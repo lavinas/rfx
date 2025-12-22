@@ -7,7 +7,7 @@
 --  remover campo status geral do processamento
 --  criar indices para process_id
 -- CREATE TABLE public.process_daily_processing (
-CREATE TABLE public.monitor_execution (
+CREATE TABLE public.monitor_execution ( -- talvez monitoring
     -- id
 	id bigserial NOT NULL,
     -- control
