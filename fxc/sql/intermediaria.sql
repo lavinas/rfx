@@ -131,51 +131,8 @@ CREATE TABLE public.process_event_status_history (
 	CONSTRAINT fk_process_event_broker_history_status FOREIGN KEY (process_event_id) REFERENCES public.process_event(id) ON DELETE CASCADE
 );
 
+''
 
--- public.process_indicator_processing definição
-
--- Drop table
-
--- DROP TABLE public.process_indicator_processing;
-
-CREATE TABLE public.process_indicator_processing (
-	id bigserial NOT NULL,
-	reference_date date NOT NULL,
-	origin_value numeric(10, 2) NULL,
-	target_value numeric(10, 2) NULL,
-	created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	process_indicator_id int8 NOT NULL,
-	status_id int4 NOT NULL,
-	status_name varchar(255) NOT NULL,
-	remarks text NULL,
-	CONSTRAINT pip_uk UNIQUE (process_indicator_id, reference_date),
-	CONSTRAINT process_indicator_processing_pkey PRIMARY KEY (id),
-	CONSTRAINT fk_pip_pi FOREIGN KEY (process_indicator_id) REFERENCES public.process_indicator(id) ON DELETE CASCADE
-);
-
-
--- public.process_indicator_processing_event definição
-
--- Drop table
-
--- DROP TABLE public.process_indicator_processing_event;
-
-CREATE TABLE public.process_indicator_processing_event (
-	id bigserial NOT NULL,
-	event_id int8 NOT NULL,
-	process_indicator_processing_id int8 NOT NULL,
-	origin_value numeric(10, 2) NOT NULL,
-	target_value numeric(10, 2) NOT NULL,
-	created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	status_id int4 NOT NULL,
-	status_name varchar(255) NOT NULL,
-	remarks text NULL,
-	CONSTRAINT process_indicator_processing_event_pkey PRIMARY KEY (id),
-	CONSTRAINT fk_pipe_event FOREIGN KEY (event_id) REFERENCES public.process_event(id) ON DELETE CASCADE,
-	CONSTRAINT fk_pipe_pip FOREIGN KEY (process_indicator_processing_id) REFERENCES public.process_indicator_processing(id) ON DELETE CASCADE
-);
 
 
 

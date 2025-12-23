@@ -67,3 +67,33 @@ CREATE TABLE public.monitoring_indicator (
 CREATE INDEX idx_monitoring_indicator_process_indicator ON public.monitoring_indicator USING btree (process_indicator_id);
 CREATE INDEX idx_monitoring_indicator_monitoring ON public.monitoring_indicator USING btree (monitoring_id);
 
+--- public.monitoring_indicator_event - tabela que relaciona os eventos de processamento com os indicadores de monitoramento
+-- alteracoes:
+--  renomear tabela de process_indicator_processing_event para monitoring_indicator_event
+--  aponta para monitoring_indicator.id ao inves de process_indicator_processing_id
+--  manter event_id apontando para process_event.id
+--  criar indices para event_id e monitoring_indicator_id
+-- CREATE TABLE public.process_indicator_processing_event (
+CREATE TABLE public.monitoring_indicator_event (
+	-- id
+	id bigserial NOT NULL,
+	-- foreign keys
+	event_id int8 NOT NULL,
+	monitoring_indicator_id int8 NOT NULL,
+	-- indicator values
+	origin_value numeric(10, 2) NOT NULL, 
+	target_value numeric(10, 2) NOT NULL,
+	-- control
+	created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	-- status details
+	status_id int4 NOT NULL,
+	status_name varchar(255) NOT NULL,
+	remarks text NULL,
+	-- constraints
+	CONSTRAINT monitoring_indicator_event_pkey PRIMARY KEY (id),
+	CONSTRAINT fk_monitoring_indicator_event FOREIGN KEY (event_id) REFERENCES public.process_event(id) ON DELETE CASCADE,
+	CONSTRAINT fk_monitoring_indicator_event_indicator FOREIGN KEY (monitoring_indicator_id) REFERENCES public.monitoring_indicator(id) ON DELETE CASCADE
+);
+CREATE INDEX idx_monitoring_indicator_event_event ON public.monitoring_indicator_event USING btree (event_id);
+CREATE INDEX idx_monitoring_indicator_event_indicator ON public.monitoring_indicator_event USING btree (monitoring_indicator_id);
