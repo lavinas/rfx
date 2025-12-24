@@ -7,6 +7,7 @@
 --  adicionar campos de status de processamento e status de indicadores
 --  remover campo status geral do processamento
 --  criar indices para process_id
+--  incluir horarios limites esperados e reais de processamento
 -- CREATE TABLE public.process_daily_processing (
 CREATE TABLE public.monitoring (
     -- id
@@ -22,6 +23,9 @@ CREATE TABLE public.monitoring (
 	processing_status_id int4 NOT NULL,
 	processing_status_name varchar(100) NOT NULL,
 	processing_remarks text NULL,
+	-- processing time limits
+	processing_expected_limit time NOT NULL,
+	processing_actual_limit time NOT NULL,
     -- indicators status details
     indicators_status_id int4 NOT NULL,
     indicators_status_name varchar(100) NOT NULL,
@@ -33,6 +37,44 @@ CREATE TABLE public.monitoring (
 );
 CREATE INDEX idx_monitoring_process_id ON public.monitoring USING btree (process_id);
 CREATE INDEX idx_monitoring_reference_date ON public.monitoring USING btree (reference_date);
+
+-- public.process_event - tabela que registra os eventos de monitoramento de execucao e indicadores dos processos
+CREATE TABLE public.monitoring_event (
+	-- id
+	id bigserial NOT NULL,
+	-- control
+	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
+	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
+	process_name varchar(100) NOT NULL, -- redundante, mas facilita consultas e relatórios
+	-- event details
+	trace_id varchar(35) NULL,
+	-- execution status details
+	status int4 NOT NULL,
+	status_name varchar(20) NOT NULL,
+	started_at timestamp NOT NULL,
+	finished_at timestamp NOT NULL,
+	errors_count int4 DEFAULT 0 NOT NULL,
+	reprocess_count int4 DEFAULT 0 NOT NULL,
+	-- foreign keys
+	process_id int8 NOT NULL, -- redundante, mas facilita consultas e relatórios
+	correlation_id varchar(64) NULL,
+	-- broker details
+	broker_sent_datetime timestamp NULL,
+	broker_status varchar(20) DEFAULT 'SENT'::character varying NULL,
+	-- process status details
+	process_status_id int4 NOT NULL,
+	process_status_name varchar(100) NOT NULL,
+	remarks text NULL,
+	-- foreign key to monitoring
+	monitoring_id int8 NOT NULL,
+	-- constraints
+	CONSTRAINT process_event_pkey PRIMARY KEY (id),
+	CONSTRAINT fk_process_event_process FOREIGN KEY (process_id) REFERENCES public.process(id) ON DELETE CASCADE,
+	CONSTRAINT fk_process_event_monitoring FOREIGN KEY (monitoring_id) REFERENCES public.monitoring(id) ON DELETE CASCADE
+);
+CREATE INDEX idx_process_event_correlation ON public.process_event USING btree (correlation_id);
+CREATE UNIQUE INDEX process_event_trace_id_idx ON public.process_event USING btree (trace_id);
+
 
 
 -- public.monitor_execution_indicator - tabela que registra os indicadores associados a execucao diaria dos processos
