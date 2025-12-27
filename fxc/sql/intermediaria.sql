@@ -1,7 +1,7 @@
 -- Active: 1766004629598@@127.0.0.1@5433@flx
 
 
-CREATE TABLE public.process_event (
+CREATE TABLE new.process_event (
 	id bigserial NOT NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
@@ -22,20 +22,20 @@ CREATE TABLE public.process_event (
 	remarks text NULL,
 	process_daily_id int8 NOT NULL,
 	CONSTRAINT process_event_pkey PRIMARY KEY (id),
-	CONSTRAINT fk_process_event_process FOREIGN KEY (process_id) REFERENCES public.process(id) ON DELETE CASCADE,
-	CONSTRAINT fk_process_event_process_daily FOREIGN KEY (process_daily_id) REFERENCES public.process_daily_processing(id) ON DELETE CASCADE
+	CONSTRAINT fk_process_event_process FOREIGN KEY (process_id) REFERENCES new.process(id) ON DELETE CASCADE,
+	CONSTRAINT fk_process_event_process_daily FOREIGN KEY (process_daily_id) REFERENCES new.process_daily_processing(id) ON DELETE CASCADE
 );
-CREATE INDEX idx_process_event_correlation ON public.process_event USING btree (correlation_id);
-CREATE UNIQUE INDEX process_event_trace_id_idx ON public.process_event USING btree (trace_id);
+CREATE INDEX idx_process_event_correlation ON new.process_event USING btree (correlation_id);
+CREATE UNIQUE INDEX process_event_trace_id_idx ON new.process_event USING btree (trace_id);
 
 
--- public.process_event_call_message definição
+-- new.process_event_call_message definição
 
 -- Drop table
 
--- DROP TABLE public.process_event_call_message;
+-- DROP TABLE new.process_event_call_message;
 
-CREATE TABLE public.process_event_call_message (
+CREATE TABLE new.process_event_call_message (
 	id bigserial NOT NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
@@ -44,17 +44,17 @@ CREATE TABLE public.process_event_call_message (
 	process_event_id int8 NOT NULL,
 	CONSTRAINT process_event_call_message_pkey PRIMARY KEY (id),
 	CONSTRAINT uk_process_event_call_message UNIQUE (process_event_id),
-	CONSTRAINT fk_process_event_call_message_event FOREIGN KEY (process_event_id) REFERENCES public.process_event(id) ON DELETE CASCADE
+	CONSTRAINT fk_process_event_call_message_event FOREIGN KEY (process_event_id) REFERENCES new.process_event(id) ON DELETE CASCADE
 );
 
 
--- public.process_event_call_status definição
+-- new.process_event_call_status definição
 
 -- Drop table
 
--- DROP TABLE public.process_event_call_status;
+-- DROP TABLE new.process_event_call_status;
 
-CREATE TABLE public.process_event_call_status (
+CREATE TABLE new.process_event_call_status (
 	id bigserial NOT NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
@@ -64,17 +64,17 @@ CREATE TABLE public.process_event_call_status (
 	process_event_id int8 NOT NULL,
 	CONSTRAINT process_event_call_status_pkey PRIMARY KEY (id),
 	CONSTRAINT uk_process_event_call_status_history UNIQUE (process_event_id),
-	CONSTRAINT fk_process_event_call_status_history FOREIGN KEY (process_event_id) REFERENCES public.process_event(id) ON DELETE CASCADE
+	CONSTRAINT fk_process_event_call_status_history FOREIGN KEY (process_event_id) REFERENCES new.process_event(id) ON DELETE CASCADE
 );
 
 
--- public.process_event_error definição
+-- new.process_event_error definição
 
 -- Drop table
 
--- DROP TABLE public.process_event_error;
+-- DROP TABLE new.process_event_error;
 
-CREATE TABLE public.process_event_error (
+CREATE TABLE new.process_event_error (
 	id bigserial NOT NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
@@ -88,18 +88,18 @@ CREATE TABLE public.process_event_error (
 	process_event_id int8 NOT NULL,
 	process_error_id int8 NULL,
 	CONSTRAINT process_event_error_pkey PRIMARY KEY (id),
-	CONSTRAINT fk_process_event_error_error FOREIGN KEY (process_error_id) REFERENCES public.process_error(id) ON DELETE SET NULL,
-	CONSTRAINT fk_process_event_error_event FOREIGN KEY (process_event_id) REFERENCES public.process_event(id) ON DELETE CASCADE
+	CONSTRAINT fk_process_event_error_error FOREIGN KEY (process_error_id) REFERENCES new.process_error(id) ON DELETE SET NULL,
+	CONSTRAINT fk_process_event_error_event FOREIGN KEY (process_event_id) REFERENCES new.process_event(id) ON DELETE CASCADE
 );
 
 
--- public.process_event_source definição
+-- new.process_event_source definição
 
 -- Drop table
 
--- DROP TABLE public.process_event_source;
+-- DROP TABLE new.process_event_source;
 
-CREATE TABLE public.process_event_source (
+CREATE TABLE new.process_event_source (
 	id bigserial NOT NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
@@ -110,17 +110,17 @@ CREATE TABLE public.process_event_source (
 	process_event_id int8 NOT NULL,
 	CONSTRAINT process_event_source_pkey PRIMARY KEY (id),
 	CONSTRAINT uk_process_event_source UNIQUE (process_event_id),
-	CONSTRAINT fk_process_event_source_event FOREIGN KEY (process_event_id) REFERENCES public.process_event(id) ON DELETE CASCADE
+	CONSTRAINT fk_process_event_source_event FOREIGN KEY (process_event_id) REFERENCES new.process_event(id) ON DELETE CASCADE
 );
 
 
--- public.process_event_status_history definição
+-- new.process_event_status_history definição
 
 -- Drop table
 
--- DROP TABLE public.process_event_status_history;
+-- DROP TABLE new.process_event_status_history;
 
-CREATE TABLE public.process_event_status_history (
+CREATE TABLE new.process_event_status_history (
 	id bigserial NOT NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
@@ -129,7 +129,7 @@ CREATE TABLE public.process_event_status_history (
 	description varchar(255) NULL,
 	process_event_id int8 NOT NULL,
 	CONSTRAINT process_event_status_history_pkey PRIMARY KEY (id),
-	CONSTRAINT fk_process_event_broker_history_status FOREIGN KEY (process_event_id) REFERENCES public.process_event(id) ON DELETE CASCADE
+	CONSTRAINT fk_process_event_broker_history_status FOREIGN KEY (process_event_id) REFERENCES new.process_event(id) ON DELETE CASCADE
 );
 
 ''
