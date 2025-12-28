@@ -1,3 +1,7 @@
+
+create schema new;
+
+
 -- nunuma alteracao estrutural
 -- retirar valores default
 CREATE TABLE new.process (

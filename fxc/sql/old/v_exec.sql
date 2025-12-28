@@ -1,4 +1,4 @@
-
+-- copia das tabelas de configuracao
 CREATE TABLE old.process (
 	id bigserial NOT NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
@@ -41,6 +41,8 @@ CREATE TABLE old.process_error (
     -- CONSTRAINT fkoht3cb97lmqyibhpjqxtxilub FOREIGN KEY (process_id) REFERENCES old.process(id),
 	CONSTRAINT uk_process_error_error_key UNIQUE (error_key)
 );
+
+-- inicio das tabelas de execucao  
 CREATE TABLE old.process_daily_processing (
 	id bigserial NOT NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
