@@ -24,10 +24,10 @@ CREATE TABLE old.process_indicator (
 	created_at timestamp DEFAULT now() NOT NULL,
 	updated_at timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT process_indicator_pkey PRIMARY KEY (id),
-	CONSTRAINT process_indicators_uk UNIQUE (name, process_origin_id, process_target_id),
-	CONSTRAINT fk_pi_origin FOREIGN KEY (process_origin_id) REFERENCES old.process(id) ON DELETE CASCADE,
-	CONSTRAINT fk_pi_target FOREIGN KEY (process_target_id) REFERENCES old.process(id) ON DELETE CASCADE
-);
+	-- CONSTRAINT fk_pi_origin FOREIGN KEY (process_origin_id) REFERENCES old.process(id) ON DELETE CASCADE,
+	-- CONSTRAINT fk_pi_target FOREIGN KEY (process_target_id) REFERENCES old.process(id) ON DELETE CASCADE,
+	CONSTRAINT process_indicators_uk UNIQUE (name, process_origin_id, process_target_id)
+	);
 CREATE TABLE old.process_error (
 	id bigserial NOT NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
