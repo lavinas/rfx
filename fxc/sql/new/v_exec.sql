@@ -61,7 +61,6 @@ CREATE TABLE new.process_indicator (
 	--CONSTRAINT fk_pi_process_reference FOREIGN KEY (process_reference_id) REFERENCES new.process(id) ON DELETE CASCADE,
 	CONSTRAINT process_indicators_uk UNIQUE (name, process_id, process_reference_id)
 );
-
 -- inicio das tabelas de execucao
 -- antiga tabela process_daily_processing
 -- retirada a coluna process_name por ser redundante
@@ -89,6 +88,7 @@ CREATE TABLE new.monitoring (
     indicators_status_id int4 NOT NULL, -- 0 - N/A, 2 - error, 3 - waiting indicators, 4 - ok
     indicators_status_name varchar(100) NOT NULL, -- 'N/A', 'error', 'waiting indicators', 'ok'
     indicators_remarks text NULL, -- mensagem corresponente
+	indicators_count int8 NOT NULL,
     -- constraints
 	CONSTRAINT monitoring_pkey PRIMARY KEY (id),
 	CONSTRAINT uk_monitoring UNIQUE (reference_date, process_id),
