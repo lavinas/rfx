@@ -8,6 +8,18 @@ create table transaction_source (
     priority int not null -- 10 - gestao, 20 - intercambio, 30 - webservice
 );
 
+-- transaction_period_closing table to store period closing information
+create table transaction_period_closing (
+    -- control
+    id bigserial primary key,
+    created_at timestamp not null default current_timestamp,
+    updated_at timestamp not null default current_timestamp,
+    -- values
+    transaction_month date not null, -- mes e ano de referencia
+    closing_date date not null -- dia do fechamento
+    status_id int not null, -- 1 - ativa, 2 - cancelada - o registro nunca é apagado, apenas cancelado
+    status_name varchar(20) not null -- 1 - ativa, 2 - cancelada - o registro nunca é apagado, apenas cancelado
+);
 
 -- transaction table is the main table to store transaction data
 create table transaction (
@@ -40,8 +52,13 @@ create table transaction (
     cost_interchange_value numeric(15,2) null
     -- references/control
     high_source_priority int not null, -- 30 - webservice, 20 - intercambio, 10 - gestao (o de maior prioridade)
+    -- status fields
+    status_id int not null, -- 1 - pendente, 2 - pronto
+    status_name varchar(20) not null, -- 1 - pendente, 2 - pronto
     -- closing fields
     period_date date null -- inicialmente nulo
+    period_closing_id bigserial null, -- inicialmente nulo, referencia transaction_period_closing(id)
+    foreign key (period_closing_id) references transaction_period_closing(id)
 );
 
 -- transaction_events table to store events related to transactions
@@ -78,3 +95,15 @@ create table transaction_event_gap (
     minor_value varchar(100) not null,
     foreign key (event_id) references transaction_events(id)
 );
+
+-- transaction_period_closing table to store period closing information
+create table transaction_period_closing (
+    -- control
+    id bigserial primary key,
+    created_at timestamp not null default current_timestamp,
+    updated_at timestamp not null default current_timestamp,
+    -- values
+    closing_date date not null
+    status_id int not null, -- 1 - ativa, 2 - cancelada
+    status_name varchar(20) not null -- 1 - ativa, 2 - cancelada
+)
