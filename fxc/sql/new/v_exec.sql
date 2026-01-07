@@ -2,7 +2,7 @@
 -- vide config
 CREATE TABLE new.process (
     -- id
-	id bigserial NOT NULL,
+	id bigserial NOT NULL, -- 10
     -- control
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
@@ -42,7 +42,7 @@ CREATE TABLE new.process_error (
 -- vide config
 CREATE TABLE new.process_indicator (
 	-- id
-	id bigserial NOT NULL,
+	id bigserial NOT NULL, -- 1
 	-- control
 	created_at timestamp DEFAULT now() NOT NULL,
 	updated_at timestamp DEFAULT now() NOT NULL,
@@ -53,8 +53,8 @@ CREATE TABLE new.process_indicator (
 	over_var numeric(5, 4) NULL,
 	message_body text NOT NULL,
 	-- foreign key to process
-	process_id int8 NOT NULL, -- antigo target
-	process_reference_id int8 NOT NULL, -- antigo origin
+	process_id int8 NOT NULL, -- antigo target  100 - outgoing-master-credito
+	process_reference_id int8 NOT NULL, -- antigo origin 10 - tc57-master-credito
 	-- constraints
 	CONSTRAINT process_indicator_pkey PRIMARY KEY (id),
 	--CONSTRAINT fk_pi_process_id FOREIGN KEY (process_id) REFERENCES new.process(id) ON DELETE CASCADE,
@@ -128,8 +128,12 @@ CREATE TABLE new.monitoring_event (
 	-- link to external traceability
 	trace_id varchar(35) NOT NULL,
 	-- result status
-	event_type varchar(20) NOT NULL, -- e.g., 'timeout', 'reader execution', 'indicator'
-	event_status_id int4 NOT NULL, -- 1 - timeout (just execution), 2 - error, 3 - waiting_indicators, 4 - ok
+	event_type varchar(20) NOT NULL, -- e.g., 'file', 'indicator'
+	event_status_id int4 NOT NULL, -- 1 - timeout (just execution), 2 - error, 3 - , 4 - ok
+	-- type: file: evento: identicou-se timeout: timeout
+	-- type: file: evento: mensagem do reader ok: ok
+	-- type: file: evento: mensagem do reader error: error
+	-- type: indicator: chegou o primeiro indicator: waiting_indicators
 	event_status_name varchar(20) NOT NULL, -- e.g., 'timeout', 'error', 'waiting indicators', 'ok'
 	remarks text NOT NULL, 
 	-- foreign keys
@@ -236,11 +240,17 @@ CREATE TABLE new.monitoring_event_open_call (
 	message_subject varchar(100) NOT NULL,
 	message_body text NOT NULL,
 	-- sent control
-	broker_sent_datetime timestamp DEFAULT CURRENT_TIMESTAMP NULL,
-	broker_status varchar(20) DEFAULT 'SENT'::character varying NULL,
 	reprocess_count int4 DEFAULT 0 NOT NULL,
 	-- sent status
-	status_code int4 NOT NULL,
+	status_code int4 NOT NULL, -- old: new, error, released, sent, archived, reprocessed // new: 1 - new, 2 - sent, 3 - sent error, 4 - call opened, 5 - call error, 6 - error archived
+	-- o registro é criado: new
+	-- envio pra fila com sucesso: new -> sent
+	-- erro no envio pra fila: sent -> sent error
+	-- retentativa de envio para fila com sucesso: sent error -> sent
+	-- retentativa de envio para fila com erro: sent error -> sent error
+	-- ticketer chamado aberto com sucesso: sent -> call opened
+	-- ticketer chamado com erro: sent -> call error
+	-- expiradas tentativas de reenvios: call error -> error archived ou sent error -> error archived
 	status_description varchar(500) NOT NULL,
 	call_code varchar(100) NULL,
 	-- foreign key to monitoring_event
