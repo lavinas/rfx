@@ -130,12 +130,10 @@ CREATE TABLE new.monitoring_event (
 	-- result status
 	event_type varchar(20) NOT NULL, -- e.g., 'file', 'indicator'
 	event_status_id int4 NOT NULL, -- 1 - timeout (just execution), 2 - error, 3 - , 4 - ok
-	-- type: file: evento: identicou-se timeout: timeout
-	-- type: file: evento: mensagem do reader ok: ok
-	-- type: file: evento: mensagem do reader error: error
-	-- type: indicator: chegou o primeiro indicator: waiting_indicators
 	event_status_name varchar(20) NOT NULL, -- e.g., 'timeout', 'error', 'waiting indicators', 'ok'
-	remarks text NOT NULL, 
+	remarks text NOT NULL,
+	-- exists open_call
+	open_call bool DEFAULT false NOT NULL, 
 	-- foreign keys
 	monitoring_id int8 NOT NULL,
 	-- constraints
@@ -154,7 +152,6 @@ CREATE TABLE new.monitoring_event_timeout (
 	monitoring_event_id int8 NOT NULL,
 	-- timeout specific details
 	expected_time time NOT NULL,
-	actual_time time NOT NULL,
 	-- constraints
 	CONSTRAINT monitoring_event_timeout_pkey PRIMARY KEY (id),
 	CONSTRAINT uk_monitoring_event_timeout UNIQUE (monitoring_event_id),
