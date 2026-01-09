@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: postgres_cdc
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=cdc
+    ports:
+      - "5435:5432"
+    volumes:
+      - ./db:/var/lib/postgresql/data
