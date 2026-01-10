@@ -1,3 +1,15 @@
 # Exclude the `files` directory
 files/
+# Exclude common Python artifacts
+__pycache__/
+*.pyc
+# Exclude virtual environment directories
+venv/
+env/
+# Exclude database files
+*.sqlite3
 db/
+# Exclude system files
+.DS_Store
+# Exclude environment variable files
+.env
