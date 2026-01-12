@@ -1,3 +1,5 @@
+SET search_path TO bins;
+
 update bins.bins bins
     set bandeira = 'MASTER2',
         pais = mbin.country_code,

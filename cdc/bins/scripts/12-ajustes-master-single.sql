@@ -1,3 +1,5 @@
+SET search_path TO bins;
+
 -- adjust country codes for MasterCard matched bins
 -- fonte: https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
 update bins.bins bins

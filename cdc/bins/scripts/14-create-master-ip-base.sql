@@ -1,3 +1,4 @@
+SET search_path TO bins;
 
 CREATE TABLE IF NOT EXISTS bins.master_ip0072t1 (
     "effective" CHAR(7) NOT NULL,

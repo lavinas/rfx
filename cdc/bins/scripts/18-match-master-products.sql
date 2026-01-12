@@ -1,3 +1,4 @@
+SET search_path TO bins;
 
 -- find produto_intermediario for MASTER cards
 update bins

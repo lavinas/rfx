@@ -1,3 +1,5 @@
+SET search_path TO bins;
+
 DROP TABLE IF EXISTS bins.master_bin_dual_message_system_mpe;
 CREATE TABLE IF NOT EXISTS bins.master_bin_dual_message_system_mpe (
     id BIGINT NOT NULL,

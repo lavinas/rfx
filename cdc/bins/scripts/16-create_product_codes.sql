@@ -1,3 +1,4 @@
+SET search_path TO bins;
 
 -- souuce: https://developers.tabapay.com/docs/mc-product-category-codes
 CREATE TABLE bins.master_product_codes (

@@ -1,3 +1,5 @@
+SET search_path TO bins;
+
 -- find banco_intermediario for MASTER cards
 update bins
     set banco_intermediario = trim(ip72.member_name)
