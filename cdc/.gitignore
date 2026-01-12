@@ -13,3 +13,5 @@ db/
 .DS_Store
 # Exclude environment variable files
 .env
+# logs
+*.log
