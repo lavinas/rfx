@@ -5,8 +5,6 @@ import psycopg2
 from psycopg2 import sql
 from psycopg2.extras import execute_values
 
-#!/usr/bin/env python3
-
 dsn_default = "postgresql://root:root@localhost:5435/cdc"
 schema_default = "reports"
 table_default = "reports_tables"
