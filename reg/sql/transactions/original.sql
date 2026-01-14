@@ -95,15 +95,3 @@ create table transaction_event_gap (
     minor_value varchar(100) not null,
     foreign key (event_id) references transaction_events(id)
 );
-
--- transaction_period_closing table to store period closing information
-create table transaction_period_closing (
-    -- control
-    id bigserial primary key,
-    created_at timestamp not null default current_timestamp,
-    updated_at timestamp not null default current_timestamp,
-    -- values
-    closing_date date not null
-    status_id int not null, -- 1 - ativa, 2 - cancelada
-    status_name varchar(20) not null -- 1 - ativa, 2 - cancelada
-)
