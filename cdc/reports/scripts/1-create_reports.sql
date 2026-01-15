@@ -1,5 +1,7 @@
 create schema reports;
 
+-- reports files
+
 -- descontos
 CREATE TABLE IF NOT EXISTS reports.descontos (
     id BIGINT PRIMARY KEY,
@@ -41,7 +43,6 @@ CREATE TABLE IF NOT EXISTS reports.intercam (
     quantidade_transacoes INTEGER NOT NULL
 );
 
-
 CREATE TABLE IF NOT EXISTS reports.ranking (
     id BIGINT PRIMARY KEY,
     sync_status SMALLINT NOT NULL,
@@ -58,4 +59,119 @@ CREATE TABLE IF NOT EXISTS reports.ranking (
     valor_transacoes NUMERIC(18,2) NOT NULL,
     quantidade_transacoes INTEGER NOT NULL,
     taxa_desconto_media NUMERIC(5,2) NOT NULL
+);
+
+-- estabelecimentos
+CREATE TABLE IF NOT EXISTS reports.conccred (
+    id BIGINT PRIMARY KEY,
+    sync_status SMALLINT NOT NULL,
+    created_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    updated_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    ano SMALLINT NOT NULL,
+    trimestre SMALLINT NOT NULL,
+    bandeira SMALLINT NOT NULL,
+    funcao CHAR(1) NOT NULL,
+    quantidade_estabelecimentos_credenciados INTEGER NOT NULL,
+    quantidade_estabelecimentos_ativos INTEGER NOT NULL,
+    valor_transacoes NUMERIC(18,2) NOT NULL,
+    quantidade_transacoes INTEGER NOT NULL
+);
+
+-- infraestrutura
+CREATE TABLE IF NOT EXISTS reports.infresta (
+    id BIGINT PRIMARY KEY,
+    sync_status SMALLINT NOT NULL,
+    created_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    updated_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    ano SMALLINT NOT NULL,
+    trimestre SMALLINT NOT NULL,
+    uf CHAR(2) NOT NULL,
+    quantidade_estabelecimentos_totais INTEGER NOT NULL,
+    quantidade_estabelecimentos_captura_manual INTEGER NOT NULL,
+    quantidade_estabelecimentos_captura_eletronica INTEGER NOT NULL,
+    quantidade_estabelecimentos_captura_remota INTEGER NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS reports.infrterm (
+    id BIGINT PRIMARY KEY,
+    sync_status SMALLINT NOT NULL,
+    created_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    updated_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    ano SMALLINT NOT NULL,
+    trimestre SMALLINT NOT NULL,
+    uf CHAR(2) NOT NULL,
+    quantidade_pos_compartilhados INTEGER NOT NULL,
+    quantidade_pos_leitora_chip INTEGER NOT NULL,
+    quantidade_pdv INTEGER NOT NULL
+);
+
+-- support tables for reports generation
+CREATE TABLE IF NOT EXISTS apoio.estabelecimentos (
+    codigo_estabelecimento BIGINT PRIMARY KEY,
+    data_credenciamento TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    data_ultima_transacao TIMESTAMP(3) WITHOUT TIME ZONE,
+    uf CHAR(2) NOT NULL,
+    tem_debito BOOLEAN NOT NULL,
+    tem_credito BOOLEAN NOT NULL,
+    tem_visa BOOLEAN NOT NULL,
+    tem_mastercard BOOLEAN NOT NULL,
+    tem_elo BOOLEAN NOT NULL,
+    mcc VARCHAR(4) NOT NULL,
+    segmento VARCHAR(255),
+    captura_manual BOOLEAN NOT NULL,
+    captura_eletronica BOOLEAN NOT NULL,
+    captura_remota BOOLEAN NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS apoio.gestao (
+    bandeira SMALLINT NOT NULL,
+    codigo_estabelecimento BIGINT NOT NULL,
+    mcc VARCHAR(4) NOT NULL,
+    segmento VARCHAR(255),
+    forma_captura SMALLINT NOT NULL,
+    funcao CHAR(1) NOT NULL,
+    numero_parcelas SMALLINT NOT NULL,
+    codigo_segmento INTEGER,
+    sum_valor_transacoes NUMERIC(18,2) NOT NULL,
+    quantidade_transacoes INTEGER NOT NULL,
+    sum_percentual_desconto NUMERIC(20,4) NOT NULL,
+    avg_percentual_desconto NUMERIC(22,16) NOT NULL,
+    min_percentual_desconto NUMERIC(22,16) NOT NULL,
+    max_percentual_desconto NUMERIC(22,16) NOT NULL,
+    dev_percentual_desconto NUMERIC(22,20),
+    sum_taxa_desconto_total NUMERIC(20,4) NOT NULL,
+    avg_taxa_desconto_total NUMERIC(22,20) NOT NULL,
+    min_taxa_desconto_total NUMERIC(22,20) NOT NULL,
+    max_taxa_desconto_total NUMERIC(22,20) NOT NULL,
+    dev_taxa_desconto_total NUMERIC(22,20)
+);
+
+
+CREATE TABLE IF NOT EXISTS apoio.intercambio (
+    modalidade_cartao VARCHAR(16),
+    produto_cartao VARCHAR(16),
+    bandeira VARCHAR(32),
+    parcela SMALLINT,
+    tipo_cartao VARCHAR(16),
+    forma_captura CHAR(2),
+    segmento VARCHAR(16),
+    sum_valor_transacoes NUMERIC(18,2),
+    quantidade_transacoes INTEGER,
+    sum_percentual_desconto NUMERIC(18,2),
+    avg_percentual_desconto NUMERIC(22,20),
+    min_percentual_desconto NUMERIC(22,20),
+    max_percentual_desconto NUMERIC(22,20),
+    dev_percentual_desconto NUMERIC(22,20),
+    sum_taxa_intercambio_valor NUMERIC(20,4),
+    avg_taxa_intercambio_valor NUMERIC(22,20),
+    min_taxa_intercambio_valor NUMERIC(22,20),
+    max_taxa_intercambio_valor NUMERIC(22,20),
+    dev_taxa_intercambio_valor NUMERIC(22,20)
+);
+
+CREATE TABLE IF NOT EXISTS apoio.terminais (
+    codigo_terminal BIGINT NOT NULL,
+    codigo_estabelecimento BIGINT NOT NULL,
+    tipo_terminal VARCHAR(16) NOT NULL
 );

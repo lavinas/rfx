@@ -18,3 +18,9 @@ banco_intermediario varchar(100),
 produto_final integer, 
 modalidade_final varchar(1)
 );
+
+
+create index idx_bins_bin on bins(bin);
+
+ALTER TABLE bins
+ADD PRIMARY KEY (bin);
