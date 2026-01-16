@@ -4,12 +4,43 @@ from pathlib import Path
 import psycopg2
 from psycopg2 import sql
 from psycopg2.extras import execute_values
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 dsn_default = "postgresql://root:root@localhost:5435/cdc"
 schema_default = "reports"
 table_default = "reports_tables"
 
+def format_value(value):
+    if value == "":
+        return None
+    if isinstance(value, str):
+        stripped = value.strip()
+        if "." in stripped:
+            integer_part, _, fractional_part = stripped.partition(".")
+            if len(fractional_part) > 2:
+                try:
+                    decimal_value = Decimal(stripped)
+                except InvalidOperation:
+                    return value
+                rounded = decimal_value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                return format(rounded, "f")
+        return value
+
+    if isinstance(value, (float, Decimal)):
+        decimal_value = Decimal(str(value))
+        if decimal_value.as_tuple().exponent < -2:
+            return decimal_value.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        return value
+
+    return value
+
+
 def insert_batch(cursor, schema_name, table_name, columns, rows):
+    rows = [
+        tuple(format_value(value) for value in row)
+        for row in rows
+    ]
+
     table_identifier = (
         sql.SQL(".").join([sql.Identifier(schema_name), sql.Identifier(table_name)])
         if schema_name
@@ -29,7 +60,7 @@ def insert_batch(cursor, schema_name, table_name, columns, rows):
         ) from exc
 
 
-def load_csv_to_table(dsn, schema_name, table_name, csv_path, batch_size=1000):
+def load_csv_to_table(dsn, schema_name, table_name, csv_path):
     path = Path(csv_path)
     if not path.is_file():
         raise FileNotFoundError(f"Arquivo CSV não encontrado: {path}")
@@ -45,6 +76,13 @@ def load_csv_to_table(dsn, schema_name, table_name, csv_path, batch_size=1000):
         if not all(columns):
             raise ValueError("Cabeçalho contém nomes de coluna vazios")
 
+        with path.open(newline="", encoding="utf-8") as count_file:
+            count_reader = csv.reader(count_file)
+            next(count_reader, None)
+            total_lines = sum(1 for row in count_reader if any(row))
+
+        processed = 0
+
         with psycopg2.connect(dsn) as connection:
             with connection.cursor() as cursor:
                 batch = []
@@ -54,12 +92,15 @@ def load_csv_to_table(dsn, schema_name, table_name, csv_path, batch_size=1000):
                     if len(row) != len(columns):
                         raise ValueError(f"Linha com número inválido de colunas: {row}")
                     batch.append(row)
-                    if len(batch) >= batch_size:
+                    processed += 1
+                    if total_lines and (processed % 500 == 0 or processed == total_lines):
+                        print(f"Processed {processed}/{total_lines}")
+                    if batch:
                         insert_batch(cursor, schema_name, table_name, columns, batch)
-                        batch.clear()
+                    batch.clear()
 
-                if batch:
-                    insert_batch(cursor, schema_name, table_name, columns, batch)
+            if batch:
+                insert_batch(cursor, schema_name, table_name, columns, batch)
 
 
 def parse_args():
@@ -87,7 +128,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    load_csv_to_table(args.dsn, args.schema, args.table, args.file, args.batch_size)
+    load_csv_to_table(args.dsn, args.schema, args.table, args.file)
 
 
 if __name__ == "__main__":

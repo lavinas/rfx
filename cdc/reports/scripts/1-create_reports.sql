@@ -124,6 +124,7 @@ CREATE TABLE IF NOT EXISTS apoio.estabelecimentos (
     captura_remota BOOLEAN NOT NULL
 );
 
+drop table if exists apoio.gestao;
 CREATE TABLE IF NOT EXISTS apoio.gestao (
     bandeira SMALLINT NOT NULL,
     codigo_estabelecimento BIGINT NOT NULL,
@@ -135,19 +136,19 @@ CREATE TABLE IF NOT EXISTS apoio.gestao (
     codigo_segmento INTEGER,
     sum_valor_transacoes NUMERIC(18,2) NOT NULL,
     quantidade_transacoes INTEGER NOT NULL,
-    sum_percentual_desconto NUMERIC(20,4) NOT NULL,
-    avg_percentual_desconto NUMERIC(22,16) NOT NULL,
-    min_percentual_desconto NUMERIC(22,16) NOT NULL,
-    max_percentual_desconto NUMERIC(22,16) NOT NULL,
-    dev_percentual_desconto NUMERIC(22,20),
-    sum_taxa_desconto_total NUMERIC(20,4) NOT NULL,
-    avg_taxa_desconto_total NUMERIC(22,20) NOT NULL,
-    min_taxa_desconto_total NUMERIC(22,20) NOT NULL,
-    max_taxa_desconto_total NUMERIC(22,20) NOT NULL,
-    dev_taxa_desconto_total NUMERIC(22,20)
+    sum_percentual_desconto NUMERIC(18,2) NOT NULL,
+    avg_percentual_desconto NUMERIC(18,2) NOT NULL,
+    min_percentual_desconto NUMERIC(18,2) NOT NULL,
+    max_percentual_desconto NUMERIC(18,2) NOT NULL,
+    dev_percentual_desconto NUMERIC(18,2),
+    sum_taxa_desconto_total NUMERIC(18,2) NOT NULL,
+    avg_taxa_desconto_total NUMERIC(18,2) NOT NULL,
+    min_taxa_desconto_total NUMERIC(18,2) NOT NULL,
+    max_taxa_desconto_total NUMERIC(18,2) NOT NULL,
+    dev_taxa_desconto_total NUMERIC(18,2)
 );
 
-
+drop table if exists apoio.intercambio;
 CREATE TABLE IF NOT EXISTS apoio.intercambio (
     modalidade_cartao VARCHAR(16),
     produto_cartao VARCHAR(16),
@@ -159,15 +160,15 @@ CREATE TABLE IF NOT EXISTS apoio.intercambio (
     sum_valor_transacoes NUMERIC(18,2),
     quantidade_transacoes INTEGER,
     sum_percentual_desconto NUMERIC(18,2),
-    avg_percentual_desconto NUMERIC(22,20),
-    min_percentual_desconto NUMERIC(22,20),
-    max_percentual_desconto NUMERIC(22,20),
-    dev_percentual_desconto NUMERIC(22,20),
-    sum_taxa_intercambio_valor NUMERIC(20,4),
-    avg_taxa_intercambio_valor NUMERIC(22,20),
-    min_taxa_intercambio_valor NUMERIC(22,20),
-    max_taxa_intercambio_valor NUMERIC(22,20),
-    dev_taxa_intercambio_valor NUMERIC(22,20)
+    avg_percentual_desconto NUMERIC(18,2),
+    min_percentual_desconto NUMERIC(18,2),
+    max_percentual_desconto NUMERIC(18,2),
+    dev_percentual_desconto NUMERIC(18,2),
+    sum_taxa_intercambio_valor NUMERIC(18,2),
+    avg_taxa_intercambio_valor NUMERIC(18,2),
+    min_taxa_intercambio_valor NUMERIC(18,2),
+    max_taxa_intercambio_valor NUMERIC(18,2),
+    dev_taxa_intercambio_valor NUMERIC(18,2)
 );
 
 CREATE TABLE IF NOT EXISTS apoio.terminais (
@@ -175,3 +176,10 @@ CREATE TABLE IF NOT EXISTS apoio.terminais (
     codigo_estabelecimento BIGINT NOT NULL,
     tipo_terminal VARCHAR(16) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS apoio.segmentos (
+    mcc_init INTEGER NOT NULL,
+    mcc_end INTEGER NOT NULL,
+    segment INTEGER NOT NULL
+);
+create index segmentos_mcc_idx on apoio.segmentos(mcc_init, mcc_end);
