@@ -1,3 +1,4 @@
+-- Active: 1767998905059@@127.0.0.1@5435@cdc
 create schema reports;
 
 -- reports files
@@ -183,3 +184,4 @@ CREATE TABLE IF NOT EXISTS apoio.segmentos (
     segment INTEGER NOT NULL
 );
 create index segmentos_mcc_idx on apoio.segmentos(mcc_init, mcc_end);
+

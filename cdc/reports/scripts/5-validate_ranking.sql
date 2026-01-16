@@ -13,7 +13,7 @@ limit 100000;
 -- deveria ter 15 por segmento maiores
 select codigo_segmento,
        count(distinct codigo_estabelecimento) as quantidade_estabelecimentos
-  from ranking
+  from reports.ranking
 where codigo_estabelecimento != '999999'
 group by 1
 order by 1;
@@ -21,7 +21,7 @@ order by 1;
 
 select ano, trimestre, codigo_estabelecimento, funcao, bandeira, forma_captura, numero_parcelas, codigo_segmento,
        count(1) as quantidade_registros
-  from ranking
+  from reports.ranking
 group by 1,2,3,4,5,6,7,8
 having count(1) > 1
 
@@ -57,7 +57,7 @@ select case codigo_estabelecimento
        sum(a.quantidade_transacoes),
        round(sum(a.valor_transacoes) / sum(a.quantidade_transacoes), 2) as ticket_medio,
        round(sum(a.taxa_desconto_media * a.valor_transacoes / 100), 2) as valor_descontado
-  from ranking a
+  from reports.ranking a
   group by 1
   order by 1;
 
@@ -67,13 +67,34 @@ select codigo_estabelecimento,
        sum(a.sum_valor_transacoes) as tpv
   from apoio.gestao a
 inner join apoio.segmentos b on cast(a.mcc as INTEGER) between b.mcc_init and b.mcc_end
-where b.segment = 408
+where b.segment = 422
 group by 1
 order by 2 desc
 limit 15
 );
 
+select sum(valor_transacoes) 
+from reports.ranking
+where codigo_estabelecimento != 'group200'
+  and codigo_segmento = 422;
 
 
-select count(1)
-  from apoio.gestao;
+select sum(tpv) from (
+select codigo_estabelecimento,
+       sum(a.sum_valor_transacoes) as tpv
+  from apoio.gestao a
+inner join apoio.segmentos b on cast(a.mcc as INTEGER) between b.mcc_init and b.mcc_end
+where b.segment = 422
+group by 1
+order by 2
+limit 200
+);
+
+-- 40091.21
+select sum(valor_transacoes) 
+from reports.ranking
+where codigo_estabelecimento = 'group200'
+  and codigo_segmento = 422;
+
+
+
