@@ -61,19 +61,21 @@ order by 1;
 --- Receita total por bandeira - descontos
 --------------------------------------------------------------------------
 
--- Elo	    1365465.82
--- Master	4412794.85
--- Visa	    3375918.04
 select case bandeira 
          when 1 then 'Visa'
          when 2 then 'Master'
          when 8 then 'Elo'
          else 'Erro'
        end as bandeira, 
-       sum(round(valor_transacoes * taxa_desconto_media/100, 2)) receita
+       round(sum(valor_transacoes * taxa_desconto_media/100)/sum(valor_transacoes), 4) receita
   from reports.descontos
 group by 1
 order by 1;
+
+select  round(sum(valor_transacoes * taxa_desconto_media/100)/sum(valor_transacoes), 4) receita
+  from reports.descontos;
+
+
 
 -- Elo	    456485.35
 -- Master	2313796.21
@@ -84,7 +86,11 @@ select case bandeira
          when 8 then 'Elo'
          else 'Erro'
        end as bandeira, 
-       sum(round(a.valor_transacoes * a.tarifa_intercambio/100, 2)) custo
+       round(sum(a.valor_transacoes * a.tarifa_intercambio/100)/sum(a.valor_transacoes), 4) custo_medio
  from reports.intercam a
 group by 1
 order by 1;
+
+
+select round(sum(a.valor_transacoes * a.tarifa_intercambio/100)/sum(a.valor_transacoes), 4) custo_medio
+ from reports.intercam a;
