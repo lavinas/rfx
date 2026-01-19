@@ -55,6 +55,7 @@ create table transaction (
     -- status fields
     status_id int not null, -- 1 - pendente, 2 - pronto
     status_name varchar(20) not null, -- 1 - pendente, 2 - pronto
+    status_count int not null default 3, -- contador de tentativas de processamento
     -- closing fields
     period_date date null -- inicialmente nulo
     period_closing_id bigserial null, -- inicialmente nulo, referencia transaction_period_closing(id)

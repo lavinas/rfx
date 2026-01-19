@@ -1,0 +1,267 @@
+{
+
+	"process": "tc57-reader",
+
+	"traceId": "089EC5F3400646159F6CB252E466D647",
+
+	"createdAt": "2026-01-14T11:56:25.446264800",
+
+	"indicators": [
+
+		{
+
+			"name": "visa-new-transactions-credit-count",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 8974
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "visa-new-transactions-credit-amount",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 814713.3
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "visa-new-transactions-debit-count",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 27245
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "visa-new-transactions-debit-amount",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 1203769.7
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "master-new-transactions-credit-count",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 15607
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "master-new-transactions-credit-amount",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 1173484.39
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "master-new-transactions-debit-count",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 41972
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "master-new-transactions-debit-amount",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 1313784.13
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "elo-new-transactions-credit-count",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 1629
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "elo-new-transactions-credit-amount",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 137456.01
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "elo-new-transactions-debit-count",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 10740
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "elo-new-transactions-debit-amount",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 553855.1
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "others-new-transactions-count",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 0
+
+				}
+
+			]
+
+		},
+
+		{
+
+			"name": "others-new-transactions-amount",
+
+			"values": [
+
+				{
+
+					"referenceDate": "2026-01-08",
+
+					"value": 0
+
+				}
+
+			]
+
+		}
+
+	]
+
+}
+ 
+ 

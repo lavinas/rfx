@@ -78,12 +78,12 @@ CREATE TABLE new.monitoring (
     -- foreign key to process
 	process_id int8 NOT NULL,
     -- processing status details
-	processing_status_id int4 NOT NULL, -- 1 - timeout, 2 - error, 4 - ok
-	processing_status_name varchar(100) NOT NULL, -- 'timeout', 'error', 'ok'
+	processing_status_id int4 NOT NULL, -- 0 - N/A, 1 - timeout, 2 - error, 4 - ok
+	processing_status_name varchar(100) NOT NULL, -- 'N/A' 'timeout', 'error', 'ok'
 	processing_remarks text NULL, -- mensagem corresponente
 	-- processing time limits
-	processing_expected_limit time NOT NULL,
-	processing_actual_limit time NOT NULL,
+	processing_expected_limit time NULL,
+	processing_actual_limit time NULL,
     -- indicators status details
     indicators_status_id int4 NOT NULL, -- 0 - N/A, 2 - error, 3 - waiting indicators, 4 - ok
     indicators_status_name varchar(100) NOT NULL, -- 'N/A', 'error', 'waiting indicators', 'ok'
@@ -104,8 +104,8 @@ CREATE TABLE new.monitoring_indicator (
 	-- foreign key to monitoring
 	monitoring_id int8 NOT NULL,
 	-- indicator status details
-	indicator_status_id int4 NOT NULL,
-	indicator_status_name varchar(100) NOT NULL,
+	indicator_status_id int4 NOT NULL, -- 2 - error, 3 - waiting indicators, 4 - ok
+	indicator_status_name varchar(100) NOT NULL,-- 'error', 'waiting indicators', 'ok'
 	indicator_remarks text NULL,
 	-- received values
 	process_indicator_id int8 NOT NULL,
@@ -129,9 +129,9 @@ CREATE TABLE new.monitoring_event (
 	trace_id varchar(35) NOT NULL,
 	-- result status
 	event_type varchar(20) NOT NULL, -- e.g., 'file', 'indicator'
-	event_status_id int4 NOT NULL, -- 1 - timeout (just execution), 2 - error, 3 - , 4 - ok
+	event_status_id int4 NOT NULL, -- 1 - timeout (just execution), 2 - error, 3 - waiting indicator , 4 - ok
 	event_status_name varchar(20) NOT NULL, -- e.g., 'timeout', 'error', 'waiting indicators', 'ok'
-	remarks text NOT NULL,
+	remarks text NULL,
 	-- exists open_call
 	open_call bool DEFAULT false NOT NULL, 
 	-- foreign keys
@@ -194,7 +194,7 @@ CREATE TABLE new.monitoring_event_indicator (
 	-- indicator specific details
 	monitoring_indicator_id int8 NOT NULL,
 	process_indicator_id int8 NOT NULL,
-	indicator_value numeric(20, 6) NULL,
+	indicator_value numeric(20, 6) NOT NULL,
 	-- constraints
 	CONSTRAINT monitoring_event_indicator_pkey PRIMARY KEY (id),
 	CONSTRAINT fk_monitoring_event_indicator_process_indicator FOREIGN KEY (process_indicator_id) REFERENCES new.process_indicator(id) ON DELETE CASCADE,

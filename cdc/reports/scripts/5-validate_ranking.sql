@@ -98,3 +98,4 @@ where codigo_estabelecimento = 'group200'
 
 
 
+select * from 
