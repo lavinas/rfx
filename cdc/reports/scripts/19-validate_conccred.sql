@@ -1,5 +1,11 @@
 select * from reports.conccred_ch;
 
+select bandeira, funcao, count(1)
+  from reports.conccred_ch
+ group by 1,2
+having count(1) != 1;
+
+
 select sum(quantidade_estabelecimentos_totais) from reports.infresta_ch;
 
 -- estabelecimentos

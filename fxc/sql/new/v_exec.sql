@@ -193,7 +193,6 @@ CREATE TABLE new.monitoring_event_indicator (
 	monitoring_event_id int8 NOT NULL,
 	-- indicator specific details
 	monitoring_indicator_id int8 NOT NULL,
-	process_indicator_id int8 NOT NULL,
 	indicator_value numeric(20, 6) NOT NULL,
 	-- constraints
 	CONSTRAINT monitoring_event_indicator_pkey PRIMARY KEY (id),
