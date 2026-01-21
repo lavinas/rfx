@@ -194,11 +194,11 @@ update reports.intercam_ch a
 -- pegar as que ficaram com quantidade menor ou igual a zero
 create table intercam_tmp_adjust_4 as
 select *  
-  from intercam_ch a
+  from reports.intercam_ch a
 where a.quantidade_transacoes <= 0;
 
 -- calcular o ajuste necessário na tabela de descontos_ch
-create table intercam_tmp_adjust_5 as
+create table reports,intercam_tmp_adjust_5 as
 select funcao, bandeira, forma_captura, numero_parcelas, codigo_segmento,
        sum(-1*quantidade_transacoes+1) as quantidade_transacoes
   from reports.intercam_tmp_adjust_4
@@ -211,14 +211,14 @@ update reports.intercam_ch a
 where quantidade_transacoes <= 0;
 
 -- faz backup da tabela descontos_ch antes do ajuste final
-create table descontos_ch_back as
+create table reports.descontos_ch_back as
 select *
   from reports.descontos_ch;
 
 -- realizar o ajuste final na tabela descontos_ch
 update descontos_ch a
    set quantidade_transacoes = a.quantidade_transacoes + b.quantidade_transacoes
-  from intercam_tmp_adjust_5 b
+  from reports.intercam_tmp_adjust_5 b
  where a.funcao = b.funcao
    and a.bandeira = b.bandeira
    and a.forma_captura = b.forma_captura
@@ -243,8 +243,8 @@ select funcao, bandeira, forma_captura, numero_parcelas, codigo_segmento,
 
 -- faz a validacao
  select count(1)
-   from intercam_tmp_valida a
- inner join descontos_tmp_valida b
+   from reports.intercam_tmp_valida a
+ inner join reports.descontos_tmp_valida b
      on a.funcao = b.funcao
     and a.bandeira = b.bandeira
     and a.forma_captura = b.forma_captura
@@ -254,10 +254,11 @@ select funcao, bandeira, forma_captura, numero_parcelas, codigo_segmento,
      or a.quantidade_transacoes <> b.quantidade_transacoes;
 
 -- apaga tabelas auxiliares
-drop table descontos_tmp_valida;
-drop table intercam_tmp_adjust;
-drop table intercam_tmp_adjust_2;
-drop table intercam_tmp_adjust_3;
-drop table intercam_tmp_adjust_4;
-drop table intercam_tmp_adjust_5;
-drop table intercam_tmp_valida;
+drop table reports.descontos_tmp_valida;
+drop table reports.intercam_tmp_adjust;
+drop table reports.intercam_tmp_adjust_2;
+drop table reports.intercam_tmp_adjust_3;
+drop table reports.intercam_tmp_adjust_4;
+drop table reports.intercam_tmp_adjust_5;
+drop table reports.intercam_tmp_valida;
+drop table reports.descontos_ch_back;

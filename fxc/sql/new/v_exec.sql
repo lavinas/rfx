@@ -75,7 +75,7 @@ CREATE TABLE new.monitoring (
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NULL,
     -- reference date
 	reference_date date NOT NULL,
-    -- foreign key to process
+    -- foreign key to processI
 	process_id int8 NOT NULL,
     -- processing status details
 	processing_status_id int4 NOT NULL, -- 0 - N/A, 1 - timeout, 2 - error, 4 - ok

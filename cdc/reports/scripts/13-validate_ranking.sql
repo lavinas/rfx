@@ -64,3 +64,6 @@ where b.segment = 401 and a.
 group by 1
 order by 2 desc
 limit 15
+
+
+drop table reports.ranking_tmp_validate;
