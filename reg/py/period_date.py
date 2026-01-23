@@ -2,6 +2,7 @@ from datetime import date
 
 # PARAMETROS
 # tabela de fechamento de datas (banco de dados)
+# mes da transacao : data de fechamento
 closing_date_table = {
     '2025/10': date(2025, 11, 2),
     '2025/11': date(2025, 12, 3),
@@ -13,7 +14,6 @@ default_closing_day = 3
 # ALGORITMO PRINICIPAL
 # funcao exemplo que traz a data referente ao periodo da transacao 
 def get_period_date(transaction_date: date, current_date: date, closing_date_table: dict) -> date:
-    return_period_date = None
     # Extrai o ano e o mês da data da transação
     year = transaction_date.year
     month = transaction_date.month
@@ -33,66 +33,75 @@ def get_period_date(transaction_date: date, current_date: date, closing_date_tab
 
 # APOIO
 # procedure apenas para imprimir o resultado
-def print_result(transaction_date: date, current_date: date, period_date: date):
+def print_result(transaction_date: date, current_date: date, period_date: date, resultado: bool):
     print(f"Data da transação: {transaction_date}")
     print(f"Data atual: {current_date}")
-    print(f"Data do período: {period_date}\n")
+    print(f"Data do período: {period_date}")
+    print(f"Resultado: {resultado}\n")
 
-# TESTES
+# EXEMPLOS
 # main
 if __name__ == "__main__":
     # teste 1: data atual antes da data de fechamento
     transaction_date = date(2025, 10, 20)
     current_date = date(2025, 11, 1)
     period_date = get_period_date(transaction_date, current_date, closing_date_table)
+    result = period_date == transaction_date
     print(f"Teste 1: data atual antes da data de fechamento:")
-    print_result(transaction_date, current_date, period_date)
+    print_result(transaction_date, current_date, period_date, result)
     # teste 2: data atual depois da data de fechamento
     transaction_date = date(2025, 10, 20)
     current_date = date(2025, 11, 5)
     period_date = get_period_date(transaction_date, current_date, closing_date_table)
+    result = period_date == current_date
     print(f"Teste 2: data atual depois da data de fechamento:")
-    print_result(transaction_date, current_date, period_date)
-    # teste 3: data de fechamento não encontrada na tabela
-    # data atual no mesmo dia do fechamento
+    print_result(transaction_date, current_date, period_date, result)
+    # teste 3: data atual no mesmo dia do fechamento
     transaction_date = date(2025, 10, 20)
     current_date = date(2025, 11, 3)
     period_date = get_period_date(transaction_date, current_date, closing_date_table)
+    result = period_date == current_date
     print(f"Teste 3: data de fechamento não encontrada na tabela:")
-    print_result(transaction_date, current_date, period_date)
-    # data de fechamento retroativa e data atual antes da data de fechamento
+    print_result(transaction_date, current_date, period_date, result)
+    # teste 4: data de fechamento retroativa e data atual antes da data de fechamento
     transaction_date = date(2025, 12, 15)
     current_date = date(2025, 12, 27)
     period_date = get_period_date(transaction_date, current_date, closing_date_table)
+    result = period_date == transaction_date
     print(f"Teste 4: data de fechamento retroativa e data atual antes da data de fechamento:")
-    print_result(transaction_date, current_date, period_date)
+    print_result(transaction_date, current_date, period_date, result)
     # data de fechamento retroativa e data atual depois da data de fechamento mas dentro do proprio mes
     transaction_date = date(2025, 12, 15)
     current_date = date(2025, 12, 29)
     period_date = get_period_date(transaction_date, current_date, closing_date_table)
+    result = period_date == date(2026, 1, 1)
     print(f"Teste 5: data de fechamento retroativa e data atual depois da data de fechamento mas dentro do proprio mes:")
-    print_result(transaction_date, current_date, period_date)
-    # data de fechamento retroativa e data atual depois da data de fechamento e no mes seguinte
+    print_result(transaction_date, current_date, period_date, result)
+    # teste 6: data de fechamento retroativa e data atual depois da data de fechamento e no mes seguinte
     transaction_date = date(2025, 12, 15)
     current_date = date(2026, 1, 5)
     period_date = get_period_date(transaction_date, current_date, closing_date_table)
+    result = period_date == current_date
     print(f"Teste 6: data de fechamento retroativa e data atual depois da data de fechamento e no mes seguinte:")
-    print_result(transaction_date, current_date, period_date)
-    # data de fechamento não encontrada na tabela, data atual antes da data de fechamento
+    print_result(transaction_date, current_date, period_date, result)
+    # teste 7: data de fechamento não encontrada na tabela, data atual antes da data de fechamento
     transaction_date = date(2026, 1, 10)
     current_date = date(2026, 2, 2)
     period_date = get_period_date(transaction_date, current_date, closing_date_table)
+    result = period_date == transaction_date
     print(f"Teste 7: data de fechamento não encontrada na tabela, data atual antes da data de fechamento:")
-    print_result(transaction_date, current_date, period_date)
-    # data de fechamento não encontrada na tabela, data atual depois da data de fechamento
+    print_result(transaction_date, current_date, period_date, result)
+    # teste 8: data de fechamento não encontrada na tabela, data atual depois da data de fechamento
     transaction_date = date(2026, 1, 10)
     current_date = date(2026, 2, 5)
     period_date = get_period_date(transaction_date, current_date, closing_date_table)
+    result = period_date == current_date
     print(f"Teste 8: data de fechamento não encontrada na tabela, data atual depois da data de fechamento:")
-    print_result(transaction_date, current_date, period_date)
-    # data de fechamento não encontrada na tabela, data atual exatamente no dia de fechamento
+    print_result(transaction_date, current_date, period_date, result)
+    # teste 9: data de fechamento não encontrada na tabela, data atual exatamente no dia de fechamento
     transaction_date = date(2026, 1, 10)
     current_date = date(2026, 2, 3)
     period_date = get_period_date(transaction_date, current_date, closing_date_table)
+    result = period_date == current_date
     print(f"Teste 9: data de fechamento não encontrada na tabela, data atual exatamente no dia de fechamento:")
-    print_result(transaction_date, current_date, period_date)
+    print_result(transaction_date, current_date, period_date, result)
