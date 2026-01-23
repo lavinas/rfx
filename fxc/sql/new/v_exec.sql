@@ -104,7 +104,7 @@ CREATE TABLE new.monitoring_indicator (
 	-- foreign key to monitoring
 	monitoring_id int8 NOT NULL,
 	-- indicator status details
-	indicator_status_id int4 NOT NULL, -- 2 - error, 3 - waiting indicators, 4 - ok
+	indicator_status_id int4 NOT NULL, -- 0 - waiting_compartion, 2 - error, 3 - waiting indicators, 4 - ok
 	indicator_status_name varchar(100) NOT NULL,-- 'error', 'waiting indicators', 'ok'
 	indicator_remarks text NULL,
 	-- received values
@@ -129,7 +129,7 @@ CREATE TABLE new.monitoring_event (
 	trace_id varchar(35) NOT NULL,
 	-- result status
 	event_type varchar(20) NOT NULL, -- e.g., 'file', 'indicator'
-	event_status_id int4 NOT NULL, -- 1 - timeout (just execution), 2 - error, 3 - waiting indicator , 4 - ok
+	event_status_id int4 NOT NULL, -- 0 - waiting-comparation, 1 - timeout (just execution), 2 - error, 3 - waiting indicator , 4 - ok
 	event_status_name varchar(20) NOT NULL, -- e.g., 'timeout', 'error', 'waiting indicators', 'ok'
 	remarks text NULL,
 	-- exists open_call
@@ -193,10 +193,11 @@ CREATE TABLE new.monitoring_event_indicator (
 	monitoring_event_id int8 NOT NULL,
 	-- indicator specific details
 	monitoring_indicator_id int8 NOT NULL,
+    process_id int8 NOT NULL, 
 	indicator_value numeric(20, 6) NOT NULL,
 	-- constraints
 	CONSTRAINT monitoring_event_indicator_pkey PRIMARY KEY (id),
-	CONSTRAINT fk_monitoring_event_indicator_process_indicator FOREIGN KEY (process_indicator_id) REFERENCES new.process_indicator(id) ON DELETE CASCADE,
+	CONSTRAINT fk_monitoring_event_indicator_process FOREIGN KEY (process_id) REFERENCES new.process(id) ON DELETE CASCADE,
 	CONSTRAINT uk_monitoring_event_indicator UNIQUE (monitoring_event_id),
 	CONSTRAINT fk_monitoring_event_indicator_indicator FOREIGN KEY (monitoring_indicator_id) REFERENCES new.monitoring_indicator(id) ON DELETE CASCADE,
 	CONSTRAINT fk_monitoring_event_indicator FOREIGN KEY (monitoring_event_id) REFERENCES new.monitoring_event(id) ON DELETE CASCADE
