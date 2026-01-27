@@ -1,7 +1,7 @@
 services:
-  db:
+  db_2025_4T:
     image: postgres:16-alpine
-    container_name: postgres_cdc
+    container_name: cadoc_2025_4T
     restart: always
     environment:
       - POSTGRES_USER=root
@@ -10,4 +10,16 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - ./db_2025_4T:/var/lib/postgresql/data
+  db_2025_3T:
+    image: postgres:16-alpine
+    container_name: cadoc_2025_3T
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=cadoc
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db_2025_3T:/var/lib/postgresql/data

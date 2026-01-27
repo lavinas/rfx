@@ -10,6 +10,7 @@ env/
 # Exclude database files
 *.sqlite3
 db/
+db_2025_4T/
 # Exclude system files
 .DS_Store
 # Exclude environment variable files
