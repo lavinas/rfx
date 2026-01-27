@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS reports.infrterm_ch (
     quantidade_pdv INTEGER NOT NULL
 );
 
+truncate table reports.infrterm_ch;
 
 INSERT INTO reports.infrterm_ch (
     ano,
@@ -26,7 +27,7 @@ INSERT INTO reports.infrterm_ch (
 select 2025,
        4,
        b.uf,
-       count(1) quantidade_total,
+       sum(case when a.tipo_terminal = 'POS' then 1 else 0 end) quantidade_pos_leitora_chip,
        0 quantidade_pos_compartilhados,
        sum(case when a.tipo_terminal = 'POS' then 1 else 0 end) quantidade_pos_leitora_chip,
        sum(case when a.tipo_terminal = 'TEF' then 1 else 0 end) quantidade_pdv

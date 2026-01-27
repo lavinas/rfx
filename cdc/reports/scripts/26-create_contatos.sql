@@ -11,13 +11,13 @@ CREATE TABLE IF NOT EXISTS reports.contatos_ch (
 );
 
 INSERT INTO reports.contatos_ch (Ano, Trimestre, TipoContato, Nome, Cargo, NumeroTelefone, Email)
-VALUES (2025, 3, 'D', 'Diego Silveira de Faria', 'Diretor', '(65) 99683-4775', 'diego@redeflex.com.br');
+VALUES (2025, 4, 'D', 'Diego Silveira de Faria', 'Diretor', '(65) 99683-4775', 'diego@redeflex.com.br');
 
 INSERT INTO reports.contatos_ch (Ano, Trimestre, TipoContato, Nome, Cargo, NumeroTelefone, Email)
-VALUES (2025, 3, 'T', 'Werika Oliveira Calassa', 'Gerente de Controladoria', '(65) 99964-2769', 'werika.calassa@redeflex.com.br');
+VALUES (2025, 4, 'T', 'Werika Oliveira Calassa', 'Gerente de Controladoria', '(65) 99964-2769', 'werika.calassa@redeflex.com.br');
 
 INSERT INTO reports.contatos_ch (Ano, Trimestre, TipoContato, Nome, Cargo, NumeroTelefone, Email)
-VALUES (2025, 3, 'T', 'Andrea Da Silva Santos', 'Coordenador Fiscal', '(65) 99901-7193', 'andrea.dasantos@redeflex.com.br');
+VALUES (2025, 4, 'T', 'Andrea Da Silva Santos', 'Coordenador Fiscal', '(65) 99901-7193', 'andrea.dasantos@redeflex.com.br');
 
 INSERT INTO reports.contatos_ch (Ano, Trimestre, TipoContato, Nome, Cargo, NumeroTelefone, Email)
-VALUES (2025, 3, 'I', '', '', '', 'atendimento.bacen@redeflex.com.br');
+VALUES (2025, 4, 'I', '', '', '', 'atendimento.bacen@redeflex.com.br');
