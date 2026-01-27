@@ -1,0 +1,20 @@
+# Exclude the `files` directory
+files/
+saidas/
+# Exclude common Python artifacts
+__pycache__/
+*.pyc
+# Exclude virtual environment directories
+venv/
+env/
+# Exclude database files
+*.sqlite3
+db/
+db_2025_4T/
+db_2025_3T/
+# Exclude system files
+.DS_Store
+# Exclude environment variable files
+.env
+# logs
+*.log
