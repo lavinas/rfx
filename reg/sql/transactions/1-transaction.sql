@@ -96,3 +96,6 @@ create table transaction_event_gap (
     minor_value varchar(100) not null,
     foreign key (event_id) references transaction_events(id)
 );
+
+
+
