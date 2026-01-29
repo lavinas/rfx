@@ -89,8 +89,8 @@ CREATE TABLE new.monitoring (
     indicators_status_name varchar(100) NOT NULL, -- 'N/A', 'error', 'waiting indicators', 'ok'
     indicators_remarks text NULL, -- mensagem corresponente
 	indicators_count int8 NOT NULL, -- total de indicadores esperados - nao subtrai 
-    indicators_ok int8 NOT NULL, -- total de indicadores ok (nao soma de novo se o status anterior for ok)
-    indicators_error int8 NOT NULL, -- total de indicadores com erro (nao soma de novo se o status anterior for erro)
+    indicators_ok int8 NOT NULL, -- total de indicadores ok (nao soma de novo se não mudou de status)
+    indicators_error int8 NOT NULL, -- total de indicadores com erro (nao soma de novo se não mudou de status)
     -- constraints
 	CONSTRAINT monitoring_pkey PRIMARY KEY (id),
 	CONSTRAINT uk_monitoring UNIQUE (reference_date, process_id),
