@@ -88,6 +88,7 @@ CREATE TABLE new.monitoring (
     indicators_status_id int4 NOT NULL, -- 0 - N/A, 2 - error, 3 - waiting indicators, 4 - ok
     indicators_status_name varchar(100) NOT NULL, -- 'N/A', 'error', 'waiting indicators', 'ok'
     indicators_remarks text NULL, -- mensagem corresponente
+	-- indicators counts
 	indicators_count int8 NOT NULL, -- total de indicadores esperados - nao subtrai 
     indicators_ok int8 NOT NULL, -- total de indicadores ok (nao soma de novo se não mudou de status)
     indicators_error int8 NOT NULL, -- total de indicadores com erro (nao soma de novo se não mudou de status)
