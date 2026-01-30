@@ -45,17 +45,19 @@ create table consolidator (
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp,
     name VARCHAR(100) NOT NULL,
-    last_updated TIMESTAMP NULL
+    last_updated_at TIMESTAMP NULL,
+    last_execution_at TIMESTAMP NULL
 );
 
--- transaction_consolidation table to link transactions with consolidators
-create table transaction_consolidation (
+-- consolidator_control table to track consolidation processes
+create table consolidator_control (
     id BIGSERIAL PRIMARY KEY,
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp,
-    transaction_id BIGINT NOT NULL,
     consolidator_id BIGINT NOT NULL,
-    UNIQUE (transaction_id, consolidator_id),
-    FOREIGN KEY (transaction_id) REFERENCES transaction(id),
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NULL,
+    consolidation_type VARCHAR(50) NOT NULL, -- normal, reprocess
+    status VARCHAR(50) NOT NULL,
     FOREIGN KEY (consolidator_id) REFERENCES consolidator(id)
 );
