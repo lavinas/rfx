@@ -1,0 +1,11 @@
+SUBJECT: Erro na formação do arquivo Elo Débito Outgoing - <reference_date>
+
+BODY:
+Arquivo: <source_name> 
+Quantidade de Linhas: <source_lines> 
+Início de Processamento: <started_at> 
+Fim de Processamento: <finished_at> 
+Quantidade de Erros Encontrados: <errors_count> 
+Quantidade de Erros Reportados: <errors_reported> 
+Erros: <error_message>
+

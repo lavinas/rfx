@@ -1,0 +1,22 @@
+SUBJECT: 
+Erro nos valores do arquivo Elo Débito Outgoing - <reference_date> -> monitoring.reference_date
+
+BODY: 
+Indicador: <indicator_name> -> process_indicator.name>
+Processo monitorado: <process_name> -> process.name
+Processo referência: <reference_process_name> -> process.name
+Valor do processo: <process_indicator_value>  -> monitoring_indicator.indicator_value
+Valor da referência: <reference_value> -> monitoring_indicator.reference_value
+Valor mínimo de referência: <min_reference_value>  -> monitoring_indicator.reference_value * (1-process_indicator.under_var)
+Valor máximo de referência: <max_reference_value>  -> monitoring_indicator.reference_value * (1+process_indicator.over_var) 
+Comentários: <indicator_remarks> -> monitoring_indicator.remarks
+
+Evento detectado às <event_created_at> -> monitoring_event.created_at
+
+
+
+
+
+
+
+

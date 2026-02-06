@@ -114,6 +114,8 @@ CREATE TABLE new.monitoring_indicator (
 	process_indicator_id int8 NOT NULL,
 	indicator_value numeric(20, 6) NULL, -- antigo target_value
 	reference_value numeric(20, 6) NULL, -- antigo origin_value
+	min_reference_value numeric(20, 6) NULL,
+	max_reference_value numeric(20, 6) NULL,
 	-- constraints
 	CONSTRAINT monitoring_indicator_pkey PRIMARY KEY (id),
 	CONSTRAINT uk_monitoring_indicator UNIQUE (monitoring_id, process_indicator_id),
@@ -253,6 +255,7 @@ CREATE TABLE new.monitoring_event_open_call (
 	-- expiradas tentativas de reenvios: call error -> error archived ou sent error -> error archived
 	status_description varchar(500) NOT NULL,
 	call_code varchar(100) NULL,
+	call_link varchar(500) NULL,
 	-- foreign key to monitoring_event
 	monitoring_event_id int8 NOT NULL,
 	-- constraints
