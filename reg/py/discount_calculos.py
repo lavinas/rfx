@@ -44,6 +44,7 @@ class Cadoc6334Discount:
         # atualiza a média e desvio padrão pelo algoritmo de Welford
         delta = mcc_fee - self.avg_mcc_fee
         self.avg_mcc_fee += delta / self.transaction_quantity
+        self.avg_mcc_fee = round(self.avg_mcc_fee, 2)
         delta2 = mcc_fee - self.avg_mcc_fee
         self.sqrdiff_mcc_fee += delta * delta2
         self.stdev_mcc_fee = round((self.sqrdiff_mcc_fee / (self.transaction_quantity - 1)) ** 0.5, 2)
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     test_values = [
         (100.0, 2.0), # 2%
         (200.0, 4.0), # 2%
-        (150.0, 3.0), # 2%
+        (7.0, 3.0), # 2%
         (100.0, 2.0), # 2%
         (1000.0, 1.5),  # 3%
     ]
