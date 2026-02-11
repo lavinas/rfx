@@ -15,10 +15,12 @@ CREATE TABLE cadoc_6334.desconto (
 	transaction_amount numeric(15, 2) NULL,
 	transaction_quantity numeric(12) NULL,
     -- avg fields
-    avg_mcc_fee numeric(4, 2) NULL, -- se esta criando é: round(transaction.revenue_mdr_value / transaction.transaction_amount) * 100, 2) -- se esta atualizando é round((round(transaction.revenue_mdr_value / transaction.transaction_amount) * 100, 2) + avg_mcc_fee * transaction_count) / (transaction_count + 1), 2)
+    avg_mcc_fee numeric(4, 2) NULL, 
 	min_mcc_fee numeric(4, 2) NULL, -- se esta criando é: round(transaction.revenue_mdr_value / transaction.transaction_amount) * 100, 2) -- se esta atualizando é o min (min_mcc_fee, round(transaction.revenue_mdr_value / transaction.transaction_amount) * 100, 2))
 	max_mcc_fee numeric(4, 2) NULL, -- se esta criando é: round(transaction.revenue_mdr_value / transaction.transaction_amount) * 100, 2) -- se esta atualizando é o max (max_mcc_fee, round(transaction.revenue_mdr_value / transaction.transaction_amount) * 100, 2))
-	stdev_mcc_fee numeric(4, 2) NULL, -- colocar zero por enquanto
+	stdev_mcc_fee numeric(4, 2) NULL,
+    -- aux fields
+    sqrdiff_mcc_fee numeric(4, 2) NULL, 
 	CONSTRAINT cadoc_6334_desconto_pkey PRIMARY KEY (id),
     CONSTRAINT unique_cadoc_6334_desconto UNIQUE (year, quarter, function, brand, forma_captura, numero_parcelas, codigo_segmento)
 );
