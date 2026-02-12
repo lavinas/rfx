@@ -33,8 +33,8 @@ class Cadoc6334Discount:
             self.min_mcc_fee = mcc_fee
             self.max_mcc_fee = mcc_fee
             self.avg_mcc_fee = mcc_fee
-            self.stdev_mcc_fee = 0.0
             self.sqrdiff_mcc_fee = 0.0
+            self.stdev_mcc_fee = 0.0
             return
         # se não é a primeira transação, atualiza os valores
         # atualiza o valor mínimo
@@ -42,12 +42,20 @@ class Cadoc6334Discount:
         # atualiza o valor máximo
         self.max_mcc_fee = max(self.max_mcc_fee, mcc_fee)
         # atualiza a média e desvio padrão pelo algoritmo de Welford
+        # calcula a media
         delta = mcc_fee - self.avg_mcc_fee
         self.avg_mcc_fee += delta / self.transaction_quantity
+        # arredonda a média para 2 casas decimais
         self.avg_mcc_fee = round(self.avg_mcc_fee, 2)
+        # calcular diferenca quadratica
         delta2 = mcc_fee - self.avg_mcc_fee
         self.sqrdiff_mcc_fee += delta * delta2
-        self.stdev_mcc_fee = round((self.sqrdiff_mcc_fee / (self.transaction_quantity - 1)) ** 0.5, 2)
+        # calcular a variancia - soma das diferencas quadráticas dividido pela quantidade de transações menos 1
+        var = self.sqrdiff_mcc_fee / (self.transaction_quantity - 1)
+        # calcula o desvio padrão - raiz da variancia
+        self.stdev_mcc_fee = var ** 0.5
+        # arredonda o desvio padrão para 2 casas decimais
+        self.stdev_mcc_fee = round(self.stdev_mcc_fee, 2)
 
 # main - testar valores
 if __name__ == "__main__":
@@ -58,12 +66,17 @@ if __name__ == "__main__":
         (7.0, 3.0), # 2%
         (100.0, 2.0), # 2%
         (1000.0, 1.5),  # 3%
+        (500.0, 10.0), # 2%
+        (50.0, 1.0), # 2%
+        (300.0, 6.0), # 2%
+        (150.0, 3.0), # 2%
+        (80.0, 1.6) # 2%
     ]
     discount = Cadoc6334Discount()
     for amount, mcc in test_values:
         discount.update_values(amount, mcc)
         print(f"Transaction amount: {amount}, MCC value: {mcc}")
-        print(f"Result: {discount.transaction_amount}, \
+        print(f"Result: Amount {discount.transaction_amount}, \
               Quantity: {discount.transaction_quantity}, \
               Avg MCC Fee: {discount.avg_mcc_fee}%, \
               Min MCC Fee: {discount.min_mcc_fee}%, \
