@@ -69,15 +69,12 @@ CREATE TABLE new.process_error (
 	error_key varchar(100) NOT NULL,
 	generate_call bool NOT NULL,
 	message_body text NULL,
-	-- foreign key to process
-	process_id int8 DEFAULT 1 NOT NULL,
 	-- description
 	description text NULL,
 	--error details
 	CONSTRAINT process_error_pkey PRIMARY KEY (id),
 	-- constraints
-	CONSTRAINT uk_process_error_error_key UNIQUE (error_key),
-	CONSTRAINT fk_process_error_process FOREIGN KEY (process_id) REFERENCES new.process(id)
+	CONSTRAINT uk_process_error_error_key UNIQUE (error_key)
 );
 -- nenhuma alteracao estrutural
 CREATE TABLE new.process_error_history (

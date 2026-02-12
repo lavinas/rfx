@@ -9,3 +9,4 @@ Quantidade de Erros Encontrados: <errors_count>
 Quantidade de Erros Reportados: <errors_reported> 
 Erros: <error_message>
 
+Evento detectado às <eventcreated_at> -> monitoring_event.created_at

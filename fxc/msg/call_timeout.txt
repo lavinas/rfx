@@ -1,0 +1,8 @@
+SUBJECT: 
+O arquivo Elo Débito Outgoing não chegou - <reference_date> -> monitoring.reference_date
+
+BODY:
+Data do arquivo: <reference_date> -> monitoring.reference_date
+Hora limite esperada: <expected_time_limit> -> monitoring.processing_expected_limit
+
+Evento detectado às <eventcreated_at> -> monitoring_event.created_at
