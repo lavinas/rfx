@@ -32,7 +32,6 @@ CREATE TABLE public.gestao_transacao (
 );
 CREATE INDEX idx_gestao_transacao_status_last_event ON public.gestao_transacao USING btree (status, last_event_sent_at);
  
- 
 -- public.intercambio_transacao definição
  
 -- Drop table
