@@ -55,14 +55,14 @@ CREATE TABLE IF NOT EXISTS cadoc_6334.interchange (
     interchange_fee NUMERIC(7,4) NOT NULL, -- round(transaction.cost_interchange_value / transaction.transaction_amount * 100, 2) -- usar o algoritmo de media incremental 
     transaction_amount NUMERIC(18,2) NOT NULL, -- +=transaction.transaction_amount)
     transaction_quantity INTEGER NOT NULL, -- += 1
-	CONSTRAINT unique_cadoc_6334_interchange UNIQUE (year, quarter, product, card_type, function, brand, capture_mode, installments, segment_code)
+	CONSTRAINT unique_cadoc_6334_interchange UNIQUE (year, quarter, product_code, card_type, function, brand, capture_mode, installments, segment_code)
 );
 CREATE INDEX idx_cadoc_6334_interchange_year_quarter ON cadoc_6334.interchange (year, quarter);
 
 CREATE TABLE IF NOT EXISTS cadoc_6334.bins (
-	id BIGINT PRIMARY KEY,
-	created_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
-	updated_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    id bigserial NOT NULL,
+    created_at timestamp DEFAULT now() NOT NULL,
+    updated_at timestamp DEFAULT now() NOT NULL,
 	bin VARCHAR(8) NOT NULL,
 	product_code SMALLINT NOT NULL,
 	card_type CHAR(1) NOT NULL,
