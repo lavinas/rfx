@@ -69,3 +69,24 @@ CREATE TABLE IF NOT EXISTS cadoc_6334.bins (
 	CONSTRAINT unique_cadoc_6334_bins_bin UNIQUE (bin)
 );
 
+CREATE TABLE IF NOT EXISTS cadoc_6334.ranking_establishments (
+    id BIGINT PRIMARY KEY,
+    created_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    updated_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    year SMALLINT NOT NULL, -- transactional: year(transaction.period_date)
+    quarter SMALLINT NOT NULL, -- transactional: quarter(transaction.period_date)
+    establishment_code BIGINT NOT NULL, -- transactional: transaction.establishment_code
+    function CHAR(1) NOT NULL, -- -- função: 'C' - credito, 'D' - débito -- transactional: transaction.transaction_product (conversão DB - 'D', CR - 'C')
+    brand SMALLINT NOT NULL, -- 1 - Visa, 2 - Mastercard, 8 - elo -- transactional: transaction.transaction_brand (conversão V - 1, M - 2, E - 8)
+    capture_mode SMALLINT NOT NULL, -- 1 - Cartão tarja, 2 - Cartão chip, 5 - contactless -- transactional: transaction.transaction_capture (conversão TJ - 1, CH - 2, CT - 5)
+    installments SMALLINT NOT NULL,  -- 1 a 12 -- transactional: transaction.transaction_installments
+    segment_code SMALLINT NOT NULL, tabela código de segmento -- transactional: transaction.establishment_mcc (join com a tabela segment_mcc)
+    transaction_amount NUMERIC(18,2) NOT NULL, -- +=transaction.transaction_amount
+    transaction_quantity INTEGER NOT NULL, -- += 1
+    avg_mcc_fee numeric(4, 2) NULL, -- o mesmo algortimo de media calculado para desconto, porém utilizando apenas a média
+    CONSTRAINT unique_cadoc_6334_ranking_establishments UNIQUE (year, quarter, establishment_code, segment_code)
+);
+CREATE INDEX idx_cadoc_6334_ranking_establishments_year_quarter ON cadoc_6334.ranking_establishments (year, quarter);
+
+    
+
