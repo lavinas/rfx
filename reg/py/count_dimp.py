@@ -28,7 +28,7 @@ try:
                     valor = partes[coluna].strip()
                     contador[valor] += 1
     
-    print(f"\nOcorrências da coluna {coluna + 1}:")
+    print(f"\nOcorrências da coluna {coluna}:")
     for valor, count in sorted(contador.items()):
         print(f"{valor}: {count}")
 except FileNotFoundError:
