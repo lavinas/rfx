@@ -89,4 +89,16 @@ CREATE TABLE IF NOT EXISTS cadoc_6334.ranking_establishments (
 CREATE INDEX idx_cadoc_6334_ranking_establishments_year_quarter ON cadoc_6334.ranking_establishments (year, quarter);
 
     
-
+-- segnments table para mapear o código de segmento (segment_code) para o nome do segmento (segment_name)
+-- se o segment_code já existe na tabela, verifica se o mcc está concatenado no description, se não estiver, concatena o mcc no description. Exemplo: 'MCC: 4816, 5045, 5065, 5722, 5732, 5734, 7379, 7622, 7629'
+-- se o segment_code não existe na tabela, insere o novo segment_code, segment_name e description com o mcc da transação (transaction.establishment_mcc)
+CREATE TABLE IF NOT EXISTS cadoc_6334.segments (
+    id bigserial NOT NULL,
+    created_at timestamp DEFAULT now() NOT NULL,
+    updated_at timestamp DEFAULT now() NOT NULL,
+    segment_code numeric(3) NOT NULL, -- código do segmento transactional: transaction.establishment_mcc (join com a tabela segment_mcc - campo segment_code)
+    segment_name varchar(100) NOT NULL, -- nome do segmento transactional: transaction.establishment_mcc (join com a tabela segment_mcc - campo segment_name)
+    description varchar(600) NULL, -- concatenar o mcc mcc no texto (transaction.establishment_mcc). Exemplo: 'MCC: 4816, 5045, 5065, 5722, 5732, 5734, 7379, 7622, 7629'
+    CONSTRAINT cadoc_6334_segments_pkey PRIMARY KEY (id),
+    CONSTRAINT unique_cadoc_6334_segments UNIQUE (segment_code)
+);

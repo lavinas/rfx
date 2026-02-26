@@ -46,7 +46,7 @@ create table transaction (
     transaction_installments_type varchar(10) not null, -- 'loja', 'emissor'
     transaction_brand varchar(2) not null, -- 'V' Visa, 'M' Mastercard, 'E' Elo
     transaction_product varchar(2) not null, -- 'DB' debit, 'CR' credit, 'PX' Pix, 'PP' Pre-pago
-    transaction_capture varchar(3) not null, -- POS, TEF
+    transaction_capture varchar(3) not null, -- 'TAR' tarja (1) (gestão - '02', intercambio - '2', webservice - 1), 'CHP' chip (2) (gestao - else, intercambio - else, webservice - 2), 'CTC' contactless (5) (gestão - '07', intercambio - '7', webservice - '5'), 'ONL' online (4 - N/A), 'REC' recorrente (6 - N/A) -- 
     -- financial values
     revenue_mdr_value numeric(15,2) null,
     cost_interchange_value numeric(15,2) null,
