@@ -5,7 +5,9 @@ CREATE TABLE raw_data.base (
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp,
     transactional_sent boolean not null default false,
-    reconciliation_sent boolean not null default false
+	transactional_sent_at timestamp NULL,
+    reconciliation_sent boolean not null default false,
+	reconciliation_sent_at timestamp NULL
 );
 create index idx_base_transactional_sent on raw_data.base (transactional_sent);
 create index idx_base_reconciliation_sent on raw_data.base (reconciliation_sent);
