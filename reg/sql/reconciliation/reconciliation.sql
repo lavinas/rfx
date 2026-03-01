@@ -61,3 +61,4 @@ create TABLE reconciliation.dash_items_consolidated (
     total_slave_value numeric(18,2) null,
     total_discrepancy numeric(18,2) null
 );
+
