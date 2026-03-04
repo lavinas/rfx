@@ -105,12 +105,14 @@ CREATE INDEX idx_webservice_transaction_date ON raw_data.webservice_transaction 
 CREATE TABLE raw_data.tc57_transaction (
     -- data
 	cd_transacao_fin varchar NOT NULL,
-    key1 varchar NULL,  -- chave transformada para poder cruzar entre sistemas
-	transaction_brand varchar NULL,  -- visa, master, ello
-	transaction_product varchar NULL, -- debito, credito
-	transaction_date timestamp NULL, -- data/hora da transacao 
-    qtd_parc int4 NULL, -- parcelas
-    transaction_amount numeric NULL, -- valor da transacao
+    key1 varchar NULL,  -- amanha alinhamos
+	transaction_brand varchar NULL,  -- TC57-TCR0-TR2.campo20 ('E' - Elo, 'V' - Visa, 'M' - Master)    
+	transaction_product varchar NULL, -- TC57-TCR0-TR2.campo33 ('D' - Debito, '' - Credito)
+	transaction_date timestamp NULL, -- TC57-TCR0_TR2.campo10 TC57-TCR0_TR2.campo22 + TC57-TCR0-TR2.campo23
+    qtd_parc int4 NULL, -- Elo: TC57-TCR1-EL.campo31; Visa: TC57-TCRD-IP.campo07 (se não existir = 1); Master: TC57-TCR5-TR2.campo47 (se '' = 1)
+    transaction_amount numeric NULL, -- TC57-TCR0-TR2.campo11
+	establishment_code varchar NULL, --TC57-TCR0-TR1.campo20 (armazenar na variavel cada vez que coloca ele)
+	bin varchar NULL, -- TC57-TCR0-TR2.campo21 (primeiros 8 dígitos)
     -- inserter control
 	dt_inserter timestamptz DEFAULT now() NOT NULL,
     -- transaction control

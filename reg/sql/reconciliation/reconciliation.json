@@ -7,5 +7,6 @@
     "transaction_brand": "visa",
     "transaction_product": "credito",
     "transaction_installments": 1,
-    "transaction_value": 100.00
+    "transaction_value": 100.00,
+    "transaction_bin": "123456"
 }
