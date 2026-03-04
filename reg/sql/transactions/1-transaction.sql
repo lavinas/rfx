@@ -1,4 +1,6 @@
-create table transaction_source (
+create schema if not exists transaction;
+
+create table transaction.transaction_source (
     -- control
     id bigint primary key,
     created_at timestamp not null default current_timestamp,
@@ -9,7 +11,7 @@ create table transaction_source (
 );
 
 -- transaction_period_closing table to store period closing information
-create table transaction_period_closing (
+create table transaction.transaction_period_closing (
     -- control
     id bigserial primary key,
     created_at timestamp not null default current_timestamp,
@@ -22,48 +24,49 @@ create table transaction_period_closing (
 );
 
 -- transaction table is the main table to store transaction data
-create table transaction (
+create table transaction.transaction (
     -- control fields
     id bigserial primary key,
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp,
     -- keys fields 
-    key1 varchar(50) not null,
+    key1 varchar(50) not null, 
     key2 varchar(50) null,
     key3 varchar(50) null,
     -- establishment fields
-    establishment_code numeric(50) null,
-    establishment_mcc numeric(4) null,
-    establishment_terminal_code numeric(50) null,
+    establishment_code numeric(50) null, -- obrigatório
+    establishment_nature numeric(1) null, -- 0 - CNPJ, 1 - CPF (somente pix)
+    establishment_mcc numeric(4) null, -- pix é nulo
+    establishment_terminal_code numeric(50) null, -- pix é nulo
     -- authorization fields
-    bin numeric(11) not null,
+    bin numeric(11) null, -- pix é nulo
     authorization_code varchar(20) null,
-    transaction_nsu varchar(20) not null, 
+    transaction_nsu varchar(20) null, 
     -- transaction fields
     transaction_date date not null,
     transaction_amount numeric(15,2) not null,
-    transaction_installments numeric(2) not null, -- 1 to 12
-    transaction_installments_type varchar(10) not null, -- 'loja', 'emissor'
-    transaction_brand varchar(2) not null, -- 'V' Visa, 'M' Mastercard, 'E' Elo
+    transaction_installments numeric(2) null, -- 1 to 12 (1 para pix e débito)
+    transaction_installments_type varchar(10) null, -- 'loja', 'emissor', pix - null
+    transaction_brand varchar(2) null, -- 'V' Visa, 'M' Mastercard, 'E' Elo, pix - null
     transaction_product varchar(2) not null, -- 'DB' debit, 'CR' credit, 'PX' Pix, 'PP' Pre-pago
-    transaction_capture varchar(3) not null, -- 'TAR' tarja (1) (gestão - '02', intercambio - '2', webservice - 1), 'CHP' chip (2) (gestao - else, intercambio - else, webservice - 2), 'CTC' contactless (5) (gestão - '07', intercambio - '7', webservice - '5'), 'ONL' online (4 - N/A), 'REC' recorrente (6 - N/A) -- 
+    transaction_capture varchar(3) null, -- 'PIX' - nulo, 'TAR' tarja (1) (gestão - '02', intercambio - '2', webservice - 1), 'CHP' chip (2) (gestao - else, intercambio - else, webservice - 2), 'CTC' contactless (5) (gestão - '07', intercambio - '7', webservice - '5'), 'ONL' online (4 - N/A), 'REC' recorrente (6 - N/A) -- 
     -- financial values
-    revenue_mdr_value numeric(15,2) null,
-    cost_interchange_value numeric(15,2) null,
+    revenue_mdr_value numeric(15,2) null,  -- pix = 0
+    cost_interchange_value numeric(15,2) null, -- pix = 0
     -- references/control
-    high_source_priority int not null, -- 30 - webservice, 20 - intercambio, 10 - gestao (o de maior prioridade)
+    high_source_priority int not null, -- 30 - webservice, 20 - intercambio, 10 - gestao (o de maior prioridade), 1000 - PIX
     -- status fields
-    status_id int not null, -- 1 - pendente, 2 - pronto
-    status_name varchar(20) not null, -- 1 - pendente, 2 - pronto
-    status_count int not null default 3, -- contador de tentativas de processamento
+    status_id int not null, -- 1 - pendente, 2 - pronto (pix sempre pronto - 2)
+    status_name varchar(20) not null, -- 1 - pendente, 2 - pronto (pix sempte pronto)
+    status_count int not null default 3, -- contador de tentativas de processamento, para pix = 1
     -- closing fields
-    period_date date null, -- inicialmente nulo
-    period_closing_id bigint null, -- inicialmente nulo, referencia transaction_period_closing(id)
+    period_date date null, -- inicialmente nulo (seguir a mesma regra, se chegou depois do fechamento é a data atual, senão é a transaction_date, inclusive para pix)
+    period_closing_id bigint null, -- inicialmente nulo, referencia transaction_period_closing(id), pix segue a mesma regra
     foreign key (period_closing_id) references transaction_period_closing(id)
 );
 
 -- transaction_events table to store events related to transactions
-create table transaction_event (
+create table transaction.transaction_event (
     -- control
     id bigserial primary key,
     created_at timestamp not null default current_timestamp,
@@ -80,7 +83,7 @@ create table transaction_event (
 );
 
 -- transaction_log table to store logs related to transactions
-create table transaction_event_gap (
+create table transaction.transaction_event_gap (
     -- control
     id bigserial primary key,
     created_at timestamp not null default current_timestamp,
@@ -94,7 +97,7 @@ create table transaction_event_gap (
     field_name varchar(50) not null,
     high_value varchar(100) not null,
     minor_value varchar(100) not null,
-    foreign key (event_id) references transaction_events(id)
+    foreign key (event_id) references transaction.transaction_event(id)
 );
 
 

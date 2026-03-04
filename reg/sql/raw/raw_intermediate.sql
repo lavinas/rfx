@@ -1,7 +1,7 @@
 CREATE TABLE raw_data.intercambio_transaction (
     -- data
-	key1 varchar NULL,
 	cd_transacao_fin varchar NOT NULL,
+	key1 varchar NULL,  -- chave transformada para poder cruzar entre sistemas
 	forma_captura varchar NULL,
 	dt_processamento timestamptz NULL,
 	valor_transacoes numeric NULL,
@@ -12,6 +12,8 @@ CREATE TABLE raw_data.intercambio_transaction (
 	tipo_cartao varchar NULL,
 	segmento varchar NULL,
 	bin varchar NULL,
+	transaction_nsu varchar NULL,
+	authorization_code varchar NULL,
     -- inserter control
 	dt_inserter timestamptz DEFAULT now() NOT NULL,
     -- transactional control old
@@ -27,11 +29,16 @@ CREATE TABLE raw_data.intercambio_transaction (
     reconciliation_status_date timestamp NULL,
     CONSTRAINT intercambio_transaction_pkey PRIMARY KEY (cd_transacao_fin)
 );
+CREATE INDEX idx_intercambio_transaction_transactional_status_id ON raw_data.intercambio_transaction (transactional_status_id);
+CREATE INDEX idx_intercambio_transaction_reconciliation_status_id ON raw_data.intercambio_transaction (reconciliation_status_id);
+CREATE INDEX idx_dt_processamento ON raw_data.intercambio_transaction (dt_processamento);
+
 
 CREATE TABLE raw_data.management_transaction (
-	key1 varchar NULL,
+	-- data
 	cd_transacao_fin varchar NOT NULL,
-	cnt_privado varchar NULL,
+	key1 varchar NULL,  -- chave transformada para poder cruzar entre sistemas
+	-- cnt_privado varchar NULL,
 	dt_processamento timestamp NULL,
 	valor_transacao numeric NULL,
 	bandeira varchar NULL,
@@ -42,6 +49,7 @@ CREATE TABLE raw_data.management_transaction (
 	numero_parcelas int4 NULL,
 	desconto_valor numeric NULL,
 	percentual_desconto numeric NULL,
+	transac_id varchar NULL,
     -- inserter control
 	dt_inserter timestamptz DEFAULT now() NOT NULL,
 	-- transactional control old
@@ -57,11 +65,15 @@ CREATE TABLE raw_data.management_transaction (
     reconciliation_status_date timestamp NULL,
 	CONSTRAINT management_transaction_pkey PRIMARY KEY (cd_transacao_fin)
 );
+CREATE INDEX idx_management_transaction_transactional_status_id ON raw_data.management_transaction (transactional_status_id);
+CREATE INDEX idx_management_transaction_reconciliation_status_id ON raw_data.management_transaction (reconciliation_status_id);
+CREATE INDEX idx_management_dt_processamento ON raw_data.management_transaction (dt_processamento);
 
  
 CREATE TABLE raw_data.webservice_transaction (
+	-- data
 	ref_num_bnd varchar NULL,
-	key1 varchar NULL,
+	key1 varchar NULL,  -- chave transformada para poder cruzar entre sistemas
 	ref_num_fis varchar NOT NULL,
 	transaction_brand varchar NULL,
 	transaction_product varchar NULL,
@@ -83,19 +95,24 @@ CREATE TABLE raw_data.webservice_transaction (
     transactional_status_id int4 DEFAULT 0 NOT NULL, -- 0 - pending, 1 - translated, 2 - recognized, 3 - error
     transactional_status_date timestamp NULL,
     -- reconciliation control
-    reconciliation_status_id int4 DEFAULT 0 NOT NULL, -- 0 - pending, 1 - translated, 2 - recognized, 3 - error
-    reconciliation_status_date timestamp NULL
+	CONSTRAINT webservice_transaction_pkey PRIMARY KEY (ref_num_fis)
 );
+CREATE INDEX idx_webservice_transaction_transactional_status_id ON raw_data.webservice_transaction (transactional_status_id);
+CREATE INDEX idx_webservice_transaction_reconciliation_status_id ON raw_data.webservice_transaction (reconciliation_status_id);
+CREATE INDEX idx_webservice_transaction_date ON raw_data.webservice_transaction (transaction_date);
 
 
 CREATE TABLE raw_data.tc57_transaction (
     -- data
-    key1 varchar NULL,
+	cd_transacao_fin varchar NOT NULL,
+    key1 varchar NULL,  -- chave transformada para poder cruzar entre sistemas
 	transaction_brand varchar NULL,  -- visa, master, ello
 	transaction_product varchar NULL, -- debito, credito
 	transaction_date timestamp NULL, -- data/hora da transacao 
     qtd_parc int4 NULL, -- parcelas
     transaction_amount numeric NULL, -- valor da transacao
+    -- inserter control
+	dt_inserter timestamptz DEFAULT now() NOT NULL,
     -- transaction control
     transactional_status_id int4 DEFAULT 0 NOT NULL, -- 0 - pending, 1 - translated, 2 - recognized, 3 - error
     transactional_status_date timestamp NULL,
@@ -103,6 +120,37 @@ CREATE TABLE raw_data.tc57_transaction (
     reconciliation_status_id int4 DEFAULT 0 NOT NULL, -- 0 - pending, 1 - translated, 2 - recognized, 3 - error
     reconciliation_status_date timestamp NULL,
     -- constraints
-    constraint uk_base_id unique (base_id),
-    constraint fk_base_id foreign key (base_id) references raw_data.base(id)
+	CONSTRAINT tc57_transaction_pkey PRIMARY KEY (cd_transacao_fin)
 );
+CREATE INDEX idx_tc57_transaction_transactional_status_id ON raw_data.tc57_transaction (transactional_status_id);
+CREATE INDEX idx_tc57_transaction_reconciliation_status_id ON raw_data.tc57_transaction (reconciliation_status_id);
+CREATE INDEX idx_tc57_transaction_date ON raw_data.tc57_transaction (transaction_date);
+
+
+CREATE TABLE raw_data.pix_transaction (
+    -- data
+	key_pix varchar NULL,
+	transaction_date timestamp NULL, -- data/hora da transacao 
+    transaction_amount numeric NULL, -- valor da transacao
+	transaction_nsu varchar NULL,
+	authorization_code varchar NULL,
+	transac_id varchar NULL,
+	originator_bank_qr_code varchar NULL,
+	establishment_code varchar NULL,
+	-- inserter control
+	document_type int4 NULL, -- 0 - cpf, 1 - cnpj 
+    -- inserter control
+	dt_inserter timestamptz DEFAULT now() NOT NULL,
+    -- transaction control
+    transactional_status_id int4 DEFAULT 0 NOT NULL, -- 0 - pending, 1 - translated, 2 - recognized, 3 - error
+    transactional_status_date timestamp NULL,
+    -- reconciliation control
+    reconciliation_status_id int4 DEFAULT 0 NOT NULL, -- 0 - pending, 1 - translated, 2 - recognized, 3 - error
+    reconciliation_status_date timestamp NULL,
+    -- constraints
+    CONSTRAINT pix_transaction_pkey PRIMARY KEY (key_pix)
+);
+CREATE INDEX idx_pix_transaction_transactional_status_id ON raw_data.pix_transaction (transactional_status_id);
+CREATE INDEX idx_pix_transaction_reconciliation_status_id ON raw_data.pix_transaction (reconciliation_status_id);
+CREATE INDEX idx_pix_transaction_date ON raw_data.pix_transaction (transaction_date);
+

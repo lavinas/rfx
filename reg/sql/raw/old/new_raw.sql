@@ -100,3 +100,4 @@ CREATE TABLE raw_data.tc57_transaction (
     constraint uk_base_id unique (base_id),
     constraint fk_base_id foreign key (base_id) references raw_data.base(id)
 );
+

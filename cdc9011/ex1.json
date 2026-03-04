@@ -1,0 +1,101 @@
+{
+    "@cnpj": "99999999",
+    "@codigoDocumento": "9999",
+    "@tipoRemessa": "S",
+    "@unidadeMedida": 1000,
+    "@dataBase": "062020",
+    "datasBaseReferencia": [
+        {
+            "@id": "dt1",
+            "@data": "S062020"
+        },
+        {
+            "@id": "dt2",
+            "@data": "A122019"
+        }
+    ],
+    "BalancoPatrimonial": {
+        "contas": [
+            {
+                "@id": "conta1",
+                "@nivel": "1",
+                "@descricao": "Ativo",
+                "@contaPai": "",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta2",
+                "@nivel": "1.1",
+                "@descricao": "Circulante",
+                "@contaPai": "conta1",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta3",
+                "@nivel": "1.1.1",
+                "@descricao": "Disponibilidades",
+                "@contaPai": "conta2",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta4",
+                "@nivel": "1.1.2",
+                "@descricao": "Aplicações interfinanceiras de liquidez ",
+                "@contaPai": "conta2",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta5",
+                "@nivel": "1.1.3",
+                "@descricao": "Títulos e valores mobiliários",
+                "@contaPai": "conta2",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            }
+        ]
+    }
+}

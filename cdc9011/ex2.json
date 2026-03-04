@@ -1,0 +1,549 @@
+{
+    "@cnpj": "99999999",
+    "@codigoDocumento": "9999",
+    "@tipoRemessa": "S",
+    "@unidadeMedida": 1000,
+    "@dataBase": "062020",
+    "datasBaseReferencia": [
+        {
+            "@id": "dt1",
+            "@data": "S062020"
+        },
+        {
+            "@id": "dt2",
+            "@data": "A122019"
+        }
+    ],
+    "BalancoPatrimonial": {
+        "contas": [
+            {
+                "@id": "conta1",
+                "@nivel": "1",
+                "@descricao": "Ativo",
+                "@contaPai": "",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta2",
+                "@nivel": "1.1",
+                "@descricao": "Circulante",
+                "@contaPai": "conta1",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta3",
+                "@nivel": "1.1.1",
+                "@descricao": "Disponibilidades",
+                "@contaPai": "conta2",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta4",
+                "@nivel": "1.1.2",
+                "@descricao": "Aplicações interfinanceiras de liquidez",
+                "@contaPai": "conta2",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta5",
+                "@nivel": "1.1.3",
+                "@descricao": "Títulos e valores mobiliários",
+                "@contaPai": "conta2",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta6",
+                "@nivel": "1.1.3.1",
+                "@descricao": "Títulos de renda fixa",
+                "@contaPai": "conta5",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta7",
+                "@nivel": "1.1.3.2",
+                "@descricao": "Cotas de fundos de investimentos",
+                "@contaPai": "conta5",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta8",
+                "@nivel": "1.1.3.3",
+                "@descricao": "Vinculados a operações de garantias",
+                "@contaPai": "conta5",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta9",
+                "@nivel": "1.1.4",
+                "@descricao": "Relações interfinanceiras",
+                "@contaPai": "conta2",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta10",
+                "@nivel": "1.1.5",
+                "@descricao": "Operações de crédito – setor privado",
+                "@contaPai": "conta2",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta11",
+                "@nivel": "1.2",
+                "@descricao": "Não Circulante",
+                "@contaPai": "conta1",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta12",
+                "@nivel": "1.2.1",
+                "@descricao": "Realizável a longo prazo",
+                "@contaPai": "conta11",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta13",
+                "@nivel": "1.2.1.1",
+                "@descricao": "Aplicações interfinanceiras de liquidez",
+                "@contaPai": "conta12",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta14",
+                "@nivel": "1.2.1.1.1",
+                "@descricao": "Aplicações em depósitos interfinanceiros",
+                "@contaPai": "conta13",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta15",
+                "@nivel": "1.2.1.2",
+                "@descricao": "Títulos e valores mobiliários",
+                "@contaPai": "conta12",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta16",
+                "@nivel": "1.2.1.2.1",
+                "@descricao": "Títulos de renda fixa",
+                "@contaPai": "conta15",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta17",
+                "@nivel": "1.2.1.2.2",
+                "@descricao": "Vinculados a operações de garantias",
+                "@contaPai": "conta15",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta18",
+                "@nivel": "1.2.1.3",
+                "@descricao": "Relações interfinanceiras",
+                "@contaPai": "conta12",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta19",
+                "@nivel": "1.2.1.4",
+                "@descricao": "Operações de crédito - setor privado",
+                "@contaPai": "conta12",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta20",
+                "@nivel": "1.2.1.5",
+                "@descricao": "Outros créditos",
+                "@contaPai": "conta12",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta21",
+                "@nivel": "1.2.2",
+                "@descricao": "Permanente",
+                "@contaPai": "conta11",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta22",
+                "@nivel": "1.2.2.1",
+                "@descricao": "Investimentos",
+                "@contaPai": "conta21",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta23",
+                "@nivel": "1.2.2.2",
+                "@descricao": "Imobilizações de uso",
+                "@contaPai": "conta21",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta24",
+                "@nivel": "1.2.2.3",
+                "@descricao": "Intangível",
+                "@contaPai": "conta21",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta27",
+                "@nivel": "2",
+                "@descricao": "Passivo e patrimônio líquido",
+                "@contaPai": "",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta28",
+                "@nivel": "2.1",
+                "@descricao": "Circulante",
+                "@contaPai": "conta27",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta29",
+                "@nivel": "2.1.1",
+                "@descricao": "Relações interfinanceiras",
+                "@contaPai": "conta28",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta30",
+                "@nivel": "2.1.2",
+                "@descricao": "Outras obrigações",
+                "@contaPai": "conta28",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta33",
+                "@nivel": "2.2",
+                "@descricao": "Não Circulante",
+                "@contaPai": "conta27",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta34",
+                "@nivel": "2.2.1",
+                "@descricao": "Obrigações por empréstimos erepasses",
+                "@contaPai": "conta33",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta35",
+                "@nivel": "2.3",
+                "@descricao": "Patrimônio Líquido",
+                "@contaPai": "conta27",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta36",
+                "@nivel": "2.3.1",
+                "@descricao": "Capital social",
+                "@contaPai": "conta35",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            },
+            {
+                "@id": "conta37",
+                "@nivel": "2.3.2",
+                "@descricao": "Reserva legal",
+                "@contaPai": "conta35",
+                "valoresIndividualizados": [
+                    {
+                        "@dtBase": "dt1",
+                        "@valor": 9999.99
+                    },
+                    {
+                        "@dtBase": "dt2",
+                        "@valor": 9999.99
+                    }
+                ]
+            }
+        ]
+    }
+}
