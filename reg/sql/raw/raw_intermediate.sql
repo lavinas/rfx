@@ -156,3 +156,41 @@ CREATE INDEX idx_pix_transaction_transactional_status_id ON raw_data.pix_transac
 CREATE INDEX idx_pix_transaction_reconciliation_status_id ON raw_data.pix_transaction (reconciliation_status_id);
 CREATE INDEX idx_pix_transaction_date ON raw_data.pix_transaction (transaction_date);
 
+
+CREATE TABLE raw_data.establishment (
+	establishment_code int8 NOT NULL,
+	accreditation_date timestamp NULL,
+    company_name varchar(255) NULL,
+	trading_name varchar(255) NULL,
+	cnpj varchar(255) NULL,
+	cpf varchar(255) NULL,
+	mcc_code varchar(255) NULL,
+	address varchar(255) NULL,
+	cep varchar(20) NULL,
+	city_ibge_code int8,
+	federation_unit varchar(2) NULL,
+	contact_name varchar(255) NULL,
+	contact_phone int4 NULL,
+	contact_email varchar(255) NULL,
+	has_debit bool NULL,
+	has_credit bool NULL,
+	has_visa bool NULL,
+	has_mastercard bool NULL,
+	has_elo bool NULL,
+	has_manual_capture bool NULL,
+	has_eletronic_capture bool NULL,
+	has_remote_capture bool NULL,
+	is_subacquirer bool NULL,
+    -- inserter control
+	dt_inserter timestamptz DEFAULT now() NOT NULL,
+    -- transaction control
+    transactional_status_id int4 DEFAULT 0 NOT NULL, -- 0 - pending, 1 - translated, 2 - recognized, 3 - error
+    transactional_status_date timestamp NULL,
+    -- reconciliation control
+    reconciliation_status_id int4 DEFAULT 0 NOT NULL, -- 0 - pending, 1 - translated, 2 - recognized, 3 - error
+    reconciliation_status_date timestamp NULL,
+	CONSTRAINT establishment_pkey PRIMARY KEY (establishment_code)
+);
+CREATE INDEX idx_establishments_transactional_status_id ON raw_data.establishments (transactional_status_id);
+CREATE INDEX idx_establishments_reconciliation_status_id ON raw_data.establishments (reconciliation_status_id);
+CREATE INDEX idx_establishments_accreditation_date ON raw_data.establishments (accreditation_date);
