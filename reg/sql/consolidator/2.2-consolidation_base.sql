@@ -107,8 +107,6 @@ CREATE TABLE IF NOT EXISTS cadoc_6334.ranking (
     CONSTRAINT unique_cadoc_6334_ranking UNIQUE (year, quarter, establishment_code, segment_code)
 );
 CREATE INDEX idx_cadoc_6334_ranking_year_quarter ON cadoc_6334.ranking (year, quarter);
-
-
     
 -- segnments table para mapear o código de segmento (segment_code) para o nome do segmento (segment_name)
 -- se o segment_code já existe na tabela, verifica se o mcc está concatenado no description, se não estiver, concatena o mcc no description. Exemplo: 'MCC: 4816, 5045, 5065, 5722, 5732, 5734, 7379, 7622, 7629'
@@ -124,6 +122,7 @@ CREATE TABLE IF NOT EXISTS cadoc_6334.segments (
     CONSTRAINT unique_cadoc_6334_segments UNIQUE (segment_code)
 );
 
+------- finalizer
 
 CREATE TABLE cadoc_6334.conccred (
     id bigserial NOT NULL,
@@ -173,6 +172,8 @@ CREATE TABLE cadoc_6334.infrterm (
     CONSTRAINT unique_cadoc_6334_infrterm UNIQUE (year, quarter, federation_unit)
 );
 
+------- finalizer
+
 CREATE TABLE cadoc_6334.luccred (
     id bigserial NOT NULL,
     created_at timestamp DEFAULT now() NOT NULL,
@@ -206,7 +207,6 @@ CREATE TABLE cadoc_6334.contact (
 );
 
 
-
 /*
 --- algoritmo do job concred atualizacao-------------------------------------
 -- pega todos os estabelecimentos
@@ -220,17 +220,22 @@ select establishment_code
 	   has_eletronic_capture,
 	   has_remote_capture,
        federation_unit,
-       max(t.period_date) last_transaction
-  from raw_data.establishment where accreditation_date < '<ultima_data_trimestre> + 1'
+       count(t.period_date) transactions_count
+  from raw_data.establishment
 left join transaction.transaction t on t.establishment_code = raw_data.establishment.establishment_code
-where t.period_date > '<ultima_data_trimestre> - 180' and t.transaction_id = 2
+where accreditation_date < '<ultima_data_trimestre> + 1' 
+  and t.period_date > '<ultima_data_trimestre> - 180' 
+  and t.transaction_id = 2
 group by 1, 2, 3, 4, 5, 6;
+
+
+
 -- loop
 -- if has_visa and has_debit
         -- atualiza a conccred da seguinte forma
             -- update cadoc_6334.conccred 
             --    set number_acrredited_establishement += 1,
-            --        number_actived_establishemnts += (1 se query.last_transaction >= '<ultima data do trimestre - 180> senão 0)
+            --        number_actived_establishemnts += (1 se query.transactions_count > 0 senão 0)
             -- where year = <ano do relatório> 
             --   and quarter = <trimetre>
             --   and brand = visa
@@ -239,7 +244,7 @@ group by 1, 2, 3, 4, 5, 6;
         -- atualiza a conccred da seguinte forma
             -- update cadoc_6334.conccred 
             --    set number_acrredited_establishement += 1,
-            --        number_actived_establishemnts += (1 se query.last_transaction >= '<ultima data do trimestre - 180> senão 0)
+            --        number_actived_establishemnts += (1 se query.transactions_count > 0 senão 0)
             -- where year = <ano do relatório> 
             --   and quarter = <trimetre>
             --   and brand = mastercard
@@ -248,7 +253,7 @@ group by 1, 2, 3, 4, 5, 6;
         -- atualiza a conccred da seguinte forma
             -- update cadoc_6334.conccred 
             --    set number_acrredited_establishement += 1,
-            --        number_actived_establishemnts += (1 se query.last_transaction >= '<ultima data do trimestre - 180> senão 0)
+            --        number_actived_establishemnts += (1 se query.transactions_count > 0 senão 0)
             -- where year = <ano do relatório> 
             --   and quarter = <trimetre>
             --   and brand = elo
@@ -256,7 +261,7 @@ group by 1, 2, 3, 4, 5, 6;
         -- atualiza a conccred da seguinte forma
             -- update cadoc_6334.conccred 
             --    set number_acrredited_establishement += 1,
-            --        number_actived_establishemnts += (1 se query.last_transaction >= '<ultima data do trimestre - 180> senão 0)
+            --        number_actived_establishemnts += (1 se query.transactions_count > 0 senão 0)
             -- where year = <ano do relatório> 
             --   and quarter = <trimetre>
             --   and brand = visa
@@ -265,7 +270,7 @@ group by 1, 2, 3, 4, 5, 6;
         -- atualiza a conccred da seguinte forma
             -- update cadoc_6334.conccred 
             --    set number_acrredited_establishement += 1,
-            --        number_actived_establishemnts += (1 se query.last_transaction >= '<ultima data do trimestre - 180> senão 0)
+            --        number_actived_establishemnts += (1 se query.transactions_count > 0 senão 0)
             -- where year = <ano do relatório> 
             --   and quarter = <trimetre>
             --   and brand = mastercard
@@ -274,7 +279,7 @@ group by 1, 2, 3, 4, 5, 6;
         -- atualiza a conccred da seguinte forma    
             -- update cadoc_6334.conccred 
             --    set number_acrredited_establishement += 1,
-            --        number_actived_establishemnts += (1 se query.last_transaction >= '<ultima data do trimestre - 180> senão 0)
+            --        number_actived_establishemnts += (1 se query.transactions_count > 0 senão 0)
             -- where year = <ano do relatório> 
             --   and quarter = <trimetre>
             --   and brand = elo

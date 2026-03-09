@@ -194,3 +194,11 @@ CREATE TABLE raw_data.establishment (
 CREATE INDEX idx_establishments_transactional_status_id ON raw_data.establishments (transactional_status_id);
 CREATE INDEX idx_establishments_reconciliation_status_id ON raw_data.establishments (reconciliation_status_id);
 CREATE INDEX idx_establishments_accreditation_date ON raw_data.establishments (accreditation_date);
+
+
+create table terminals_transaction (
+	terminal_code varchar(10) NOT NULL,
+	establishment_code int8 NOT NULL,
+	terminal_type varchar(3), -- 'POS' ou 'TEF'
+	CONSTRAINT terminals_transaction_pkey PRIMARY KEY (terminal_code)
+);
