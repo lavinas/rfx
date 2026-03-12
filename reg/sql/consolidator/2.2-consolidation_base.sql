@@ -197,6 +197,8 @@ CREATE TABLE cadoc_6334.contact (
     id bigserial NOT NULL,
     created_at timestamp DEFAULT now() NOT NULL,
     updated_at timestamp DEFAULT now() NOT NULL,
+    year numeric(4) NOT NULL,
+    quarter numeric(1) NOT NULL,
     contact_type VARCHAR(1) not null, -- 'D' - diretor, 'T' - técnico, 'I' - instituição
     name VARCHAR(100) NOT NULL,
     position VARCHAR(100) NULL,

@@ -38,7 +38,6 @@ create table transaction (
     foreign key (period_closing_id) references transaction_period_closing(id)
 );
 
-
 -- consolidators table to store consolidation data
 create table consolidator (
     id BIGINT PRIMARY KEY,

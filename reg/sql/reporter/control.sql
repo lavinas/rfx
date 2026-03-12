@@ -7,6 +7,13 @@ create table reporter.report (
 );
 
 
-create table reporter.control (
-    
-)
+
+
+
+
+
+-- fechamento de periodo -> consolidacoes -> finalizacoes -> reports
+
+
+
+-- replicacao dados brutos -> transacoes consolidadas -> consolidacao -> geracao do report

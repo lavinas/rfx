@@ -196,9 +196,19 @@ CREATE INDEX idx_establishments_reconciliation_status_id ON raw_data.establishme
 CREATE INDEX idx_establishments_accreditation_date ON raw_data.establishments (accreditation_date);
 
 
-create table terminals_transaction (
+create table raw_data.terminals (
 	terminal_code varchar(10) NOT NULL,
 	establishment_code int8 NOT NULL,
 	terminal_type varchar(3), -- 'POS' ou 'TEF'
+   -- inserter control
+	dt_inserter timestamptz DEFAULT now() NOT NULL,
+    -- transaction control
+    transactional_status_id int4 DEFAULT 0 NOT NULL, -- 0 - pending, 1 - translated, 2 - recognized, 3 - error
+    transactional_status_date timestamp NULL,
+    -- reconciliation control
+    reconciliation_status_id int4 DEFAULT 0 NOT NULL, -- 0 - pending, 1 - translated, 2 - recognized, 3 - error
+    reconciliation_status_date timestamp NULL,
 	CONSTRAINT terminals_transaction_pkey PRIMARY KEY (terminal_code)
 );
+CREATE INDEX idx_terminals_transactional_status_id ON raw_data.terminals (transactional_status_id);
+CREATE INDEX idx_terminals_reconciliation_status_id ON raw_data.terminals (reconciliation_status_id);
