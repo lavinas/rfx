@@ -7,11 +7,15 @@ import (
 	"conversorCadoc9011/internal/excel"
 )
 
-func ValidateHierarchy(rows []*excel.RawRow, periods []string) error {
+func ValidateHierarchy(rows []*excel.RawRow, periods []string, skip map[string]bool) error {
 
 	for _, parent := range rows {
 
 		if parent.Nivel == "" {
+			continue
+		}
+
+		if skip[parent.Demonstrativo] {
 			continue
 		}
 

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"math"
 	"strconv"
 	"strings"
 )
@@ -48,9 +49,13 @@ func NormalizeNumericString(s string) string {
 
 	s = strings.TrimSpace(s)
 
-	if before, ok := strings.CutSuffix(s, ".0"); ok {
-		s = before
+	if strings.HasSuffix(s, ".0") {
+		s = strings.TrimSuffix(s, ".0")
 	}
 
 	return s
+}
+
+func Round2(v float64) float64 {
+	return math.Round(v*100) / 100
 }

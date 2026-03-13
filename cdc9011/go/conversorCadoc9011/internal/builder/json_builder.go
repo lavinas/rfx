@@ -7,6 +7,7 @@ import (
 
 	"conversorCadoc9011/internal/excel"
 	"conversorCadoc9011/internal/model"
+	"conversorCadoc9011/internal/util"
 )
 
 func BuildDocument(meta excel.Meta, rows []*excel.RawRow, periods []string) (model.Documento, error) {
@@ -59,7 +60,7 @@ func BuildDocument(meta excel.Meta, rows []*excel.RawRow, periods []string) (mod
 				c.ValoresIndividualizados,
 				model.Valor{
 					DtBase: dateToID[p],
-					Valor:  v,
+					Valor:  util.Round2(v),
 				},
 			)
 		}
@@ -75,6 +76,21 @@ func BuildDocument(meta excel.Meta, rows []*excel.RawRow, periods []string) (mod
 
 			doc.DemonstracaoDoResultado.Contas =
 				append(doc.DemonstracaoDoResultado.Contas, c)
+
+		case "DemonstracaoDasMutacoesDoPatrimonioLiquido":
+
+			doc.DemonstracaoDasMutacoesDoPatrimonioLiquido.Contas =
+				append(doc.DemonstracaoDasMutacoesDoPatrimonioLiquido.Contas, c)
+
+		case "DemonstracaoDosRecursosDeConsorcioConsolidada":
+
+			doc.DemonstracaoDosRecursosDeConsorcioConsolidada.Contas =
+				append(doc.DemonstracaoDosRecursosDeConsorcioConsolidada.Contas, c)
+
+		case "DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada":
+
+			doc.DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada.Contas =
+				append(doc.DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada.Contas, c)
 
 		default:
 

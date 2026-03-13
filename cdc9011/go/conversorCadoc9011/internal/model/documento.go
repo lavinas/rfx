@@ -34,4 +34,8 @@ type Documento struct {
 
 	BalancoPatrimonial      Bloco `json:"balancoPatrimonial"`
 	DemonstracaoDoResultado Bloco `json:"demonstracaoDoResultado"`
+
+	DemonstracaoDasMutacoesDoPatrimonioLiquido                    Bloco `json:"demonstracaoDasMutacoesDoPatrimonioLiquido"`
+	DemonstracaoDosRecursosDeConsorcioConsolidada                 Bloco `json:"demonstracaoDosRecursosDeConsorcioConsolidada"`
+	DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada Bloco `json:"demonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada"`
 }
