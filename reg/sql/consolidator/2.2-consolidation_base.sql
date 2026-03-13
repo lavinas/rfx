@@ -107,7 +107,28 @@ CREATE TABLE IF NOT EXISTS cadoc_6334.ranking (
     CONSTRAINT unique_cadoc_6334_ranking UNIQUE (year, quarter, establishment_code, segment_code)
 );
 CREATE INDEX idx_cadoc_6334_ranking_year_quarter ON cadoc_6334.ranking (year, quarter);
-    
+
+CREATE TABLE IF NOT EXISTS cadoc_6334.ranking_final (
+    id BIGINT PRIMARY KEY,
+    created_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    updated_at TIMESTAMP(3) WITHOUT TIME ZONE NOT NULL,
+    year SMALLINT NOT NULL, -- transactional: year(transaction.period_date)
+    quarter SMALLINT NOT NULL, -- transactional: quarter(transaction.period_date)
+    establishment_code BIGINT NOT NULL, -- transactional: transaction.establishment_code
+    function CHAR(1) NOT NULL, -- -- função: 'C' - credito, 'D' - débito -- transactional: transaction.transaction_product (conversão DB - 'D', CR - 'C')
+    brand SMALLINT NOT NULL, -- 1 - Visa, 2 - Mastercard, 8 - elo -- transactional: transaction.transaction_brand (conversão V - 1, M - 2, E - 8)
+    capture_mode SMALLINT NOT NULL, -- 1 - Cartão tarja, 2 - Cartão chip, 5 - contactless -- transactional: transaction.transaction_capture (conversão TJ - 1, CH - 2, CT - 5)
+    installments SMALLINT NOT NULL,  -- 1 a 12 -- transactional: transaction.transaction_installments
+    segment_code SMALLINT NOT NULL, tabela código de segmento -- transactional: transaction.establishment_mcc (join com a tabela segment_mcc)
+    transaction_amount NUMERIC(18,2) NOT NULL, -- +=transaction.transaction_amount
+    transaction_quantity INTEGER NOT NULL, -- += 1
+    avg_mcc_fee numeric(4, 2) NULL, -- o mesmo algortimo de media calculado para desconto, porém utilizando apenas a média
+    CONSTRAINT unique_cadoc_6334_ranking UNIQUE (year, quarter, establishment_code, segment_code)
+);
+CREATE INDEX idx_cadoc_6334_ranking_year_quarter ON cadoc_6334.ranking (year, quarter);
+
+
+
 -- segnments table para mapear o código de segmento (segment_code) para o nome do segmento (segment_name)
 -- se o segment_code já existe na tabela, verifica se o mcc está concatenado no description, se não estiver, concatena o mcc no description. Exemplo: 'MCC: 4816, 5045, 5065, 5722, 5732, 5734, 7379, 7622, 7629'
 -- se o segment_code não existe na tabela, insere o novo segment_code, segment_name e description com o mcc da transação (transaction.establishment_mcc)

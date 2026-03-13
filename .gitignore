@@ -18,3 +18,5 @@ db_2025_3T/
 .env
 # logs
 *.log
+# executables
+*.exe
