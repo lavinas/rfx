@@ -15,7 +15,7 @@ import (
 func main() {
 
 	if len(os.Args) < 2 {
-		fmt.Println("uso: conversor90x1 <arquivo.xlsx>")
+		fmt.Println("uso: c9011 <arquivo.xlsx>")
 		os.Exit(1)
 	}
 
