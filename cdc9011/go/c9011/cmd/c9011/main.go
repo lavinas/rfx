@@ -26,7 +26,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cfg, err := config.Load("app.yml")
+	cfg, err := config.Load("c9011.yml")
 	if err != nil {
 		log.Fatal(err)
 	}
