@@ -32,9 +32,10 @@ type Documento struct {
 
 	DatasBaseReferencia []DtRef `json:"datasBaseReferencia"`
 
-	BalancoPatrimonial      Bloco `json:"balancoPatrimonial"`
-	DemonstracaoDoResultado Bloco `json:"demonstracaoDoResultado"`
-
+	BalancoPatrimonial                                            Bloco `json:"balancoPatrimonial"`
+	DemonstracaoDoResultado                                       Bloco `json:"demonstracaoDoResultado"`
+	DemonstracaoDoResultadoAbrangente                             Bloco `json:"demonstracaoDoResultadoAbrangente"`
+	DemonstracaoDosFluxosDeCaixa                                  Bloco `json:"demonstracaoDosFluxosDeCaixa"`
 	DemonstracaoDasMutacoesDoPatrimonioLiquido                    Bloco `json:"demonstracaoDasMutacoesDoPatrimonioLiquido"`
 	DemonstracaoDosRecursosDeConsorcioConsolidada                 Bloco `json:"demonstracaoDosRecursosDeConsorcioConsolidada"`
 	DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada Bloco `json:"demonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada"`

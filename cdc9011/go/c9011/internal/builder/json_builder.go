@@ -77,6 +77,16 @@ func BuildDocument(meta excel.Meta, rows []*excel.RawRow, periods []string) (mod
 			doc.DemonstracaoDoResultado.Contas =
 				append(doc.DemonstracaoDoResultado.Contas, c)
 
+		case "DemonstracaoDoResultadoAbrangente":
+
+			doc.DemonstracaoDoResultadoAbrangente.Contas =
+				append(doc.DemonstracaoDoResultadoAbrangente.Contas, c)
+
+		case "DemonstracaoDosFluxosDeCaixa":
+
+			doc.DemonstracaoDosFluxosDeCaixa.Contas =
+				append(doc.DemonstracaoDosFluxosDeCaixa.Contas, c)
+
 		case "DemonstracaoDasMutacoesDoPatrimonioLiquido":
 
 			doc.DemonstracaoDasMutacoesDoPatrimonioLiquido.Contas =

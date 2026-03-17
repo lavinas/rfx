@@ -1,8 +1,7 @@
 package config
 
 const (
-	defaultConfigString = 
-	`validator:
+	defaultConfigString = `validator:
         skipHierarchyValidation:
            - DemonstracaoDasMutacoesDoPatrimonioLiquido`
 )
