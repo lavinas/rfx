@@ -61,6 +61,7 @@ func BuildDocument(meta excel.Meta, rows []*excel.RawRow, periods []string) (mod
 				model.Valor{
 					DtBase: dateToID[p],
 					Valor:  util.Round2(v),
+					ValorCurrence: model.Currence(util.Round2(v)),
 				},
 			)
 		}
