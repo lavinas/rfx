@@ -6,10 +6,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"conversorCadoc9011/internal/builder"
-	"conversorCadoc9011/internal/config"
-	"conversorCadoc9011/internal/excel"
-	"conversorCadoc9011/internal/validator"
+	"c9011/internal/builder"
+	"c9011/internal/config"
+	"c9011/internal/excel"
+	"c9011/internal/validator"
 )
 
 func main() {

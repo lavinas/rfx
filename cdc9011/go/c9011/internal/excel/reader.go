@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/xuri/excelize/v2"
+	"c9011/internal/util"
 )
 
 type Meta struct {
@@ -58,6 +59,7 @@ func ParseFile(path string) (Meta, []*RawRow, []string, error) {
 	return meta, dataRows, periods, nil
 }
 
+
 func readMetadata(rows [][]string) (Meta, int, error) {
 
 	meta := Meta{}
@@ -79,16 +81,19 @@ func readMetadata(rows [][]string) (Meta, int, error) {
 			}
 
 		case "codigodocumento":
-			meta.CodigoDocumento = row[1]
+			meta.CodigoDocumento = util.TruncInt(row[1])
 
 		case "tiporemessa":
 			meta.TipoRemessa = row[1]
 
 		case "unidademedida":
-			meta.UnidadeMedida, _ = strconv.Atoi(row[1])
-
+			var err error
+			meta.UnidadeMedida, err = strconv.Atoi(util.TruncInt(row[1]))
+			if err != nil {
+				return meta, -1, fmt.Errorf("unidade de medida inválida: %v", err)
+			}
 		case "database":
-			meta.DataBase = row[1]
+			meta.DataBase = util.TruncInt(row[1])
 
 		case "demonstrativo":
 			header = i
@@ -98,7 +103,6 @@ func readMetadata(rows [][]string) (Meta, int, error) {
 	if header == -1 {
 		return meta, -1, fmt.Errorf("header não encontrado")
 	}
-
 	return meta, header, nil
 }
 

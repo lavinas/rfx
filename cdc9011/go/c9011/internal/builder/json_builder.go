@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"conversorCadoc9011/internal/excel"
-	"conversorCadoc9011/internal/model"
-	"conversorCadoc9011/internal/util"
+	"c9011/internal/excel"
+	"c9011/internal/model"
+	"c9011/internal/util"
 )
 
 func BuildDocument(meta excel.Meta, rows []*excel.RawRow, periods []string) (model.Documento, error) {

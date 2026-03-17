@@ -14,9 +14,9 @@ type Conta struct {
 	ID        string `json:"@id"`
 	Nivel     string `json:"@nivel"`
 	Descricao string `json:"@descricao"`
-	ContaPai  string `json:"@contaPai,omitempty"`
+	ContaPai  string `json:"@contaPai"`
 
-	ValoresIndividualizados []Valor `json:"valoresIndividualizados,omitempty"`
+	ValoresIndividualizados []Valor `json:"valoresIndividualizados"`
 }
 
 type Bloco struct {

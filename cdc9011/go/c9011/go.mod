@@ -1,4 +1,4 @@
-module conversorCadoc9011
+module c9011
 
 go 1.25.6
 

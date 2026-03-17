@@ -45,17 +45,13 @@ func NormalizeParent(s string) string {
 	return s
 }
 
-func NormalizeNumericString(s string) string {
-
-	s = strings.TrimSpace(s)
-
-	if strings.HasSuffix(s, ".0") {
-		s = strings.TrimSuffix(s, ".0")
-	}
-
-	return s
-}
-
 func Round2(v float64) float64 {
 	return math.Round(v*100) / 100
+}
+
+func TruncInt(s string) string {
+	if idx := strings.Index(s, "."); idx != -1 {
+		return s[:idx]
+	}
+	return s
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"conversorCadoc9011/internal/excel"
+	"c9011/internal/excel"
 )
 
 func ValidateHierarchy(rows []*excel.RawRow, periods []string, skip map[string]bool) error {
