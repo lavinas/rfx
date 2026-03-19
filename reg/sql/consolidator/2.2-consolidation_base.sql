@@ -1,3 +1,6 @@
+-- Active: 1766518799113@@127.0.0.1@5434@reg@cadoc_6334
+
+create schema cadoc_6334;
 -- só pode débito e crédito
 CREATE TABLE cadoc_6334.discount (
 	id bigserial NOT NULL,
@@ -100,7 +103,7 @@ CREATE TABLE IF NOT EXISTS cadoc_6334.ranking (
     brand SMALLINT NOT NULL, -- 1 - Visa, 2 - Mastercard, 8 - elo -- transactional: transaction.transaction_brand (conversão V - 1, M - 2, E - 8)
     capture_mode SMALLINT NOT NULL, -- 1 - Cartão tarja, 2 - Cartão chip, 5 - contactless -- transactional: transaction.transaction_capture (conversão TJ - 1, CH - 2, CT - 5)
     installments SMALLINT NOT NULL,  -- 1 a 12 -- transactional: transaction.transaction_installments
-    segment_code SMALLINT NOT NULL, tabela código de segmento -- transactional: transaction.establishment_mcc (join com a tabela segment_mcc)
+    segment_code SMALLINT NOT NULL, -- tabela código de segmento -- transactional: transaction.establishment_mcc (join com a tabela segment_mcc)
     transaction_amount NUMERIC(18,2) NOT NULL, -- +=transaction.transaction_amount
     transaction_quantity INTEGER NOT NULL, -- += 1
     avg_mcc_fee numeric(4, 2) NULL, -- o mesmo algortimo de media calculado para desconto, porém utilizando apenas a média
@@ -194,7 +197,6 @@ CREATE TABLE cadoc_6334.infrterm (
 );
 
 ------- finalizer
-
 CREATE TABLE cadoc_6334.luccred (
     id bigserial NOT NULL,
     created_at timestamp DEFAULT now() NOT NULL,
@@ -209,10 +211,12 @@ CREATE TABLE cadoc_6334.luccred (
     brand_access_cost numeric(15,2) NOT NULL,
     risk_cost numeric(15,2) NOT NULL,
     processing_cost numeric(15,2) NOT NULL,
-    others_cost(15,2) NOT NULL,
+    others_cost numeric(15,2) NOT NULL,
     CONSTRAINT cadoc_6334_luccred_pkey PRIMARY KEY(id),
     CONSTRAINT cadoc_6334_luccred_uk UNIQUE(year, quarter)
 );
+
+drop table if exists cadoc_6334.contact;
 
 CREATE TABLE cadoc_6334.contact (
     id bigserial NOT NULL,
@@ -223,12 +227,11 @@ CREATE TABLE cadoc_6334.contact (
     contact_type VARCHAR(1) not null, -- 'D' - diretor, 'T' - técnico, 'I' - instituição
     name VARCHAR(100) NOT NULL,
     position VARCHAR(100) NULL,
-    phone_number int4 NOT NULL,
+    phone_number varchar(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    CONSTRAINTS cadoc_6334_contact PRIMARY KEY(id),
-    CONSTRAINT cadoc_6334_luccred_uk(year, quarter, contact_type, name)
+    CONSTRAINT cadoc_6334_contact_pkey PRIMARY KEY(id),
+    CONSTRAINT unique_cadoc_6334_contact UNIQUE(year, quarter, contact_type, name)
 );
-
 
 /*
 --- algoritmo do job concred atualizacao-------------------------------------
