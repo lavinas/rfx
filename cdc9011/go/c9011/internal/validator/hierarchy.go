@@ -34,7 +34,12 @@ func ValidateHierarchy(rows []*excel.RawRow, periods []string, skip map[string]b
 					continue
 				}
 
-				sum += child.Valores[period]
+				val := child.Valores[period]
+				if math.IsNaN(val) {
+					val = 0.0
+				}
+
+				sum += val
 				hasChildren = true
 			}
 
@@ -43,6 +48,9 @@ func ValidateHierarchy(rows []*excel.RawRow, periods []string, skip map[string]b
 			}
 
 			parentValue := parent.Valores[period]
+			if math.IsNaN(parentValue) {
+				parentValue = 0.0
+			}
 			diff := sum - parentValue
 
 			if math.Abs(diff) > 0.01 {

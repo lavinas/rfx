@@ -108,15 +108,18 @@ func readMetadata(rows [][]string) (Meta, int, error) {
 
 func detectPeriods(header []string) ([]string, int) {
 
-	var periods []string
+    var periods []string
 	start := -1
 
 	for i, h := range header {
 
 		h = strings.TrimSpace(h)
-
-		if strings.HasPrefix(h, "A") {
-
+	
+		if i >= 4 && (
+		    strings.HasPrefix(h, "A")  ||
+			strings.HasPrefix(h, "S")  ||
+			strings.HasPrefix(h, "T")  ||
+			strings.HasPrefix(h, "I")) {
 			if start == -1 {
 				start = i
 			}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"math"
 
 	"c9011/internal/excel"
 	"c9011/internal/model"
@@ -54,6 +55,10 @@ func BuildDocument(meta excel.Meta, rows []*excel.RawRow, periods []string) (mod
 					r.Conta,
 					p,
 				)
+			}
+
+			if math.IsNaN(v) {
+				continue
 			}
 
 			c.ValoresIndividualizados = append(

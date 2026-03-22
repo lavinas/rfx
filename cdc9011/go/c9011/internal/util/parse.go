@@ -16,6 +16,10 @@ func GetCell(row []string, idx int) string {
 
 func ParseFloat(s string) float64 {
 	s = strings.TrimSpace(s)
+	if s == "--" {
+		return math.NaN()
+	}
+
 	if s == "" || s == "-" || s == "-.-" {
 		return 0
 	}
@@ -38,7 +42,7 @@ func NormalizeParent(s string) string {
 
 	s = strings.TrimSpace(s)
 
-	if s == "-" {
+	if s == "-" || s == "--" || s == "" || s == "0" {
 		return ""
 	}
 
