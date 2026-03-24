@@ -21,7 +21,7 @@ func parseRows(rows [][]string, start int, periods []string, periodStart int) []
 		}
 
 		nivel := util.GetCell(row, 1)
-		conta := util.GetCell(row, 2)
+		conta := util.GetCell(row, 3)
 
 		if nivel == "" && conta == "" {
 			continue
@@ -32,7 +32,7 @@ func parseRows(rows [][]string, start int, periods []string, periodStart int) []
 			Demonstrativo: currentDemo,
 			Nivel:         nivel,
 			Conta:         conta,
-			PaiNivel:      util.NormalizeParent(util.GetCell(row, 3)),
+			PaiNivel:      util.NormalizeParent(util.GetCell(row, 2)),
 			Valores:       map[string]float64{},
 		}
 

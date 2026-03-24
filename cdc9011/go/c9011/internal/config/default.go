@@ -4,5 +4,6 @@ const (
 	defaultConfigString = 
         `validator:
                 skipHierarchyValidation:
-                        - DemonstracaoDasMutacoesDoPatrimonioLiquido`
+                        - DemonstracaoDasMutacoesDoPatrimonioLiquido
+                        - DemonstracaoDosFluxosDeCaixa`
 )
