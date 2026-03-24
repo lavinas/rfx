@@ -30,10 +30,11 @@ func main() {
 	defer db.Close()
 
 	transaction := NewTransaction()
+	lastID := transaction.GetLastID(db)
 
 	// Generate and insert transactions
-	for i := 0; i < 100; i++ {
-		transaction.GenerateData(int16(i), time.Now()) // Assuming you have a method to generate random data for the transaction
+	for i := 1; i <= 100; i++ {
+		transaction.GenerateData(int16(i)+lastID, time.Now()) // Assuming you have a method to generate random data for the transaction
 		transaction.Insert(db)
 	}
 	fmt.Println("Transactions inserted successfully")

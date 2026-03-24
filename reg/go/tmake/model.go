@@ -59,6 +59,16 @@ func (t *Transaction) Insert(db *sql.DB) {
 	}
 }
 
+// GetLastID retrieves the last transaction ID from the database
+func (t *Transaction) GetLastID(db *sql.DB) int16 {
+	var lastID int16
+	err := db.QueryRow("SELECT COALESCE(MAX(id), 0) FROM transaction.transaction").Scan(&lastID)
+	if err != nil {
+		panic(err)
+	}
+	return lastID
+}
+
 // Generate random data for the transaction (this is just a placeholder, you can implement it as needed)
 func (t *Transaction) GenerateData(id int16, transaction_date time.Time) {
 	t.ID = id
