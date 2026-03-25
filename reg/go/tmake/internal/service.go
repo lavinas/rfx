@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"fmt"
 	"log"
 	"time"
 )
@@ -25,5 +24,5 @@ func InsertTransactions(transactionStartDate, transactionEndDate time.Time, tran
 		db.Commit()
 		log.Printf("Finished inserting %d transactions for date %s\n", transactionQtty, date.Format("2006-01-02"))
 	}
-	fmt.Println("Transactions inserted successfully")
+	log.Println("Transactions inserted successfully")
 }
