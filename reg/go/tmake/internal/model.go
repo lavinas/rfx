@@ -1,17 +1,15 @@
-package main
+package internal
 
 import (
-	"database/sql"
 	"math/rand"
 	"time"
 
-	_ "github.com/lib/pq"
 	"github.com/thanhpk/randstr"
 )
 
 // Transaction represents a financial transaction
 type Transaction struct {
-	ID                        int16
+	ID                        int64
 	CreatedAt                 time.Time
 	UpdatedAt                 time.Time
 	Key1                      string
@@ -45,7 +43,7 @@ func NewTransaction() *Transaction {
 }
 
 // GenerateInsert
-func (t *Transaction) Insert(db *sql.DB) {
+func (t *Transaction) Insert(db *DB) {
 	sql := `insert into transaction.transaction(id, created_at, updated_at, key1, establishment_code, establishment_nature, establishment_mcc, establishment_terminal_code,
 	        bin, authorization_code, transaction_nsu, transaction_date, transaction_amount, transaction_installments, transaction_brand,
 			transaction_product, transaction_capture, revenue_mdr_value, cost_interchange_value, high_source_priority, status_id, status_name, status_count,
@@ -60,8 +58,8 @@ func (t *Transaction) Insert(db *sql.DB) {
 }
 
 // GetLastID retrieves the last transaction ID from the database
-func (t *Transaction) GetLastID(db *sql.DB) int16 {
-	var lastID int16
+func (t *Transaction) GetLastID(db *DB) int64 {
+	var lastID int64
 	err := db.QueryRow("SELECT COALESCE(MAX(id), 0) FROM transaction.transaction").Scan(&lastID)
 	if err != nil {
 		panic(err)
@@ -70,7 +68,7 @@ func (t *Transaction) GetLastID(db *sql.DB) int16 {
 }
 
 // Generate random data for the transaction (this is just a placeholder, you can implement it as needed)
-func (t *Transaction) GenerateData(id int16, transaction_date time.Time) {
+func (t *Transaction) GenerateData(id int64, transaction_date time.Time) {
 	t.ID = id
 	t.TransactionDate = transaction_date
 	t.CreatedAt = time.Now()

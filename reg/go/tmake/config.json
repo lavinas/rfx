@@ -1,0 +1,10 @@
+{
+    "database": {
+        "host": "localhost",
+        "port": 5434,
+        "user": "root",
+        "password": "root",
+        "dbname": "reg",
+        "sslmode": false
+    }
+}
