@@ -12,8 +12,8 @@ import (
 type DB struct {
 	*sql.DB
 	tx *sql.Tx
-	
 }
+
 // NewBD creates a new database connection and begins a transaction
 func NewBD(host string, port int, user, password, dbname string, sslmode bool) *DB {
 	txtSSLMode := "disable"
@@ -71,4 +71,9 @@ func (db *DB) RollbackTransaction() {
 		log.Fatal("Error rolling back transaction: ", err)
 	}
 	db.BeginTransaction()
+}
+
+// Exec executes a query within the current transaction
+func (db *DB) Exec(query string, args ...interface{}) (sql.Result, error) {
+	return db.tx.Exec(query, args...)
 }

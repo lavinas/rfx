@@ -6,5 +6,8 @@
         "password": "root",
         "dbname": "reg",
         "sslmode": false
+    },
+    "service": {
+        "commit_qtty": 1000
     }
 }

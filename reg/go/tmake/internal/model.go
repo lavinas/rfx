@@ -95,7 +95,6 @@ func (t *Transaction) GenerateData(id int64, transaction_date time.Time) {
 	t.GeneratePeriodDate()
 }
 
-
 // GenerateEstablishmentCode generates a random establishment code between 600067 and 700222
 func (t *Transaction) GenerateEstablishmentCode() {
 	min := 600067

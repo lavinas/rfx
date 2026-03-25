@@ -11,10 +11,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db := internal.NewBD(config.Database.Host, config.Database.Port, config.Database.User, config.Database.Password, config.Database.DBName, config.Database.SSLMode)
+	db := internal.NewBD(config.Database.Host, config.Database.Port, config.Database.User,
+		config.Database.Password, config.Database.DBName, config.Database.SSLMode)
 	defer db.CloseDBConnection()
 	// Get parameters from command line arguments
 	transactionStartDate, transactionEndDate, transactionQtty := internal.GetParameters()
 	// Insert transactions into the database
-	internal.InsertTransactions(transactionStartDate, transactionEndDate, transactionQtty, db)
+	internal.InsertTransactions(transactionStartDate, transactionEndDate, transactionQtty, db, config.Service.CommitQtty)
 }
