@@ -22,8 +22,8 @@ func InsertTransactions(transactionStartDate, transactionEndDate time.Time, tran
 			}
 			count++
 		}
-		log.Printf("Finished inserting transactions for date %s\n", date.Format("2006-01-02"))
+		db.Commit()
+		log.Printf("Finished inserting %d transactions for date %s\n", transactionQtty, date.Format("2006-01-02"))
 	}
-	db.Commit()
 	fmt.Println("Transactions inserted successfully")
 }
