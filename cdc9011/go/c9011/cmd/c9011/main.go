@@ -46,6 +46,11 @@ func main() {
 	ext := filepath.Ext(input)
 	output := input[:len(input)-len(ext)] + ".json"
 
+	err = validator.ValidateStructure(doc)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	err = builder.WriteJSON(output, doc)
 	if err != nil {
 		log.Fatal(err)
