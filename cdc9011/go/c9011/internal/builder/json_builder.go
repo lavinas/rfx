@@ -74,36 +74,58 @@ func BuildDocument(meta excel.Meta, rows []*excel.RawRow, periods []string) (mod
 		switch r.Demonstrativo {
 
 		case "BalancoPatrimonial":
+			if doc.BalancoPatrimonial == nil {
+				doc.BalancoPatrimonial = &model.Bloco{}
+			}
 
 			doc.BalancoPatrimonial.Contas =
 				append(doc.BalancoPatrimonial.Contas, c)
 
 		case "DemonstracaoDoResultado":
+			if doc.DemonstracaoDoResultado == nil {
+				doc.DemonstracaoDoResultado = &model.Bloco{}
+			}
 
 			doc.DemonstracaoDoResultado.Contas =
 				append(doc.DemonstracaoDoResultado.Contas, c)
 
 		case "DemonstracaoDoResultadoAbrangente":
+			if doc.DemonstracaoDoResultadoAbrangente == nil {
+				doc.DemonstracaoDoResultadoAbrangente = &model.Bloco{}
+			}
 
 			doc.DemonstracaoDoResultadoAbrangente.Contas =
 				append(doc.DemonstracaoDoResultadoAbrangente.Contas, c)
 
 		case "DemonstracaoDosFluxosDeCaixa":
+			if doc.DemonstracaoDosFluxosDeCaixa == nil {
+				doc.DemonstracaoDosFluxosDeCaixa = &model.Bloco{}
+			}
+
 
 			doc.DemonstracaoDosFluxosDeCaixa.Contas =
 				append(doc.DemonstracaoDosFluxosDeCaixa.Contas, c)
 
 		case "DemonstracaoDasMutacoesDoPatrimonioLiquido":
+			if doc.DemonstracaoDasMutacoesDoPatrimonioLiquido == nil {
+				doc.DemonstracaoDasMutacoesDoPatrimonioLiquido = &model.Bloco{}
+			}
 
 			doc.DemonstracaoDasMutacoesDoPatrimonioLiquido.Contas =
 				append(doc.DemonstracaoDasMutacoesDoPatrimonioLiquido.Contas, c)
 
 		case "DemonstracaoDosRecursosDeConsorcioConsolidada":
+			if doc.DemonstracaoDosRecursosDeConsorcioConsolidada == nil {
+				doc.DemonstracaoDosRecursosDeConsorcioConsolidada = &model.Bloco{}
+			}
 
 			doc.DemonstracaoDosRecursosDeConsorcioConsolidada.Contas =
 				append(doc.DemonstracaoDosRecursosDeConsorcioConsolidada.Contas, c)
 
 		case "DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada":
+			if doc.DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada == nil {
+				doc.DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada = &model.Bloco{}
+			}
 
 			doc.DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada.Contas =
 				append(doc.DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada.Contas, c)
