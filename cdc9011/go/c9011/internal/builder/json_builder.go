@@ -3,8 +3,8 @@ package builder
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"math"
+	"os"
 
 	"c9011/internal/excel"
 	"c9011/internal/model"
@@ -64,8 +64,8 @@ func BuildDocument(meta excel.Meta, rows []*excel.RawRow, periods []string) (mod
 			c.ValoresIndividualizados = append(
 				c.ValoresIndividualizados,
 				model.Valor{
-					DtBase: dateToID[p],
-					Valor:  util.Round2(v),
+					DtBase:        dateToID[p],
+					Valor:         util.Round2(v),
 					ValorCurrence: model.Currence(util.Round2(v)),
 				},
 			)

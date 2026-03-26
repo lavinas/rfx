@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/xuri/excelize/v2"
 	"c9011/internal/util"
+	"github.com/xuri/excelize/v2"
 )
 
 type Meta struct {
@@ -59,7 +59,6 @@ func ParseFile(path string) (Meta, []*RawRow, []string, error) {
 	return meta, dataRows, periods, nil
 }
 
-
 func readMetadata(rows [][]string) (Meta, int, error) {
 
 	meta := Meta{}
@@ -108,17 +107,16 @@ func readMetadata(rows [][]string) (Meta, int, error) {
 
 func detectPeriods(header []string) ([]string, int) {
 
-    var periods []string
+	var periods []string
 	start := -1
 
 	for i, h := range header {
 
 		h = strings.TrimSpace(h)
-	
-		if i >= 4 && (
-		    strings.HasPrefix(h, "A")  ||
-			strings.HasPrefix(h, "S")  ||
-			strings.HasPrefix(h, "T")  ||
+
+		if i >= 4 && (strings.HasPrefix(h, "A") ||
+			strings.HasPrefix(h, "S") ||
+			strings.HasPrefix(h, "T") ||
 			strings.HasPrefix(h, "I")) {
 			if start == -1 {
 				start = i
