@@ -33,11 +33,11 @@ type Documento struct {
 
 	DatasBaseReferencia []DtRef `json:"datasBaseReferencia"`
 
-	BalancoPatrimonial                                            Bloco `json:"balancoPatrimonial"`
-	DemonstracaoDoResultado                                       Bloco `json:"demonstracaoDoResultado"`
-	DemonstracaoDoResultadoAbrangente                             Bloco `json:"demonstracaoDoResultadoAbrangente"`
-	DemonstracaoDosFluxosDeCaixa                                  Bloco `json:"demonstracaoDosFluxosDeCaixa"`
-	DemonstracaoDasMutacoesDoPatrimonioLiquido                    Bloco `json:"demonstracaoDasMutacoesDoPatrimonioLiquido"`
-	DemonstracaoDosRecursosDeConsorcioConsolidada                 Bloco `json:"demonstracaoDosRecursosDeConsorcioConsolidada"`
-	DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada Bloco `json:"demonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada"`
+	BalancoPatrimonial                                            Bloco `json:"BalancoPatrimonial"`
+	DemonstracaoDoResultado                                       Bloco `json:"DemonstracaoDoResultado"`
+	DemonstracaoDoResultadoAbrangente                             Bloco `json:"DemonstracaoDoResultadoAbrangente"`
+	DemonstracaoDosFluxosDeCaixa                                  Bloco `json:"DemonstracaoDosFluxosDeCaixa"`
+	DemonstracaoDasMutacoesDoPatrimonioLiquido                    Bloco `json:"DemonstracaoDasMutacoesDoPatrimonioLiquido"`
+	DemonstracaoDosRecursosDeConsorcioConsolidada                 Bloco `json:"DemonstracaoDosRecursosDeConsorcioConsolidada"`
+	DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada Bloco `json:"DemonstracaoDeVariacoesNasDisponibilidadesDeGruposConsolidada"`
 }
