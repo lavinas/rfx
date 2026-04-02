@@ -6,6 +6,7 @@ type Config struct {
 
 type ValidatorConfig struct {
 	SkipHierarchyValidation []string `yaml:"skipHierarchyValidation"`
+	*Config
 }
 
 func (v ValidatorConfig) SkipMap() map[string]bool {

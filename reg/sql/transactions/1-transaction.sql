@@ -16,11 +16,16 @@ create table transaction.transaction_period_closing (
     id bigserial primary key,
     created_at timestamp not null default current_timestamp,
     updated_at timestamp not null default current_timestamp,
-    -- values
+    -- keys
+    year int not null, -- ano de referencia
+    month int not null, -- mes de referencia
     transaction_month date not null, -- mes e ano de referencia
+    -- values
     closing_date date not null, -- dia do fechamento
     status_id int not null, -- 1 - ativa, 2 - cancelada - o registro nunca é apagado, apenas cancelado
     status_name varchar(20) not null -- 1 - ativa, 2 - cancelada - o registro nunca é apagado, apenas cancelado
+    CONSTRAINT transaction_period_closing_year_month_key UNIQUE (year, month)
+    CONSTRAINT transaction_period_closing_transaction_month_key UNIQUE (transaction_month)
 );
 
 -- transaction table is the main table to store transaction data

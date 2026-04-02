@@ -1,3 +1,4 @@
+
 -- public.extractor_process definição
  
 -- Drop table
@@ -93,7 +94,7 @@ CREATE TABLE public.extractor_execution (
 	execution_quantity int4 DEFAULT 0 NOT NULL,
 	execution_start timestamp NULL,
 	execution_end timestamp NULL,
-	status_id int4 NOT NULL,
+	status_id int4 NOT NULL,  -- 1 - processing, 2 - completed, 3 - inserter error, 4 - inserter done, 5 - translated, 6 - fuser error, 7 - fuser done
 	status_name varchar(20) NOT NULL,
 	error_message varchar(300) NULL,
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -102,3 +103,5 @@ CREATE TABLE public.extractor_execution (
 	required_trace_id varchar(50) NULL,
 	CONSTRAINT extractor_execution_pkey1 PRIMARY KEY (id)
 );
+
+CREATE INDEX idx_extractor_execution_trace_id ON public.extractor_execution (trace_id);

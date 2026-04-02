@@ -16,3 +16,6 @@ where cast(bin as integer) between elo.bin_range_low and elo.bin_range_high;
 -- checks
 select count(1) from bins where bandeira is not null;
 select count(1) from bins where bandeira is not null and banco_intermediario is null;
+
+
+select * from bins where bandeira = 'ELO';

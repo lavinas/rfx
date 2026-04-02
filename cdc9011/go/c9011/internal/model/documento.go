@@ -6,8 +6,8 @@ type DtRef struct {
 }
 
 type Valor struct {
-	DtBase string  `json:"@dtBase"`
-	Valor  float64 `json:"-"`
+	DtBase        string   `json:"@dtBase"`
+	Valor         float64  `json:"-"`
 	ValorCurrence Currence `json:"@valor"`
 }
 

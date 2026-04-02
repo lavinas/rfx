@@ -1,11 +1,9 @@
 package validator
 
 import (
-	"fmt"
 	"c9011/internal/model"
-
+	"fmt"
 )
-
 
 func ValidateStructure(doc model.Documento) error {
 	err := ""

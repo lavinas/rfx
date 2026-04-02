@@ -102,7 +102,6 @@ func BuildDocument(meta excel.Meta, rows []*excel.RawRow, periods []string) (mod
 				doc.DemonstracaoDosFluxosDeCaixa = &model.Bloco{}
 			}
 
-
 			doc.DemonstracaoDosFluxosDeCaixa.Contas =
 				append(doc.DemonstracaoDosFluxosDeCaixa.Contas, c)
 
