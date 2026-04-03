@@ -2,48 +2,64 @@ package adapters
 
 import (
 	"context"
-	"gorm.io/gorm"
+	"time"
+
 	"fuser/internal/domain"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 // GormAdapter is an adapter for GORM database operations
 type GormAdapter struct {
 	DB *gorm.DB
+	ctx *context.Context
 }
 
 // NewGormAdapter creates a new instance of GormAdapter
-func NewGormAdapter(db *gorm.DB) *GormAdapter {
-	return &GormAdapter{DB: db}
+func NewGormAdapter(db *gorm.DB, ctx *context.Context) *GormAdapter {
+	return &GormAdapter{DB: db, ctx: ctx}
 }
 
-// GetIntercamTransactions retrieves Intercam transactions from the database
-func (a *GormAdapter) GetIntercamTransactions(ctx context.Context) ([]domain.Intercam, error) {
-	var transactions []domain.Intercam
-	if err := a.DB.WithContext(ctx).Find(&transactions).Error; err != nil {
-		return nil, err
+// Connect establishes a connection to the database (placeholder for actual connection logic)
+func (a *GormAdapter) Connect(dns string) error {
+	// Placeholder for actual connection logic, using GORM to connect to the database
+	sqlDB, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
+	if err != nil {
+		return err
 	}
-	return transactions, nil
+	a.DB = sqlDB
+	// Verify the connection by pinging the database
+	return a.Ping()
+}
+
+// Ping checks the database connection
+func (a *GormAdapter) Ping() error {
+	db, err := a.DB.DB()
+	if err != nil {
+		return err
+	}
+	return db.PingContext(*a.ctx)
 }
 
 // GetManagementTransactions retrieves Management transactions from the database
-func (a *GormAdapter) GetManagementTransactions(ctx context.Context) ([]domain.Management, error) {
+func (a *GormAdapter) GetManagementTransactions(dt_transaction time.Time) ([]domain.Management, error) {
 	var transactions []domain.Management
-	if err := a.DB.WithContext(ctx).Find(&transactions).Error; err != nil {
+	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento = ?", dt_transaction).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 	return transactions, nil
 }
 
 // GetWebserviceTransactions retrieves Webservice transactions from the database
-func (a *GormAdapter) GetWebserviceTransactions(ctx context.Context) ([]domain.Webservice, error) {
+func (a *GormAdapter) GetWebserviceTransactions(dt_transaction time.Time, page int) ([]domain.Webservice, error) {
 	var transactions []domain.Webservice
-	if err := a.DB.WithContext(ctx).Find(&transactions).Error; err != nil {
+	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento = ?", dt_transaction).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 	return transactions, nil
 }
 
 // Insert Transactions inserts a list of transactions into the database
-func (a *GormAdapter) InsertTransactions(ctx context.Context, transactions []domain.Transaction) error {
-	return a.DB.WithContext(ctx).Create(&transactions).Error
+func (a *GormAdapter) InsertTransactions(transactions []domain.Transaction) error {
+	return a.DB.WithContext(*a.ctx).Create(&transactions).Error
 }
