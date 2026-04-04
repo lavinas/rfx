@@ -20,7 +20,7 @@ func (v *JsonConfig) GetDNS() string {
 	return v.DB.DNS
 }
 
-// LoadConfig reads the configuration from a YAML file and unmarshals it into a Config struct
+// LoadJsonConfig reads the configuration from a JSON file and unmarshals it into a JsonConfig struct
 func LoadJsonConfig(path string) (*JsonConfig, error) {
 	// Attempt to read the configuration file, if it fails, use the default configuration string
 	data, err := os.ReadFile(path)
@@ -33,6 +33,5 @@ func LoadJsonConfig(path string) (*JsonConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Return a pointer to the Config struct
 	return &cfg, nil
 }
