@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"fuser/internal/adapters/config"
+	"fuser/internal/adapters/driver"
 	"fuser/internal/adapters/repository"
 	"fuser/internal/core/service"
 )
@@ -22,10 +23,10 @@ func main() {
 		panic(err)
 	}
 	defer repo.Close()
-	// Create the service layer with the repository
-	svc := service.NewFuseService(repo)
-	// Run the service
-	if err := svc.Run(); err != nil {
+	// Create the driver with the service
+	drv := driver.NewFlagDriver(service.NewFuseService(repo))
+	// Run the driver
+	if err := drv.Run(); err != nil {
 		panic(err)
 	}
 
