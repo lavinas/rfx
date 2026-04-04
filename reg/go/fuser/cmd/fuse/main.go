@@ -1,6 +1,5 @@
 package main
 
-
 import (
 	"context"
 
@@ -12,7 +11,7 @@ import (
 // Main function to initialize and run the application
 func main() {
 	// Load configuration
-	cfg, err := config.LoadConfig("config.json")
+	cfg, err := config.LoadJsonConfig("config.json")
 	if err != nil {
 		panic(err)
 	}
