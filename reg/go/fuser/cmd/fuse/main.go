@@ -33,7 +33,7 @@ func main() {
 	drv := driver.NewFlagDriver(service.NewFuseService(repo, logger))
 	// Run the driver
 	if err := drv.Run(); err != nil {
-		logger.Println("Error running driver:", err)
+		logger.Println(err)
 		os.Exit(1)
 	}
 }

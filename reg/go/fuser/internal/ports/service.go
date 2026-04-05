@@ -1,5 +1,7 @@
 package ports
 
+import "time"
+
 type Service interface {
-	Run() error
+	Run(start_date, end_date time.Time) error
 }
