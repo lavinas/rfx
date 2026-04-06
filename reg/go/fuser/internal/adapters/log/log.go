@@ -4,9 +4,8 @@ import (
 	"log"
 )
 
-
 // SimpleLogger is a simple wrapper around the standard log.Logger
-type SimpleLogger struct{
+type SimpleLogger struct {
 	*log.Logger
 }
 

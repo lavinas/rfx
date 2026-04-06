@@ -3,10 +3,14 @@ package repository
 import (
 	"context"
 	"time"
+	"fmt"
 
 	"fuser/internal/core/domain"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+	"gorm.io/gorm/logger"
 )
 
 // GormRepository is an adapter for GORM database operations
@@ -27,7 +31,12 @@ func NewGormRepository(dns string, ctx *context.Context) (*GormRepository, error
 // Connect establishes a connection to the database (placeholder for actual connection logic)
 func (a *GormRepository) Connect(dns string) error {
 	// Placeholder for actual connection logic, using GORM to connect to the database
-	sqlDB, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
+
+	gConfig := gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent), // Disables all SQL logging
+	}
+
+	sqlDB, err := gorm.Open(postgres.Open(dns), &gConfig)
 	if err != nil {
 		return err
 	}
@@ -55,33 +64,62 @@ func (a *GormRepository) Ping() error {
 }
 
 // GetManagementTransactions retrieves Management transactions from the database
-func (a *GormRepository) GetManagementTransactions(dt_transaction time.Time) ([]domain.Management, error) {
-	var transactions []domain.Management
-	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento = ?", dt_transaction).Find(&transactions).Error; err != nil {
+func (a *GormRepository) GetManagementTransactions(dt_transaction time.Time) ([]*domain.Management, error) {
+	var transactions []*domain.Management
+	start_date := dt_transaction.Format("2006-01-02") + " 00:00:00"
+	end_date := dt_transaction.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
+	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento >= ? AND dt_processamento < ?", start_date, end_date).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 	return transactions, nil
 }
 
 // GetWebserviceTransactions retrieves Webservice transactions from the database
-func (a *GormRepository) GetWebserviceTransactions(dt_transaction time.Time, page int) ([]domain.Webservice, error) {
-	var transactions []domain.Webservice
-	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento = ?", dt_transaction).Find(&transactions).Error; err != nil {
+func (a *GormRepository) GetWebserviceTransactions(dt_transaction time.Time, page int) ([]*domain.Webservice, error) {
+	var transactions []*domain.Webservice
+	start_date := dt_transaction.Format("2006-01-02") + " 00:00:00"
+	end_date := dt_transaction.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
+	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento >= ? AND dt_processamento < ?", start_date, end_date).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 	return transactions, nil
 }
 
 // GetIntercamTransactions retrieves Intercam transactions from the database
-func (a *GormRepository) GetIntercamTransactions(dt_transaction time.Time) ([]domain.Intercam, error) {
-	var transactions []domain.Intercam
-	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento = ?", dt_transaction).Find(&transactions).Error; err != nil {
+func (a *GormRepository) GetIntercamTransactions(dt_transaction time.Time) ([]*domain.Intercam, error) {
+	var transactions []*domain.Intercam
+	fmt.Println("Fetching Intercam transactions for date:", dt_transaction.Format("2006-01-02"))
+	start_date := dt_transaction.Format("2006-01-02") + " 00:00:00"
+	end_date := dt_transaction.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
+	fmt.Printf("Querying Intercam transactions between %s and %s\n", start_date, end_date)
+
+	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento >= ? AND dt_processamento < ?", start_date, end_date).Find(&transactions).Error; err != nil {
+		return nil, err
+	}
+	return transactions, nil
+}
+
+// GetTransactionByKey retrieves a transaction by its key from the database
+func (a *GormRepository) GetTransactionByKey(key string) (*domain.Transaction, error) {
+	var transaction domain.Transaction
+	if err := a.DB.WithContext(*a.ctx).Where("key1 = ?", key).First(&transaction).Error; err != nil {
+		return nil, err
+	}
+	return &transaction, nil
+}
+
+// GetTransactionsByKey retrieves transactions by their keys from the database
+func (a *GormRepository) GetTransactionsByKey(keys []string) ([]*domain.Transaction, error) {
+	var transactions []*domain.Transaction
+	if err := a.DB.WithContext(*a.ctx).Where("key1 IN ?", keys).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 	return transactions, nil
 }
 
 // Insert Transactions inserts a list of transactions into the database
-func (a *GormRepository) InsertTransactions(transactions []domain.Transaction) error {
-	return a.DB.WithContext(*a.ctx).Create(&transactions).Error
+func (a *GormRepository) InsertTransactions(transactions []*domain.Transaction) error {
+	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&transactions).Error
 }

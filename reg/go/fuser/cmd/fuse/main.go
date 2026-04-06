@@ -13,7 +13,7 @@ import (
 
 // Main function to initialize and run the application
 func main() {
-    // Initialize the logger
+	// Initialize the logger
 	logger := log.NewSimpleLogger()
 	// Load configuration
 	cfg, err := config.LoadJsonConfig("config.json")

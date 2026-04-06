@@ -30,3 +30,5 @@ type Management struct {
 func (Management) TableName() string {
 	return "raw_data.management_transaction"
 }
+
+
