@@ -33,8 +33,8 @@ func (Intercam) TableName() string {
 	return "raw_data.intercambio_transaction"
 }
 
-// GetTransaction converts an Intercam instance to a Transaction instance
-func (i Intercam) GetTransaction() *Transaction {
+// Translate converts an Intercam instance to a Transaction instance
+func (i Intercam) Translate() *Transaction {
 	return &Transaction{
 		ID:                          0, // ID will be set by the database upon insertion
 		CreatedAt:                   time.Now(),
@@ -239,4 +239,11 @@ func MergeIntercam(interTransaction *Transaction, repoTransaction *Transaction) 
 	repoTransaction.PeriodDate = interTransaction.PeriodDate
 	repoTransaction.PeriodClosingID = interTransaction.PeriodClosingID
 	repoTransaction.TransacID = interTransaction.TransacID
+	// Calculate status
+	if repoTransaction.StatusCount == 2 {
+		repoTransaction.StatusCount = 0
+		*repoTransaction.StatusID = 2
+		*repoTransaction.StatusName = "Pronto"
+	}
+
 }

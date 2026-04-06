@@ -40,8 +40,8 @@ func (i Management) GetKey1() *string {
 	return nil
 }
 
-// GetTransaction converts an Intercam instance to a Transaction instance
-func (i Management) GetTransaction() *Transaction {
+// Translate converts a Management instance to a Transaction instance
+func (i Management) Translate() *Transaction {
 	return &Transaction{
 		ID:                          0, // ID will be set by the database upon insertion
 		CreatedAt:                   time.Now(),
@@ -66,7 +66,7 @@ func (i Management) GetTransaction() *Transaction {
 		HighSourcePriority:          i.GetHighPriority(),
 		StatusID:                    i.GetStatusID(),
 		StatusName:                  i.GetStatusName(),
-		StatusCount:                 1,
+		StatusCount:                 2,
 		PeriodDate:                  i.GetTransactionDate(),
 		PeriodClosingID:             i.GetPeriodClosingID(),
 		TransacID:                   i.GetTransacID(),
@@ -114,7 +114,6 @@ func (i Management) GetTransacID() *string {
 	}
 	return nil
 }
-
 
 // GetEstablishmentMCC returns the establishment MCC of the transaction, if available
 func (i Management) GetEstablishmentMCC() *int64 {
@@ -262,5 +261,11 @@ func MergeManagement(interTransaction *Transaction, repoTransaction *Transaction
 	}
 	if repoTransaction.RevenueMDRValue == nil {
 		repoTransaction.RevenueMDRValue = interTransaction.RevenueMDRValue
+	}
+	// Calculate status
+	if repoTransaction.StatusCount == 1 {
+		repoTransaction.StatusCount = 0
+		*repoTransaction.StatusID = 2
+		*repoTransaction.StatusName = "Pronto" 
 	}
 }

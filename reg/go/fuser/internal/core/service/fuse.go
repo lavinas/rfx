@@ -88,7 +88,7 @@ func (s *FuseService) getIntercamTransactions(date time.Time) ([]*domain.Transac
 	}
 	transactions := []*domain.Transaction{}
 	for _, intercam := range intercams {
-		transactions = append(transactions, intercam.GetTransaction())
+		transactions = append(transactions, intercam.Translate())
 	}
 	return transactions, nil
 }
@@ -106,7 +106,7 @@ func (s *FuseService) getManagementTransactions(date time.Time) ([]*domain.Trans
 			s.Logger.Printf("Skipping management transaction with null key1 for date %s\n", date.Format("2006-01-02"))
 			continue
 		}
-		transactions = append(transactions, management.GetTransaction())
+		transactions = append(transactions, management.Translate())
 	}
 	return transactions, nil
 }
@@ -151,7 +151,7 @@ func (s *FuseService) mergeTransactions(transType string, transDate time.Time, l
 	for _, localTrans := range localTransactions {
 		if repoTrans, exists := repoMap[localTrans.Key1]; exists {
 			if transType == "intercam" {
-				domain.MergeIntercam(localTrans, repoTrans)
+				domain.MergeManagement(localTrans, repoTrans)
 			}
 			merged = append(merged, repoTrans)
 		} else {
