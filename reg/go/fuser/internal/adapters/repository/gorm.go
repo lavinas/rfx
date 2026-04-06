@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"time"
 	"fmt"
+	"time"
 
 	"fuser/internal/core/domain"
 
@@ -31,11 +31,9 @@ func NewGormRepository(dns string, ctx *context.Context) (*GormRepository, error
 // Connect establishes a connection to the database (placeholder for actual connection logic)
 func (a *GormRepository) Connect(dns string) error {
 	// Placeholder for actual connection logic, using GORM to connect to the database
-
 	gConfig := gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent), // Disables all SQL logging
 	}
-
 	sqlDB, err := gorm.Open(postgres.Open(dns), &gConfig)
 	if err != nil {
 		return err
@@ -123,3 +121,13 @@ func (a *GormRepository) InsertTransactions(transactions []*domain.Transaction) 
 		UpdateAll: true,
 	}).Create(&transactions).Error
 }
+
+func (a *GormRepository) DeleteTransactionsByDate(date time.Time) error {
+	start_date := date.Format("2006-01-02") + " 00:00:00"
+	end_date := date.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
+	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento >= ? AND dt_processamento < ?", start_date, end_date).Delete(&domain.Transaction{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+	

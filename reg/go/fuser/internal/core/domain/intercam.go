@@ -28,32 +28,9 @@ type Intercam struct {
 	ReconciliationStatusDate *time.Time `gorm:"column:reconciliation_status_date"`
 }
 
-// GetKey returns the key of the Intercam transaction, if available
-func (i Intercam) GetKey() string {
-	if i.Key1 != nil {
-		str := new(string)
-		*str = *i.Key1
-		return *str
-	}
-	return ""
-}
-
-// MergeTransactions merges two Intercam transactions into one, prioritizing non-nil values from the second transaction
-func MergeIntercam(interTransaction *Transaction, repoTransaction *Transaction) {
-	repoTransaction.BIN = interTransaction.BIN
-	repoTransaction.AuthorizationCode = interTransaction.AuthorizationCode
-	repoTransaction.TransactionNSU = interTransaction.TransactionNSU
-	repoTransaction.TransactionDate = interTransaction.TransactionDate
-	repoTransaction.TransactionAmount = interTransaction.TransactionAmount
-	repoTransaction.TransactionInstallments = interTransaction.TransactionInstallments
-	repoTransaction.TransactionBrand = interTransaction.TransactionBrand
-	repoTransaction.TransactionProduct = interTransaction.TransactionProduct
-	repoTransaction.TransactionCapture = interTransaction.TransactionCapture
-	repoTransaction.CostInterchangeValue = interTransaction.CostInterchangeValue
-	repoTransaction.HighSourcePriority = interTransaction.HighSourcePriority
-	repoTransaction.PeriodDate = interTransaction.PeriodDate
-	repoTransaction.PeriodClosingID = interTransaction.PeriodClosingID
-	repoTransaction.TransacID = interTransaction.TransacID
+// TableName specifies the table name for Intercam struct
+func (Intercam) TableName() string {
+	return "raw_data.intercambio_transaction"
 }
 
 // GetTransaction converts an Intercam instance to a Transaction instance
@@ -87,11 +64,6 @@ func (i Intercam) GetTransaction() *Transaction {
 		PeriodClosingID:             i.GetPeriodClosingID(),
 		TransacID:                   i.GetTransacID(),
 	}
-}
-
-// TableName specifies the table name for Intercam struct
-func (Intercam) TableName() string {
-	return "raw_data.intercambio_transaction"
 }
 
 // GetBIN returns the BIN of the transaction, if available
@@ -174,8 +146,8 @@ func (i Intercam) GetBrand() *string {
 // GetProduct returns the product of the transaction, if available
 func (i Intercam) GetProduct() *string {
 	mapping := map[string]string{
-		"CREDIT": "C",
-		"DEBIT":  "D",
+		"CREDIT": "CR",
+		"DEBIT":  "DB",
 	}
 	if i.TipoCartao != nil {
 		if product, exists := mapping[*i.TipoCartao]; exists {
@@ -251,3 +223,20 @@ func (i Intercam) GetTransacID() *string {
 	return nil
 }
 
+// MergeTransactions merges two Intercam transactions into one, prioritizing non-nil values from the second transaction
+func MergeIntercam(interTransaction *Transaction, repoTransaction *Transaction) {
+	repoTransaction.BIN = interTransaction.BIN
+	repoTransaction.AuthorizationCode = interTransaction.AuthorizationCode
+	repoTransaction.TransactionNSU = interTransaction.TransactionNSU
+	repoTransaction.TransactionDate = interTransaction.TransactionDate
+	repoTransaction.TransactionAmount = interTransaction.TransactionAmount
+	repoTransaction.TransactionInstallments = interTransaction.TransactionInstallments
+	repoTransaction.TransactionBrand = interTransaction.TransactionBrand
+	repoTransaction.TransactionProduct = interTransaction.TransactionProduct
+	repoTransaction.TransactionCapture = interTransaction.TransactionCapture
+	repoTransaction.CostInterchangeValue = interTransaction.CostInterchangeValue
+	repoTransaction.HighSourcePriority = interTransaction.HighSourcePriority
+	repoTransaction.PeriodDate = interTransaction.PeriodDate
+	repoTransaction.PeriodClosingID = interTransaction.PeriodClosingID
+	repoTransaction.TransacID = interTransaction.TransacID
+}
