@@ -1,4 +1,4 @@
-package repository
+package driven
 
 import (
 	"context"
@@ -97,15 +97,6 @@ func (a *GormRepository) GetIntercamTransactions(dt_transaction time.Time) ([]*d
 	return transactions, nil
 }
 
-// GetTransactionByKey retrieves a transaction by its key from the database
-func (a *GormRepository) GetTransactionByKey(key string) (*domain.Transaction, error) {
-	var transaction domain.Transaction
-	if err := a.DB.WithContext(*a.ctx).Where("key1 = ?", key).First(&transaction).Error; err != nil {
-		return nil, err
-	}
-	return &transaction, nil
-}
-
 // GetTransactionsByKey retrieves transactions by their keys from the database
 func (a *GormRepository) GetTransactionsByKey(keys []string) ([]*domain.Transaction, error) {
 	var transactions []*domain.Transaction
@@ -122,6 +113,7 @@ func (a *GormRepository) InsertTransactions(transactions []*domain.Transaction) 
 	}).Create(&transactions).Error
 }
 
+// DeleteTransactionsByDate deletes transactions from the database for a specific date
 func (a *GormRepository) DeleteTransactionsByDate(date time.Time) error {
 	start_date := date.Format("2006-01-02") + " 00:00:00"
 	end_date := date.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
@@ -130,4 +122,3 @@ func (a *GormRepository) DeleteTransactionsByDate(date time.Time) error {
 	}
 	return nil
 }
-	

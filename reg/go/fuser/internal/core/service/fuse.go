@@ -19,19 +19,22 @@ func NewFuseService(repository ports.Repository, logger ports.Logger) *FuseServi
 }
 
 // Run executes the main logic of the FuseService (placeholder for actual implementation)
-func (s *FuseService) Run(start_date time.Time, end_date time.Time) error {
+func (s *FuseService) Run(start_date time.Time, end_date time.Time, focus string) error {
 	s.Logger.Println("Running FuseService...")
 	// Process intercam
 	for date := start_date; !date.After(end_date); date = date.AddDate(0, 0, 1) {
 		s.Logger.Printf("Processing intercam for date: %s\n", date.Format("2006-01-02"))
-		// getting intercam transactions for the date
-		err := s.processIntercam(date)
-		if err != nil {
-			return err
+		if focus == "all" || focus == "intercam" {
+			err := s.processIntercam(date)
+			if err != nil {
+				return err
+			}
 		}
-		err = s.processManagement(date)
-		if err != nil {
-			return err
+		if focus == "all" || focus == "management" {
+			err := s.processManagement(date)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	s.Logger.Println("Finished processing transactions.")
@@ -121,21 +124,21 @@ func (s *FuseService) getTransactionsByKey(transType string, transDate time.Time
 		keys = append(keys, transaction.Key1)
 		count++
 		if count%2000 == 0 {
-			s.Logger.Printf("Fetching %s transactions by keys for %s date %s: %d/%d\n", transType, transType, transDate.Format("2006-01-02"), count, total)
 			repTrans, err := s.Repository.GetTransactionsByKey(keys)
 			if err != nil {
 				return nil, err
 			}
+			s.Logger.Printf("Fetched %d %s transactions by keys for %s date %s (%d/%d)\n", len(repTrans), transType, transType, transDate.Format("2006-01-02"), count, total)
 			repTransactions = append(repTransactions, repTrans...)
 			keys = []string{}
 		}
 	}
 	if len(keys) > 0 {
-		s.Logger.Printf("Fetching %s transactions by keys for %s date %s: %d/%d\n", transType, transType, transDate.Format("2006-01-02"), count, total)
 		repTrans, err := s.Repository.GetTransactionsByKey(keys)
 		if err != nil {
 			return nil, err
 		}
+		s.Logger.Printf("Fetched %d %s transactions by keys for %s date %s (%d/%d)\n", len(repTrans), transType, transType, transDate.Format("2006-01-02"), count, total)
 		repTransactions = append(repTransactions, repTrans...)
 	}
 	return repTransactions, nil
@@ -150,15 +153,20 @@ func (s *FuseService) mergeTransactions(transType string, transDate time.Time, l
 	}
 	for _, localTrans := range localTransactions {
 		if repoTrans, exists := repoMap[localTrans.Key1]; exists {
-			if transType == "intercam" {
+			switch transType {
+			case "intercam":
+				domain.MergeIntercam(localTrans, repoTrans)
+			case "management":
 				domain.MergeManagement(localTrans, repoTrans)
+			default:
+				s.Logger.Printf("Unknown transaction type: %s\n", transType)
 			}
 			merged = append(merged, repoTrans)
 		} else {
 			merged = append(merged, localTrans)
 		}
 	}
-	s.Logger.Printf("Merged %d %s transactions for date %s (local: %d, repository: %d)\n", len(merged), transType, transDate.Format("2006-01-02"), len(localTransactions), len(repositoryTransactions))
+	s.Logger.Printf("Merged %s transactions for date %s (local: %d, repository: %d, merged: %d)\n", transType, transDate.Format("2006-01-02"), len(localTransactions), len(repositoryTransactions), len(merged))
 	return merged
 }
 
@@ -175,7 +183,7 @@ func (s *FuseService) insertTransactions(transType string, transDate time.Time, 
 				s.Logger.Printf("Error inserting %s transactions for date %s: %v\n", transType, transDate.Format("2006-01-02"), err)
 				return err
 			}
-			s.Logger.Printf("Inserted %d/%d %s transactions for date %s\n", count, total, transType, transDate.Format("2006-01-02"))
+			s.Logger.Printf("Inserted %s transactions for date %s (%d/%d)\n", transType, transDate.Format("2006-01-02"), count, total)
 			lot = []*domain.Transaction{}
 		}
 	}
@@ -184,6 +192,7 @@ func (s *FuseService) insertTransactions(transType string, transDate time.Time, 
 			s.Logger.Printf("Error inserting %s transactions for date %s: %v\n", transType, transDate.Format("2006-01-02"), err)
 			return err
 		}
+		s.Logger.Printf("Inserted %s transactions for date %s (%d/%d)\n", transType, transDate.Format("2006-01-02"), count, total)
 	}
 	return nil
 }

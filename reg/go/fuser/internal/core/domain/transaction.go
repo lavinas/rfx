@@ -37,5 +37,5 @@ type Transaction struct {
 
 // TableName specifies the table name for Transaction struct
 func (Transaction) TableName() string {
-	return "transaction.transaction"
+	return "transaction_v2.transaction"
 }

@@ -30,7 +30,7 @@ type Intercam struct {
 
 // TableName specifies the table name for Intercam struct
 func (Intercam) TableName() string {
-	return "raw_data.intercambio_transaction"
+	return "raw_data_v2.intercambio_transaction"
 }
 
 // Translate converts an Intercam instance to a Transaction instance

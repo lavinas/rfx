@@ -29,7 +29,7 @@ type Management struct {
 
 // TableName specifies the table name for Management struct
 func (Management) TableName() string {
-	return "raw_data.management_transaction"
+	return "raw_data_v2.management_transaction"
 }
 
 // GetKey1 returns the key1 value of the transaction, if available
@@ -50,7 +50,7 @@ func (i Management) Translate() *Transaction {
 		EstablishmentCode:           i.GetEstablishmentCode(),
 		EstablishmentNature:         i.GetEstablishmentNature(),
 		EstablishmentMCC:            i.GetEstablishmentMCC(),
-		EstablishmentTerminalCode:   nil,
+		EstablishmentTerminalCode:   i.GetEstablishmentTerminalCode(),
 		BIN:                         nil,
 		AuthorizationCode:           nil,
 		TransactionNSU:              nil,
@@ -121,6 +121,15 @@ func (i Management) GetEstablishmentMCC() *int64 {
 		if mcc, err := strconv.ParseInt(*i.Mcc, 10, 64); err == nil {
 			return &mcc
 		}
+	}
+	return nil
+}
+
+// GetEEstablishmentTerminalCode returns the establishment terminal code of the transaction, if available
+func (i Management) GetEstablishmentTerminalCode() *int64 {
+	if i.FormaCaptura != nil {
+		terminalCode := int64(0) // Default value for terminal code
+		return &terminalCode
 	}
 	return nil
 }
@@ -217,8 +226,20 @@ func (i Management) GetHighPriority() *int64 {
 
 // MergeManagement merges two  transactions into one, prioritizing Intercam values over Management values when both are available
 func MergeManagement(interTransaction *Transaction, repoTransaction *Transaction) {
+	if repoTransaction.EstablishmentCode == nil {
+		repoTransaction.EstablishmentCode = interTransaction.EstablishmentCode
+	}
+	if repoTransaction.EstablishmentNature == nil {
+		repoTransaction.EstablishmentNature = interTransaction.EstablishmentNature
+	}
+	if repoTransaction.EstablishmentMCC == nil {
+		repoTransaction.EstablishmentMCC = interTransaction.EstablishmentMCC
+	}
+	if repoTransaction.EstablishmentTerminalCode == nil {
+		repoTransaction.EstablishmentTerminalCode = interTransaction.EstablishmentTerminalCode
+	}
 	if repoTransaction.BIN == nil {
-	repoTransaction.BIN = interTransaction.BIN
+		repoTransaction.BIN = interTransaction.BIN
 	}
 	if repoTransaction.AuthorizationCode == nil {
 		repoTransaction.AuthorizationCode = interTransaction.AuthorizationCode
