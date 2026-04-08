@@ -15,7 +15,7 @@ func main() {
 	// Initialize the logger
 	logger := driven.NewSimpleLogger()
 	// Load configuration
-	cfg, err := driven.LoadJsonConfig("config.json")
+	cfg, err := driven.LoadJsonConfig("fuser.json")
 	if err != nil {
 		logger.Println("Error loading configuration:", err)
 		os.Exit(1)
