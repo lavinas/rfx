@@ -22,8 +22,8 @@ func NewFlagDriver(service ports.Service) *FlagDriver {
 
 // Run executes the main logic of the FlagDriver by calling the Run method of the service
 func (d *FlagDriver) Run() error {
-	start_date := flag.String("start_date", "", "Start date for processing transactions (format: YYYY-MM-DD)")
-	end_date := flag.String("end_date", "", "End date for processing transactions (format: YYYY-MM-DD)")
+	start_date := flag.String("start", "", "Start date for processing transactions (format: YYYY-MM-DD)")
+	end_date := flag.String("end", "", "End date for processing transactions (format: YYYY-MM-DD)")
 	focus := flag.String("focus", "all", "Focus of the processing (options: all, transactions, accounts)")
 	
 	flag.Parse()

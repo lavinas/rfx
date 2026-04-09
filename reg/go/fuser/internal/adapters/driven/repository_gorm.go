@@ -89,8 +89,6 @@ func (a *GormRepository) GetIntercamTransactions(dt_transaction time.Time) ([]*d
 	fmt.Println("Fetching Intercam transactions for date:", dt_transaction.Format("2006-01-02"))
 	start_date := dt_transaction.Format("2006-01-02") + " 00:00:00"
 	end_date := dt_transaction.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
-	fmt.Printf("Querying Intercam transactions between %s and %s\n", start_date, end_date)
-
 	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento >= ? AND dt_processamento < ?", start_date, end_date).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
