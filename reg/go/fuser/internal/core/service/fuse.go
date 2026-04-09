@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"fuser/internal/core/domain"
-	"fuser/internal/ports"
+	"fuser/internal/core/ports"
 )
 
 // FuseService is the service layer that interacts with the repository to perform business logic

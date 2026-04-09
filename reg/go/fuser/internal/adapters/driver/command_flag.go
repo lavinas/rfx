@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"fuser/internal/ports"
+	"fuser/internal/core/ports"
 )
 
 // FlagDriver is a driver that implements the necessary interfaces to run the FuseService
