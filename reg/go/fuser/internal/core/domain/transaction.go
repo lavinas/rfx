@@ -7,8 +7,8 @@ import (
 // Transaction represents the data structure for transactions which will be used for fusing data between intercam, management and webservice
 type Transaction struct {
 	ID                          int64      `gorm:"column:id"`
-	CreatedAt                   time.Time  `gorm:"column:created_at"`
-	UpdatedAt                   time.Time  `gorm:"column:updated_at"`
+	CreatedAt                   time.Time  `gorm:"column:created_at;type:timestamp"`
+	UpdatedAt                   time.Time  `gorm:"column:updated_at;type:timestamp"`
 	Key1                        string     `gorm:"column:key1"`
 	EstablishmentCode           *int64     `gorm:"column:establishment_code"`
 	EstablishmentNature         *int64     `gorm:"column:establishment_nature"`
@@ -17,7 +17,7 @@ type Transaction struct {
 	BIN                         *int64     `gorm:"column:bin"`
 	AuthorizationCode           *string    `gorm:"column:authorization_code"`
 	TransactionNSU              *string    `gorm:"column:transaction_nsu"`
-	TransactionDate             *time.Time `gorm:"column:transaction_date"`
+	TransactionDate             *time.Time `gorm:"column:transaction_date;type:timestamp"`
 	TransactionAmount           *float64   `gorm:"column:transaction_amount"`
 	TransactionInstallments     *int64     `gorm:"column:transaction_installments"`
 	TransactionInstallmentsType *string    `gorm:"column:transaction_installments_type"`
@@ -30,7 +30,7 @@ type Transaction struct {
 	StatusID                    *int64     `gorm:"column:status_id"`
 	StatusName                  *string    `gorm:"column:status_name"`
 	StatusCount                 int64      `gorm:"column:status_count"`
-	PeriodDate                  *time.Time `gorm:"column:period_date"`
+	PeriodDate                  *time.Time `gorm:"column:period_date;type:timestamp"`
 	PeriodClosingID             *int64     `gorm:"column:period_closing_id"`
 	TransacID                   *string    `gorm:"column:transac_id"`
 }

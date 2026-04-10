@@ -1,6 +1,7 @@
 package driven
 
 import (
+	"fmt"
 	"encoding/json"
 	"os"
 )
@@ -12,12 +13,24 @@ type JsonConfig struct {
 
 // DBConfig represents the database configuration structure
 type JsonDBConfig struct {
-	DNS string `json:"dns"`
+	Host	 string `json:"host"`
+	Port	 int    `json:"port"`
+	User	 string `json:"user"`
+	Password string `json:"password"`
+	DBName   string `json:"dbname"`
+	SSLMode  string `json:"sslmode"`
+	TimeZone string `json:"timezone"`
 }
 
 // GetDNS returns the DNS string from the DBConfig struct
 func (v *JsonConfig) GetDNS() string {
-	return v.DB.DNS
+	dns := "postgresql://%s:%s@%s:%d/%s?sslmode=%s&TimeZone=%s"
+	return fmt.Sprintf(dns, v.DB.User, v.DB.Password, v.DB.Host, v.DB.Port, v.DB.DBName, v.DB.SSLMode, v.DB.TimeZone)
+}
+
+// GetDBTimeZone returns the TimeZone from the DBConfig struct
+func (v *JsonConfig) GetDBTimeZone() string {
+	return v.DB.TimeZone
 }
 
 // LoadJsonConfig reads the configuration from a JSON file and unmarshals it into a JsonConfig struct

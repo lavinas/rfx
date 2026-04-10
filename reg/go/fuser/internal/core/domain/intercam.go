@@ -10,7 +10,7 @@ type Intercam struct {
 	CdTransacaoFin           string     `gorm:"column:cd_transacao_fin"`
 	Key1                     *string    `gorm:"column:key1"`
 	FormaCaptura             *string    `gorm:"column:forma_captura"`
-	DtProcessamento          *time.Time `gorm:"column:dt_processamento"`
+	DtProcessamento          *time.Time `gorm:"column:dt_processamento;type:timestamp "`
 	ValorTransacoes          *float64   `gorm:"column:valor_transacoes"`
 	PercentualDesconto       *float64   `gorm:"column:percentual_desconto"`
 	TaxaIntercambioValor     *float64   `gorm:"column:taxa_intercambio_valor"`
@@ -21,11 +21,11 @@ type Intercam struct {
 	Bin                      *string    `gorm:"column:bin"`
 	TransactionNsu           *string    `gorm:"column:transaction_nsu"`
 	AuthorizationCode        *string    `gorm:"column:authorization_code"`
-	DtInserter               *time.Time `gorm:"column:dt_inserter"`
+	DtInserter               *time.Time `gorm:"column:dt_inserter;type:timestamp"`
 	TransactionalStatusID    *int64     `gorm:"column:transactional_status_id"`
-	TransactionalStatusDate  *time.Time `gorm:"column:transactional_status_date"`
+	TransactionalStatusDate  *time.Time `gorm:"column:transactional_status_date;type:timestamp"`
 	ReconciliationStatusID   *int64     `gorm:"column:reconciliation_status_id"`
-	ReconciliationStatusDate *time.Time `gorm:"column:reconciliation_status_date"`
+	ReconciliationStatusDate *time.Time `gorm:"column:reconciliation_status_date;type:timestamp"`
 }
 
 // TableName specifies the table name for Intercam struct
@@ -39,7 +39,7 @@ func (i Intercam) Translate() *Transaction {
 		ID:                          0, // ID will be set by the database upon insertion
 		CreatedAt:                   time.Now(),
 		UpdatedAt:                   time.Now(),
-		Key1:                        *i.Key1,
+		Key1:                        i.GetKey1(),
 		EstablishmentCode:           nil, // This field is not present in Intercam, set to nil or default value
 		EstablishmentNature:         nil, // This field is not present in Intercam, set to nil or default value
 		EstablishmentMCC:            nil, // This field is not present in Intercam, set to nil or default value
@@ -64,6 +64,15 @@ func (i Intercam) Translate() *Transaction {
 		PeriodClosingID:             i.GetPeriodClosingID(),
 		TransacID:                   i.GetTransacID(),
 	}
+}
+
+// GetKey1 returns the key1 value of the transaction, if available
+func (i Intercam) GetKey1() string {
+	if i.Key1 == nil || *i.Key1 == "" {
+		i.Key1 = new(string)
+		*i.Key1 = "IC_" + strconv.FormatInt(time.Now().UnixNano(), 10)
+	}
+	return *i.Key1
 }
 
 // GetBIN returns the BIN of the transaction, if available
@@ -197,13 +206,13 @@ func (i Intercam) GetHighPriority() *int64 {
 
 // GetStatusID returns the status ID of the transaction, if available
 func (i Intercam) GetStatusID() *int64 {
-	statusID := int64(1) // Default value for status ID
+	statusID := int64(0) // Default value for status ID
 	return &statusID
 }
 
 // GetStatusName returns the status name of the transaction, if available
 func (i Intercam) GetStatusName() *string {
-	statusName := "Pendente" // Default value for status name
+	statusName := "Intercam" // Default value for status name
 	return &statusName
 }
 
@@ -240,7 +249,7 @@ func MergeIntercam(interTransaction *Transaction, repoTransaction *Transaction) 
 	repoTransaction.PeriodClosingID = interTransaction.PeriodClosingID
 	repoTransaction.TransacID = interTransaction.TransacID
 	// Calculate status
-	if repoTransaction.StatusCount == 2 {
+	if *repoTransaction.StatusID == 1 {
 		repoTransaction.StatusCount = 0
 		*repoTransaction.StatusID = 2
 		*repoTransaction.StatusName = "Pronto"

@@ -9,7 +9,7 @@ import (
 type Management struct {
 	CdTransacaoFin           string     `gorm:"column:cd_transacao_fin"`
 	Key1                     *string    `gorm:"column:key1"`
-	DtProcessamento          *time.Time `gorm:"column:dt_processamento"`
+	DtProcessamento          *time.Time `gorm:"column:dt_processamento;type:timestamp"`
 	ValorTransacao           *float64   `gorm:"column:valor_transacao"`
 	Bandeira                 *string    `gorm:"column:bandeira"`
 	CdPessoaEstabelecimento  *int64     `gorm:"column:cd_pessoa_estabelecimento"`
@@ -20,24 +20,16 @@ type Management struct {
 	DescontoValor            *float64   `gorm:"column:desconto_valor"`
 	PercentualDesconto       *float64   `gorm:"column:percentual_desconto"`
 	TransacId                *string    `gorm:"column:transac_id"`
-	DtInserter               *time.Time `gorm:"column:dt_inserter"`
+	DtInserter               *time.Time `gorm:"column:dt_inserter;type:timestamp"`
 	TransactionalStatusID    *int64     `gorm:"column:transactional_status_id"`
-	TransactionalStatusDate  *time.Time `gorm:"column:transactional_status_date"`
+	TransactionalStatusDate  *time.Time `gorm:"column:transactional_status_date;type:timestamp"`
 	ReconciliationStatusID   *int64     `gorm:"column:reconciliation_status_id"`
-	ReconciliationStatusDate *time.Time `gorm:"column:reconciliation_status_date"`
+	ReconciliationStatusDate *time.Time `gorm:"column:reconciliation_status_date;type:timestamp"`
 }
 
 // TableName specifies the table name for Management struct
 func (Management) TableName() string {
 	return "raw_data_v2.management_transaction"
-}
-
-// GetKey1 returns the key1 value of the transaction, if available
-func (i Management) GetKey1() *string {
-	if i.Key1 != nil && *i.Key1 != "" {
-		return i.Key1
-	}
-	return nil
 }
 
 // Translate converts a Management instance to a Transaction instance
@@ -46,7 +38,7 @@ func (i Management) Translate() *Transaction {
 		ID:                          0, // ID will be set by the database upon insertion
 		CreatedAt:                   time.Now(),
 		UpdatedAt:                   time.Now(),
-		Key1:                        *i.Key1,
+		Key1:                        i.GetKey1(),
 		EstablishmentCode:           i.GetEstablishmentCode(),
 		EstablishmentNature:         i.GetEstablishmentNature(),
 		EstablishmentMCC:            i.GetEstablishmentMCC(),
@@ -66,11 +58,20 @@ func (i Management) Translate() *Transaction {
 		HighSourcePriority:          i.GetHighPriority(),
 		StatusID:                    i.GetStatusID(),
 		StatusName:                  i.GetStatusName(),
-		StatusCount:                 2,
+		StatusCount:                 1,
 		PeriodDate:                  i.GetTransactionDate(),
 		PeriodClosingID:             i.GetPeriodClosingID(),
 		TransacID:                   i.GetTransacID(),
 	}
+}
+
+// GetKey1 returns the key1 value of the transaction, if available
+func (i Management) GetKey1() string {
+	if i.Key1 == nil || *i.Key1 == "" {
+		i.Key1 = new(string)
+		*i.Key1 = "MG_" + strconv.FormatInt(time.Now().UnixNano(), 10)
+	}
+	return *i.Key1
 }
 
 // GetEstablishmentCode returns the establishment code of the transaction, if available
@@ -95,7 +96,7 @@ func (i Management) GetStatusID() *int64 {
 
 // GetStatusName returns the status name of the transaction, if available
 func (i Management) GetStatusName() *string {
-	statusName := "Pendente" // Default value for status name
+	statusName := "Management" // Default value for status name
 	return &statusName
 }
 
@@ -284,7 +285,7 @@ func MergeManagement(interTransaction *Transaction, repoTransaction *Transaction
 		repoTransaction.RevenueMDRValue = interTransaction.RevenueMDRValue
 	}
 	// Calculate status
-	if repoTransaction.StatusCount == 1 {
+	if *repoTransaction.StatusID == 0 {
 		repoTransaction.StatusCount = 0
 		*repoTransaction.StatusID = 2
 		*repoTransaction.StatusName = "Pronto" 

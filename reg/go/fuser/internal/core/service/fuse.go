@@ -105,10 +105,6 @@ func (s *FuseService) getManagementTransactions(date time.Time) ([]*domain.Trans
 	}
 	transactions := []*domain.Transaction{}
 	for _, management := range managements {
-		if management.GetKey1() == nil {
-			s.Logger.Printf("Skipping management transaction with null key1 for date %s\n", date.Format("2006-01-02"))
-			continue
-		}
 		transactions = append(transactions, management.Translate())
 	}
 	return transactions, nil

@@ -2,7 +2,6 @@ package driven
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"fuser/internal/core/domain"
@@ -72,21 +71,10 @@ func (a *GormRepository) GetManagementTransactions(dt_transaction time.Time) ([]
 	return transactions, nil
 }
 
-// GetWebserviceTransactions retrieves Webservice transactions from the database
-func (a *GormRepository) GetWebserviceTransactions(dt_transaction time.Time, page int) ([]*domain.Webservice, error) {
-	var transactions []*domain.Webservice
-	start_date := dt_transaction.Format("2006-01-02") + " 00:00:00"
-	end_date := dt_transaction.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
-	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento >= ? AND dt_processamento < ?", start_date, end_date).Find(&transactions).Error; err != nil {
-		return nil, err
-	}
-	return transactions, nil
-}
 
 // GetIntercamTransactions retrieves Intercam transactions from the database
 func (a *GormRepository) GetIntercamTransactions(dt_transaction time.Time) ([]*domain.Intercam, error) {
 	var transactions []*domain.Intercam
-	fmt.Println("Fetching Intercam transactions for date:", dt_transaction.Format("2006-01-02"))
 	start_date := dt_transaction.Format("2006-01-02") + " 00:00:00"
 	end_date := dt_transaction.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
 	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento >= ? AND dt_processamento < ?", start_date, end_date).Find(&transactions).Error; err != nil {
