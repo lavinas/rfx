@@ -60,6 +60,7 @@ func MergeManagement(interTransaction *Transaction, repoTransaction *Transaction
 	if repoTransaction.RevenueMDRValue == nil {
 		repoTransaction.RevenueMDRValue = interTransaction.RevenueMDRValue
 	}
+	
 	// Update secondary date
 	repoTransaction.TransactionSecondaryDate = interTransaction.TransactionDate
 	

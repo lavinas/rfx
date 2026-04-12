@@ -71,7 +71,7 @@ func (i Management) Translate() *Transaction {
 func (i Management) GetKey1() string {
 	if i.Key1 == nil || *i.Key1 == "" {
 		i.Key1 = new(string)
-		*i.Key1 = "MG_" + strconv.FormatInt(time.Now().UnixNano(), 10)
+		*i.Key1 = "MG_" + i.CdTransacaoFin
 	}
 	return *i.Key1
 }

@@ -41,6 +41,7 @@ func (s *FuseService) Run(start_date time.Time, end_date time.Time, focus string
 	return nil
 }
 
+
 // getIntercam is a helper method to fetch Intercam transactions for a specific date
 func (s *FuseService) processIntercam(date time.Time) error {
 	s.Logger.Printf("Processing Intercam transactions for date %s\n", date.Format("2006-01-02"))
@@ -53,6 +54,8 @@ func (s *FuseService) processIntercam(date time.Time) error {
 		return err
 	}
 	merged := s.mergeTransactions("intercam", date, transactions, byKey)
+	merged = s.filterDuplicates(merged)
+
 	err = s.insertTransactions("intercam", date, merged)
 	if err != nil {
 		return err
@@ -73,6 +76,8 @@ func (s *FuseService) processManagement(date time.Time) error {
 		return err
 	}
 	merged := s.mergeTransactions("management", date, transactions, byKey)
+	merged = s.filterDuplicates(merged)
+
 	err = s.insertTransactions("management", date, merged)
 	if err != nil {
 		return err
@@ -80,7 +85,6 @@ func (s *FuseService) processManagement(date time.Time) error {
 	s.Logger.Printf("Finished processing Management transactions for date %s\n", date.Format("2006-01-02"))
 	return nil
 }
-
 
 // getIntercamTransactions is a helper method to fetch Intercam transactions for a specific date
 func (s *FuseService) getIntercamTransactions(date time.Time) ([]*domain.Transaction, error) {
@@ -194,4 +198,20 @@ func (s *FuseService) insertTransactions(transType string, transDate time.Time, 
 	return nil
 }
 
-
+// filterDuplicates is a helper method to filter out duplicate transactions based on their keys
+func (s *FuseService) filterDuplicates(transactions []*domain.Transaction) []*domain.Transaction {
+	s.Logger.Printf("Filtering duplicates from %d transactions\n", len(transactions))
+	unique := make(map[string]*domain.Transaction)
+	for _, transaction := range transactions {
+		if _, exists := unique[transaction.Key1]; exists {
+			s.Logger.Printf("Duplicate transaction found with key: %s\n", transaction.Key1)
+		}
+		unique[transaction.Key1] = transaction
+	}
+	result := []*domain.Transaction{}
+	for _, transaction := range unique {
+		result = append(result, transaction)
+	}
+	s.Logger.Printf("Filtered duplicates, resulting in %d unique transactions\n", len(result))
+	return result
+}
