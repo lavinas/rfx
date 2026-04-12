@@ -99,13 +99,3 @@ func (a *GormRepository) InsertTransactions(transactions []*domain.Transaction) 
 		UpdateAll: true,
 	}).Create(&transactions).Error
 }
-
-// DeleteTransactionsByDate deletes transactions from the database for a specific date
-func (a *GormRepository) DeleteTransactionsByDate(date time.Time) error {
-	start_date := date.Format("2006-01-02") + " 00:00:00"
-	end_date := date.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
-	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento >= ? AND dt_processamento < ?", start_date, end_date).Delete(&domain.Transaction{}).Error; err != nil {
-		return err
-	}
-	return nil
-}
