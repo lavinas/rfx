@@ -172,6 +172,7 @@ func (s *FuseService) insertTransactions(transType string, transDate time.Time, 
 	total := len(transactions)
 	lot := []*domain.Transaction{}
 	for _, transaction := range transactions {
+		transaction.PrepareForInsert()
 		lot = append(lot, transaction)
 		count++
 		if count%2000 == 0 {
@@ -192,3 +193,5 @@ func (s *FuseService) insertTransactions(transType string, transDate time.Time, 
 	}
 	return nil
 }
+
+
