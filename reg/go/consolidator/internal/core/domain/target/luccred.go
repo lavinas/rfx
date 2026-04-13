@@ -23,6 +23,6 @@ type Luccred struct {
 }
 
 // TableName returns the name of the database table for the Luccred model.
-func (Luccred) TableName() string {
+func (i *Luccred) TableName() string {
 	return "cadoc_6334_v2.luccred"
 }

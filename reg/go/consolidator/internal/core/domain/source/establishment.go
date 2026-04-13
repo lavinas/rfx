@@ -40,3 +40,85 @@ type Establishment struct {
 func (Establishment) TableName() string {
 	return "raw_date_v2.establishments"
 }
+
+// GetFederationUnit returns the federation unit of the establishment.
+func (e *Establishment) GetFederationUnit() string {
+	if e.FederationUnit != nil {
+		return *e.FederationUnit
+	}
+	return ""
+}
+
+// GetManualCaptureQuantity returns 1 if the establishment has manual capture, otherwise returns 0.
+func (e *Establishment) GetManualCaptureQuantity() int64 {
+	if e.HasManualCapture {
+		return 1
+	}
+	return 0
+}
+
+// GetEletronicCaptureQuantity returns 1 if the establishment has eletronic capture, otherwise returns 0.
+func (e *Establishment) GetEletronicCaptureQuantity() int64 {
+	if e.HasEletronicCapture {
+		return 1
+	}
+	return 0
+}
+
+// GetRemoteCaptureQuantity returns 1 if the establishment has remote capture, otherwise returns 0.
+func (e *Establishment) GetRemoteCaptureQuantity() int64 {
+	if e.HasRemoteCapture {
+		return 1
+	}
+	return 0
+}
+
+// GetFunctionCode returns the function code of the establishment based on its capture capabilities.
+func (e *Establishment) GetFunctionCodes() []string {
+	var functions []string
+	if e.HasCredit {
+		functions = append(functions, "D")
+	}
+	if e.HasDebit {
+		functions = append(functions, "C")
+	}
+	return functions
+}
+
+// GetBrandCodes returns the brand code of the establishment based on its card acceptance capabilities.
+func (e *Establishment) GetBrandCodes() []int {
+	var brands []int
+	if e.HasVisa {
+		brands = append(brands, 1)
+	}
+	if e.HasMastercard {
+		brands = append(brands, 2)
+	}
+	if e.HasElo {
+		brands = append(brands, 8)
+	}
+	return brands
+}
+
+// IsAccredited returns true if the establishment is accredited, otherwise returns false.
+func (e *Establishment) IsAccredited(year int, quarter int) int {
+	lastDayOfQuarter := time.Date(year, time.Month(quarter*3), 1, 0, 0, 0, 0, time.UTC).AddDate(0, 1, -1)
+	if e.AccreditationDate != nil && e.AccreditationDate.Before(lastDayOfQuarter) {
+		return 1
+	}
+	return 0
+}
+
+// IsActive returns true if the establishment is active, otherwise returns false.
+func (e *Establishment) IsActive(year int, quarter int) int {
+	if e.IsAccredited(year, quarter) == 0 {
+		return 0
+	}
+	lastDayOfQuarter := time.Date(year, time.Month(quarter*3), 1, 0, 0, 0, 0, time.UTC).AddDate(0, 1, -1)
+	backLimitDate := lastDayOfQuarter.AddDate(0, 0, -180)
+	if e.AccreditationDate != nil && e.AccreditationDate.After(backLimitDate) {
+		return 1
+	}
+	return 0
+}
+
