@@ -3,6 +3,9 @@ package driven
 import (
 	// "fmt"
 	"context"
+	"time"
+
+	"consolidator/internal/core/domain/source"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -57,3 +60,14 @@ func (a *GormRepository) Ping() error {
 	return db.PingContext(*a.ctx)
 }
 
+// GetTransactionsByDate retrieves transactions from the database for a specific date
+func (a *GormRepository) GetTransactionsByDate(date time.Time) ([]*source_domain.Transaction, error) {
+	var transactions []*source_domain.Transaction
+	start_date := date.Format("2006-01-02") + " 00:00:00"
+	end_date := date.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
+
+	if err := a.DB.Where("transaction_date >= ? AND transaction_date < ?", start_date, end_date).Find(&transactions).Error; err != nil {
+		return nil, err
+	}
+	return transactions, nil
+}

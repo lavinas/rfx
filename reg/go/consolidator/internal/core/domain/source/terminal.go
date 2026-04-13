@@ -1,5 +1,4 @@
-package domain
-
+package source_domain
 
 // Terminal represents the terminal data for a specific year, quarter, and establishment.
 type Terminal struct {

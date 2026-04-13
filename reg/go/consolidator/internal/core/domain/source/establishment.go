@@ -1,4 +1,4 @@
-package domain
+package source_domain
 
 import (
 	"time"
