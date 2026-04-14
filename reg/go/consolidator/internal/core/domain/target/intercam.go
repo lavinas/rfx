@@ -43,7 +43,7 @@ func (i *Intercam) GetFromTransaction(transaction *source_domain.Transaction) *I
 		CaptureMode:         transaction.GetCaptureModeCode(),
 		Installments:        transaction.GetInstallments(),
 		SegmentCode:         transaction.GetSegmentCode(),
-		InterchangeFee:      transaction.GetInterchangeFee(),
+		InterchangeFee:      transaction.GetInterchangeFeeRate(),
 		TransactionAmount:   transaction.GetTransactionAmount(),
 		TransactionQuantity: 1,
 	}

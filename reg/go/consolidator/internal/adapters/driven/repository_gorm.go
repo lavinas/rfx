@@ -97,3 +97,54 @@ func (a *GormRepository) DeleteDesconto(year int, quarter int) error {
 	}
 	return nil
 }
+
+// SaveRanking saves the consolidated Ranking data to the database
+func (a *GormRepository) SaveRanking(ranking []*target_domain.Ranking) error {
+	// Placeholder for actual save logic, using GORM to save the consolidated Ranking data to the database
+	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&ranking).Error
+}
+
+// DeleteRanking deletes existing consolidated Ranking data from the database for a specific date
+func (a *GormRepository) DeleteRanking(year int, quarter int) error {
+	// delete all records of ranking for the specified year and quarter
+	if err := a.DB.Where("year = ? AND quarter = ?", year, quarter).Delete(&target_domain.Ranking{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// SaveIntercam saves the consolidated Intercam data to the database
+func (a *GormRepository) SaveIntercam(intercam []*target_domain.Intercam) error {
+	// Placeholder for actual save logic, using GORM to save the consolidated Intercam data to the database
+	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&intercam).Error
+}
+
+// DeleteIntercam deletes existing consolidated Intercam data from the database for a specific date
+func (a *GormRepository) DeleteIntercam(year int, quarter int) error {
+	// delete all records of intercam for the specified year and quarter
+	if err := a.DB.Where("year = ? AND quarter = ?", year, quarter).Delete(&target_domain.Intercam{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// SaveConcCred saves the consolidated ConcCred data to the database
+func (a *GormRepository) SaveConcCred(conccred []*target_domain.ConcCred) error {
+	// Placeholder for actual save logic, using GORM to save the consolidated ConcCred data to the database
+	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&conccred).Error
+}
+
+// DeleteConcCred deletes existing consolidated ConcCred data from the database for a specific date
+func (a *GormRepository) DeleteConcCred(year int, quarter int) error {
+	// delete all records of conccred for the specified year and quarter
+	if err := a.DB.Where("year = ? AND quarter = ?", year, quarter).Delete(&target_domain.ConcCred{}).Error; err != nil {
+		return err
+	}
+	return nil
+}

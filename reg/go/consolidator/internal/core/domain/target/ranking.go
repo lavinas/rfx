@@ -43,7 +43,7 @@ func (i *Ranking) GetFromTransaction(transaction *source_domain.Transaction) *Ra
 		SegmentCode:         transaction.GetSegmentCode(),
 		TransactionAmount:   transaction.GetTransactionAmount(),
 		TransactionQuantity: 1,
-		AvgMccFee:           transaction.GetRevenueMDRValue(),
+		AvgMccFee:           transaction.GetRevenueMDRValueRate(),
 	}
 }
 

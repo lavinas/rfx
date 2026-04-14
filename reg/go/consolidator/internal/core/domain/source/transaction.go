@@ -131,17 +131,17 @@ func (t *Transaction) GetTransactionAmount() float64 {
 }
 
 // GetInterchangeFee returns the interchange fee of the transaction based on the CostInterchangeValue field.
-func (t *Transaction) GetInterchangeFee() float64 {
-	if t.CostInterchangeValue != nil {
-		return *t.CostInterchangeValue
+func (t *Transaction) GetInterchangeFeeRate() float64 {
+	if t.CostInterchangeValue != nil && t.TransactionAmount != nil &&  *t.TransactionAmount != 0 {
+		return *t.CostInterchangeValue / *t.TransactionAmount * 100
 	}
 	return 0
 }
 
-// GetRevenueMDRValue returns the revenue MDR value of the transaction based on the RevenueMDRValue field.
-func (t *Transaction) GetRevenueMDRValue() float64 {
-	if t.RevenueMDRValue != nil {
-		return *t.RevenueMDRValue
+// GetRevenueMDRValueRate returns the revenue MDR value rate of the transaction based on the RevenueMDRValue field.
+func (t *Transaction) GetRevenueMDRValueRate() float64 {
+	if t.RevenueMDRValue != nil && t.TransactionAmount != nil && *t.TransactionAmount != 0 {
+		return *t.RevenueMDRValue / *t.TransactionAmount * 100
 	}
 	return 0
 }
