@@ -1,8 +1,8 @@
 package target_domain
 
 import (
-	"time"
 	"fmt"
+	"time"
 
 	source_domain "consolidator/internal/core/domain/source"
 )
@@ -66,17 +66,17 @@ func (i *ConcCred) GetFromEstablishment(year int, quarter int, establishment *so
 	var concCreds []*ConcCred
 	for _, functions := range establishment.GetFunctionCodes() {
 		for _, brands := range establishment.GetBrandCodes() {
-				concCred := &ConcCred{
-					Year:                           year,
-					Quarter:                        quarter,
-					Brand:                          brands,
-					Function:                       functions,
-					NumberAccreditedEstablishments: int64(establishment.IsAccredited(year, quarter)),
-					NumberActiveEstablishments:     int64(establishment.IsActive(year, quarter)),
-					TransactionAmount:              0, // This would require additional logic to determine the transaction amount for the establishment
-					TransactionQuantity:            0, // This would require additional logic to determine the transaction quantity for the establishment
-				}
-				concCreds = append(concCreds, concCred)
+			concCred := &ConcCred{
+				Year:                           year,
+				Quarter:                        quarter,
+				Brand:                          brands,
+				Function:                       functions,
+				NumberAccreditedEstablishments: int64(establishment.IsAccredited(year, quarter)),
+				NumberActiveEstablishments:     int64(establishment.IsActive(year, quarter)),
+				TransactionAmount:              0, // This would require additional logic to determine the transaction amount for the establishment
+				TransactionQuantity:            0, // This would require additional logic to determine the transaction quantity for the establishment
+			}
+			concCreds = append(concCreds, concCred)
 		}
 	}
 	return concCreds
@@ -86,7 +86,7 @@ func (i *ConcCred) GetFromEstablishment(year int, quarter int, establishment *so
 func (i *ConcCred) AddEstablishments(establishments []*source_domain.Establishment, items map[string]*ConcCred) {
 	for _, e := range establishments {
 		concCreds := i.GetFromEstablishment(i.Year, i.Quarter, e)
-		for _, concCred := range concCreds {		
+		for _, concCred := range concCreds {
 			key := concCred.GetKey()
 			if existing, exists := items[key]; exists {
 				existing.NumberAccreditedEstablishments += concCred.NumberAccreditedEstablishments
@@ -98,4 +98,3 @@ func (i *ConcCred) AddEstablishments(establishments []*source_domain.Establishme
 		}
 	}
 }
-

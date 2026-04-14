@@ -1,11 +1,10 @@
 package target_domain
 
 import (
-	"time"
 	"fmt"
+	"time"
 
 	source_domain "consolidator/internal/core/domain/source"
-
 )
 
 // Infresta represents the data structure for infresta which will be used for fusing data between intercam, management and webservice

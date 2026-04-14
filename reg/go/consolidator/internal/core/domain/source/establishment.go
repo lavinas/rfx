@@ -121,4 +121,3 @@ func (e *Establishment) IsActive(year int, quarter int) int {
 	}
 	return 0
 }
-

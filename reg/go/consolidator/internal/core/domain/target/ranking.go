@@ -1,8 +1,8 @@
 package target_domain
 
 import (
-	"time"
 	"fmt"
+	"time"
 
 	source_domain "consolidator/internal/core/domain/source"
 )

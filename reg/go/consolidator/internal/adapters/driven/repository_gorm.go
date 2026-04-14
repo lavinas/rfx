@@ -3,9 +3,11 @@ package driven
 import (
 	// "fmt"
 	"context"
+	"fmt"
 	"time"
 
 	"consolidator/internal/core/domain/source"
+	"consolidator/internal/core/ports"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -19,8 +21,13 @@ type GormRepository struct {
 }
 
 // NewGormRepository creates a new instance of GormRepository
-func NewGormRepository(dns string, ctx *context.Context) (*GormRepository, error) {
+func NewGormRepository(config ports.Config, ctx *context.Context) (*GormRepository, error) {
 	rep := &GormRepository{DB: nil, ctx: ctx}
+	var host, user, password, dbname, sslmode, timezone string
+	var port, connect_timeout int
+	config.GetDBData(&host, &port, &user, &password, &dbname, &sslmode, &timezone, &connect_timeout)
+	dns := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s TimeZone=%s connect_timeout=%d", host, port, user, password, dbname, sslmode, timezone, connect_timeout)
+
 	if err := rep.Connect(dns); err != nil {
 		return nil, err
 	}
@@ -66,7 +73,7 @@ func (a *GormRepository) GetTransactionsByDate(date time.Time) ([]*source_domain
 	start_date := date.Format("2006-01-02") + " 00:00:00"
 	end_date := date.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
 
-	if err := a.DB.Where("transaction_date >= ? AND transaction_date < ?", start_date, end_date).Find(&transactions).Error; err != nil {
+	if err := a.DB.Where("period_date >= ? AND period_date < ? and status_id = 2", start_date, end_date).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 	return transactions, nil
