@@ -4,4 +4,5 @@ package ports
 type Logger interface {
 	Println(v ...interface{})
 	Printf(format string, v ...interface{})
+	IPrintf(tabs int, format string, v ...interface{})
 }
