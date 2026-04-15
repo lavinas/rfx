@@ -30,11 +30,11 @@ func (d *FlagDriver) Run() error {
 
 	sd, err := time.Parse("2006-01-02", *start_date)
 	if err != nil {
-		return fmt.Errorf("invalid command: use fuser -start_date=yyyy-mm-dd -end_date=yyyy-mm-dd")
+		return fmt.Errorf("invalid command: use fuser -start=yyyy-mm-dd -end=yyyy-mm-dd")
 	}
 	ed, err := time.Parse("2006-01-02", *end_date)
 	if err != nil {
-		return fmt.Errorf("invalid command: use fuser -start_date=yyyy-mm-dd -end_date=yyyy-mm-dd")
+		return fmt.Errorf("invalid command: use fuser -start=yyyy-mm-dd -end=yyyy-mm-dd")
 	}
 	if *focus != "all" && *focus != "intercam" && *focus != "management" {
 		return fmt.Errorf("invalid focus: use fuser -focus=all|intercam|management")
