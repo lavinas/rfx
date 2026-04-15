@@ -20,5 +20,3 @@ func (s *SimpleLogger) IPrintf(tabs int, format string, v ...interface{}) {
 	format = strings.Repeat("\t", tabs) + format
 	s.Printf(format, v...)
 }
-
-

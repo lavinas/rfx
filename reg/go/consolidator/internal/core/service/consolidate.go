@@ -3,8 +3,8 @@ package service
 import (
 	"time"
 
-	"consolidator/internal/core/ports"
 	domain_target "consolidator/internal/core/domain/target"
+	"consolidator/internal/core/ports"
 )
 
 // ConsolidateService is responsible for consolidating data from various sources and storing it in the target database.
@@ -26,9 +26,9 @@ func NewConsolidateService(repository ports.Repository, logger ports.Logger, con
 func (s *ConsolidateService) Run(year int, quarter int, delete bool, start *time.Time, end *time.Time) error {
 	// Log the start of the consolidation process
 	s.Logger.IPrintf(0, "Starting consolidation process for year: %d, quarter: %d\n", year, quarter)
-	
+
 	// Calculate the start and end dates for the specified quarter
-	start_date, end_date := s.getQuarterDates(year, quarter, start, end)
+	start_date, end_date := s.getDates(year, quarter, start, end)
 
 	// Delete existing consolidated data if the delete flag is set
 	if err := s.deleteAll(year, quarter, delete); err != nil {
@@ -59,7 +59,6 @@ func (s *ConsolidateService) Run(year int, quarter int, delete bool, start *time
 	return nil
 }
 
-
 // deleteAll deletes existing consolidated data from the database for the specified year and quarter
 func (s *ConsolidateService) deleteAll(year int, quarter int, delete bool) error {
 	// if delete flag is false, skip deletion and log it
@@ -78,7 +77,7 @@ func (s *ConsolidateService) deleteAll(year int, quarter int, delete bool) error
 	// delete ranking
 	if err := s.Repository.DeleteRanking(year, quarter); err != nil {
 		s.Logger.IPrintf(2, "Error deleting Ranking data: %v\n", err)
-		return err	
+		return err
 	}
 
 	// delete intercam
@@ -90,7 +89,7 @@ func (s *ConsolidateService) deleteAll(year int, quarter int, delete bool) error
 	// delete conccred
 	if err := s.Repository.DeleteConcCred(year, quarter); err != nil {
 		s.Logger.IPrintf(2, "Error deleting ConcCred data: %v\n", err)
-		return err	
+		return err
 	}
 	s.Logger.IPrintf(1, "Deleted existing consolidated data  for year: %d, quarter: %d\n", year, quarter)
 
@@ -98,7 +97,8 @@ func (s *ConsolidateService) deleteAll(year int, quarter int, delete bool) error
 }
 
 // processDate processes transactions for a specific date and updates the consolidated data maps
-func (s *ConsolidateService) processDate(date time.Time, descontoMap map[string]*domain_target.Desconto, rankingMap map[string]*domain_target.Ranking, intercamMap map[string]*domain_target.Intercam, conccredMap map[string]*domain_target.ConcCred) error {
+func (s *ConsolidateService) processDate(date time.Time, descontoMap map[string]*domain_target.Desconto, rankingMap map[string]*domain_target.Ranking,
+	intercamMap map[string]*domain_target.Intercam, conccredMap map[string]*domain_target.ConcCred) error {
 	s.Logger.IPrintf(1, "Processing for date: %s\n", date.Format("2006-01-02"))
 
 	// Fetch transactions for the date
@@ -108,13 +108,13 @@ func (s *ConsolidateService) processDate(date time.Time, descontoMap map[string]
 		return err
 	}
 	s.Logger.IPrintf(2, "Got %d transactions for date: %s\n", len(transactions), date.Format("2006-01-02"))
-	
+
 	// Process transactions and consolidate data
 	var desconto domain_target.Desconto
 	var ranking domain_target.Ranking
 	var intercam domain_target.Intercam
 	var conccred domain_target.ConcCred
-	
+
 	// Add transactions to the respective consolidated data maps
 	desconto.AddTransactions(transactions, descontoMap)
 	s.Logger.IPrintf(2, "Consolidated Desconto for date: %s\n", date.Format("2006-01-02"))
@@ -129,9 +129,10 @@ func (s *ConsolidateService) processDate(date time.Time, descontoMap map[string]
 }
 
 // saveAll saves all the consolidated data to the database
-func (s *ConsolidateService) saveAll(descontoMap map[string]*domain_target.Desconto, rankingMap map[string]*domain_target.Ranking, intercamMap map[string]*domain_target.Intercam, conccredMap map[string]*domain_target.ConcCred) error {
+func (s *ConsolidateService) saveAll(descontoMap map[string]*domain_target.Desconto, rankingMap map[string]*domain_target.Ranking,
+	intercamMap map[string]*domain_target.Intercam, conccredMap map[string]*domain_target.ConcCred) error {
 	s.Logger.IPrintf(1, "Saving consolidated data to the database\n")
-	
+
 	// save discounts
 	if err := s.saveDesconto(descontoMap); err != nil {
 		return err
@@ -146,7 +147,7 @@ func (s *ConsolidateService) saveAll(descontoMap map[string]*domain_target.Desco
 	if err := s.saveIntercam(intercamMap); err != nil {
 		return err
 	}
-	
+
 	// save conccred
 	if err := s.saveConcCred(conccredMap); err != nil {
 		return err
@@ -175,7 +176,6 @@ func (s *ConsolidateService) saveDesconto(descontoMap map[string]*domain_target.
 		return err
 	}
 	s.Logger.IPrintf(1, "Saved  %d consolidated Desconto\n", len(descontoMap))
-
 
 	return s.Repository.SaveDesconto(descontoList)
 }
@@ -249,8 +249,8 @@ func (s *ConsolidateService) saveConcCred(conccredMap map[string]*domain_target.
 	return nil
 }
 
-// getQuarterDates calculates the start and end dates for a given year and quarter.
-func (s *ConsolidateService) getQuarterDates(year int, quarter int, start, end *time.Time) (time.Time, time.Time) {
+// getDates calculates the start and end dates for a given year and quarter.
+func (s *ConsolidateService) getDates(year int, quarter int, start, end *time.Time) (time.Time, time.Time) {
 	startMonth := (quarter-1)*3 + 1
 	start_date := time.Date(year, time.Month(startMonth), 1, 0, 0, 0, 0, time.UTC)
 	end_date := start_date.AddDate(0, 3, -1) // end of the quarter is 3 months later minus 1 day

@@ -30,7 +30,7 @@ func (d *FlagDriver) Run() error {
 	end := flag.String("end", "", "End date for processing transactions (format: YYYY-MM-DD)")
 	flag.Parse()
 
-	// validate parameters	
+	// validate parameters
 	if *year < 2000 || *year > time.Now().Year() {
 		return fmt.Errorf("invalid year: use consolidate -year=YYYY -quarter=(1, 2, 3, or 4)")
 	}
@@ -38,7 +38,7 @@ func (d *FlagDriver) Run() error {
 		return fmt.Errorf("invalid quarter: use consolidate -year=YYYY -quarter=Q (1, 2, 3, or 4)")
 	}
 	var st, ed time.Time
-	var err error 
+	var err error
 	if *start != "" {
 		if st, err = time.Parse("2006-01-02", *start); err != nil {
 			return fmt.Errorf("invalid start date: use consolidate -year=YYYY -quarter=Q (1, 2, 3, or 4) -start=YYYY-MM-DD")

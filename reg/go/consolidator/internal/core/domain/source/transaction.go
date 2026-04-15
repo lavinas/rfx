@@ -6,18 +6,18 @@ import (
 
 // Transaction represents the data structure for transactions which will be used for fusing data between intercam, management and webservice
 type Transaction struct {
-	ID                          int64      `gorm:"column:id"`
-	EstablishmentCode           *int64     `gorm:"column:establishment_code"`
-	EstablishmentMCC            *int64     `gorm:"column:establishment_mcc"`
-	BIN                         *int64     `gorm:"column:bin"`
-	TransactionAmount           *float64   `gorm:"column:transaction_amount"`
-	TransactionInstallments     *int64     `gorm:"column:transaction_installments"`
-	TransactionBrand            *string    `gorm:"column:transaction_brand"`
-	TransactionProduct          *string    `gorm:"column:transaction_product"`
-	TransactionCapture          *string    `gorm:"column:transaction_capture"`
-	RevenueMDRValue             *float64   `gorm:"column:revenue_mdr_value"`
-	CostInterchangeValue        *float64   `gorm:"column:cost_interchange_value"`
-	PeriodDate                  *time.Time `gorm:"column:period_date;type:timestamp"`
+	ID                      int64      `gorm:"column:id"`
+	EstablishmentCode       *int64     `gorm:"column:establishment_code"`
+	EstablishmentMCC        *int64     `gorm:"column:establishment_mcc"`
+	BIN                     *int64     `gorm:"column:bin"`
+	TransactionAmount       *float64   `gorm:"column:transaction_amount"`
+	TransactionInstallments *int64     `gorm:"column:transaction_installments"`
+	TransactionBrand        *string    `gorm:"column:transaction_brand"`
+	TransactionProduct      *string    `gorm:"column:transaction_product"`
+	TransactionCapture      *string    `gorm:"column:transaction_capture"`
+	RevenueMDRValue         *float64   `gorm:"column:revenue_mdr_value"`
+	CostInterchangeValue    *float64   `gorm:"column:cost_interchange_value"`
+	PeriodDate              *time.Time `gorm:"column:period_date;type:timestamp"`
 }
 
 // TableName specifies the table name for Transaction struct
@@ -132,7 +132,7 @@ func (t *Transaction) GetTransactionAmount() float64 {
 
 // GetInterchangeFee returns the interchange fee of the transaction based on the CostInterchangeValue field.
 func (t *Transaction) GetInterchangeFeeRate() float64 {
-	if t.CostInterchangeValue != nil && t.TransactionAmount != nil &&  *t.TransactionAmount != 0 {
+	if t.CostInterchangeValue != nil && t.TransactionAmount != nil && *t.TransactionAmount != 0 {
 		return *t.CostInterchangeValue / *t.TransactionAmount * 100
 	}
 	return 0

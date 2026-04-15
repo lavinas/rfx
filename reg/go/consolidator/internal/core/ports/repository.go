@@ -5,7 +5,6 @@ import (
 
 	source_domain "consolidator/internal/core/domain/source"
 	target_domain "consolidator/internal/core/domain/target"
-
 )
 
 // Repository defines the interface for data access operations related to transactions and associated entities.
