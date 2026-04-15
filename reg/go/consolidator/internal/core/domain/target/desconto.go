@@ -78,7 +78,7 @@ func (i *Desconto) AddTransactions(transactions []*source_domain.Transaction, it
 			// update average and standard deviation using Welford's online algorithm
 			delta := desconto.AvgMDRFee - existing.AvgMDRFee
 			existing.AvgMDRFee += delta / float64(existing.TransactionQuantity)
-			delta2 := desconto.StdevMDRFee - existing.StdevMDRFee
+			delta2 := desconto.AvgMDRFee - existing.AvgMDRFee
 			existing.SqrdiffMDRFee += delta2 * delta2
 			variance := existing.SqrdiffMDRFee / (float64(existing.TransactionQuantity) - 1)
 			existing.StdevMDRFee = math.Sqrt(variance)
