@@ -54,6 +54,11 @@ func (i *Desconto) GetFromTransaction(transaction *source_domain.Transaction) *D
 	}
 }
 
+// NewDesconto creates a new instance of Desconto.
+func NewDesconto() *Desconto {
+	return &Desconto{}
+}
+
 // GetKey generates a unique key for the Desconto struct based on its fields.
 func (i *Desconto) GetKey() string {
 	return fmt.Sprintf("%d-%d-%s-%d-%d-%d-%d", i.Year, i.Quarter, i.Function, i.Brand, i.CaptureMode, i.Installments, i.SegmentCode)

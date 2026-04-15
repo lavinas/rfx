@@ -21,6 +21,11 @@ type Infrterm struct {
 	PdvQuantity       int64     `gorm:"column:pdv_quantity"`
 }
 
+// NewInfrterm creates a new instance of Infrterm.
+func NewInfrterm() *Infrterm {
+	return &Infrterm{}
+}
+
 // TableName specifies the table name for Infrterm struct
 func (i *Infrterm) TableName() string {
 	return "cadoc_6334_v2.infrterm"

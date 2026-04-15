@@ -14,6 +14,11 @@ type Segmento struct {
 	SegmentCode int       `gorm:"column:segment_code"`
 }
 
+// NewSegmento creates a new instance of Segmento.
+func NewSegmento() *Segmento {
+	return &Segmento{}
+}
+
 // TableName specifies the table name for Segment struct
 func (i *Segmento) TableName() string {
 	return "cadoc_6334_v2.segmento"

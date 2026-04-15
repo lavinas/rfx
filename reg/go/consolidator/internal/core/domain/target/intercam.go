@@ -24,6 +24,14 @@ type Intercam struct {
 	InterchangeFee      float64   `gorm:"column:interchange_fee"`
 	TransactionAmount   float64   `gorm:"column:transaction_amount"`
 	TransactionQuantity int64     `gorm:"column:transaction_quantity"`
+	Bins                map[int64]*source_domain.Bin `gorm:"-"`
+}
+
+// NewIntercam creates a new instance of Intercam with the provided BIN information.
+func NewIntercam(bins map[int64]*source_domain.Bin) *Intercam {
+	return &Intercam{
+		Bins: bins,
+	}
 }
 
 // TableName returns the name of the table in the database.
@@ -33,11 +41,20 @@ func (i *Intercam) TableName() string {
 
 // GetFromTransaction returns the interchange fee for a given transaction.
 func (i *Intercam) GetFromTransaction(transaction *source_domain.Transaction) *Intercam {
+	// Get the product code and card type from the BIN information, or use default values if not available
+	product_code := source_domain.DefaultProductCode
+	card_type := source_domain.DefaultCardType
+	product, ok := i.Bins[transaction.GetBin()]
+	if ok {
+		product_code = product.GetProductCode()
+		card_type = product.GetCardType()
+	}
+	// Create and return the Intercam struct based on the transaction data and BIN information
 	return &Intercam{
 		Year:                transaction.GetYear(),
 		Quarter:             transaction.GetQuarter(),
-		ProductCode:         402, // Assuming product code is fixed for this example, replace with actual logic if needed
-		CardType:            "P", // Assuming card type is fixed for this example, replace with actual logic if needed
+		ProductCode:         product_code,
+		CardType:            card_type,
 		Function:            transaction.GetFunctionCode(),
 		Brand:               transaction.GetBrandCode(),
 		CaptureMode:         transaction.GetCaptureModeCode(),
@@ -55,7 +72,7 @@ func (i *Intercam) GetKey() string {
 }
 
 // Translate transforms the Intercam struct into a format suitable for database storage, if necessary.
-func (i *Intercam) AddTransactions(transactions []*source_domain.Transaction, items map[string]*Intercam) {
+func (i *Intercam) AddTransactions(transactions []*source_domain.Transaction, items map[string]*Intercam, bins map[int64]*source_domain.Bin) {
 	for _, t := range transactions {
 		interchange := i.GetFromTransaction(t)
 		key := interchange.GetKey()

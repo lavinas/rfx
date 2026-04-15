@@ -10,6 +10,7 @@ import (
 // Repository defines the interface for data access operations related to transactions and associated entities.
 type Repository interface {
 	GetTransactionsByDate(date time.Time) ([]*source_domain.Transaction, error)
+	GetBins() ([]*source_domain.Bin, error)
 	SaveDesconto(desconto []*target_domain.Desconto) error
 	DeleteDesconto(year int, quarter int) error
 	SaveRanking(ranking []*target_domain.Ranking) error

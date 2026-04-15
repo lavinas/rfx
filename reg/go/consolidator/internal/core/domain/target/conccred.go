@@ -22,6 +22,11 @@ type ConcCred struct {
 	TransactionQuantity            int64     `gorm:"column:transaction_quantity"`
 }
 
+// NewConcCred creates a new instance of ConcCred.
+func NewConcCred() *ConcCred {
+	return &ConcCred{}
+}
+
 // TableName specifies the table name for ConcCred struct
 func (i *ConcCred) TableName() string {
 	return "cadoc_6334_v2.conccred"

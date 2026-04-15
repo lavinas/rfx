@@ -18,6 +18,11 @@ type Contatos struct {
 	Email       string    `gorm:"column:email"`
 }
 
+// NewContatos creates a new instance of Contatos.
+func NewContatos() *Contatos {
+	return &Contatos{}
+}
+
 // TableName specifies the table name for Contatos struct
 func (i *Contatos) TableName() string {
 	return "cadoc_6334_v2.contatos"

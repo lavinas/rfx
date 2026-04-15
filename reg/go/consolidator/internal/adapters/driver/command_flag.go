@@ -26,6 +26,7 @@ func (d *FlagDriver) Run() error {
 	year := flag.Int("year", 0, "year for processing transactions (format: YYYY)")
 	quarter := flag.Int("quarter", 0, "quarter for processing transactions (format: 1, 2, 3, 4)")
 	delete := flag.Bool("delete", true, "Delete existing consolidated data before processing")
+	filter_ranking := flag.Bool("filter_ranking", true, "Filter ranking data to include only top and bottom establishments")
 	start := flag.String("start", "", "Start date for processing transactions (format: YYYY-MM-DD)")
 	end := flag.String("end", "", "End date for processing transactions (format: YYYY-MM-DD)")
 	flag.Parse()
@@ -35,22 +36,22 @@ func (d *FlagDriver) Run() error {
 		return fmt.Errorf("invalid year: use consolidate -year=YYYY -quarter=(1, 2, 3, or 4)")
 	}
 	if *quarter < 1 || *quarter > 4 {
-		return fmt.Errorf("invalid quarter: use consolidate -year=YYYY -quarter=Q (1, 2, 3, or 4)")
+		return fmt.Errorf("invalid quarter: use consolidate -year=YYYY -quarter=(1, 2, 3, or 4)")
 	}
 	var st, ed time.Time
 	var err error
 	if *start != "" {
 		if st, err = time.Parse("2006-01-02", *start); err != nil {
-			return fmt.Errorf("invalid start date: use consolidate -year=YYYY -quarter=Q (1, 2, 3, or 4) -start=YYYY-MM-DD")
+			return fmt.Errorf("invalid start date")
 		}
 
 	}
 	if *end != "" {
 		if ed, err = time.Parse("2006-01-02", *end); err != nil {
-			return fmt.Errorf("invalid end date: use consolidate -year=YYYY -quarter=Q (1, 2, 3, or 4) -end=YYYY-MM-DD")
+			return fmt.Errorf("invalid end date")
 		}
 	}
-
+	
 	// run service
-	return d.service.Run(*year, *quarter, *delete, &st, &ed)
+	return d.service.Run(*year, *quarter, *delete, *filter_ranking,	 &st, &ed)
 }

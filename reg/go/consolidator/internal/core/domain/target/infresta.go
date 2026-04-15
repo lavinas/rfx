@@ -21,6 +21,11 @@ type Infresta struct {
 	EstablishmentRemoteCaptureQuantity    int64     `gorm:"column:establishment_remote_capture_quantity"`
 }
 
+// NewInfresta creates a new instance of Infresta.
+func NewInfresta() *Infresta {
+	return &Infresta{}
+}
+
 // TableName specifies the table name for Infresta struct
 func (i *Infresta) TableName() string {
 	return "cadoc_6334_v2.infresta"

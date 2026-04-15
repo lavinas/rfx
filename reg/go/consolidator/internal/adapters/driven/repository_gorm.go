@@ -81,6 +81,15 @@ func (a *GormRepository) GetTransactionsByDate(date time.Time) ([]*source_domain
 	return transactions, nil
 }
 
+// GetBins retrieves BIN information from the database
+func (a *GormRepository) GetBins() ([]*source_domain.Bin, error) {
+	var bins []*source_domain.Bin
+	if err := a.DB.WithContext(*a.ctx).Find(&bins).Error; err != nil {
+		return nil, err
+	}
+	return bins, nil
+}
+
 // SaveDesconto saves the consolidated Desconto data to the database
 func (a *GormRepository) SaveDesconto(desconto []*target_domain.Desconto) error {
 	// Placeholder for actual save logic, using GORM to save the consolidated Desconto data to the database

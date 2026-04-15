@@ -3,6 +3,7 @@ package service
 import (
 	"time"
 
+	domain_source "consolidator/internal/core/domain/source"
 	domain_target "consolidator/internal/core/domain/target"
 	"consolidator/internal/core/ports"
 )
@@ -23,7 +24,7 @@ func NewConsolidateService(repository ports.Repository, logger ports.Logger, con
 }
 
 // Run executes the consolidation process for a specific date.
-func (s *ConsolidateService) Run(year int, quarter int, delete bool, start *time.Time, end *time.Time) error {
+func (s *ConsolidateService) Run(year int, quarter int, delete bool, filter_ranking bool, start *time.Time, end *time.Time) error {
 	// Log the start of the consolidation process
 	s.Logger.IPrintf(0, "Starting consolidation process for year: %d, quarter: %d\n", year, quarter)
 
@@ -36,16 +37,30 @@ func (s *ConsolidateService) Run(year int, quarter int, delete bool, start *time
 		return err
 	}
 
+	// Get bins for mapping BIN numbers to product and card type information
+	bins, err := s.GetBins()
+	if err != nil {
+		s.Logger.IPrintf(1, "Error fetching BIN information: %v\n", err)
+		return err
+	}
+
 	// consolidation maps to hold the consolidated data for each type
 	descontoMap := make(map[string]*domain_target.Desconto)
 	rankingMap := make(map[string]*domain_target.Ranking)
 	intercamMap := make(map[string]*domain_target.Intercam)
 	conccredMap := make(map[string]*domain_target.ConcCred)
 	for date := start_date; !date.After(end_date); date = date.AddDate(0, 0, 1) {
-		if err := s.processDate(date, descontoMap, rankingMap, intercamMap, conccredMap); err != nil {
+		if err := s.processDate(date, descontoMap, rankingMap, intercamMap, conccredMap, bins); err != nil {
 			s.Logger.IPrintf(1, "Error processing date %s: %v\n", date.Format("2006-01-02"), err)
 			return err
 		}
+	}
+
+	// filter ranking data if the filter_ranking flag is set
+	if filter_ranking {
+		s.Logger.IPrintf(1, "Filtering ranking data from %d records\n", len(rankingMap))
+		rankingMap = domain_target.FilterRanking(rankingMap)
+		s.Logger.IPrintf(1, "Filtered ranking data to %d records\n", len(rankingMap))
 	}
 
 	// save consolidated data to the database
@@ -57,6 +72,21 @@ func (s *ConsolidateService) Run(year int, quarter int, delete bool, start *time
 	// Log the completion of the consolidation process
 	s.Logger.IPrintf(0, "Consolidation process completed successfully for year: %d, quarter: %d\n", year, quarter)
 	return nil
+}
+
+// GetBins retrieves BIN information from the repository
+func (s *ConsolidateService) GetBins() (map[int64]*domain_source.Bin, error) {
+	s.Logger.IPrintf(1, "Fetching BIN information from the repository\n")
+	bins := make(map[int64]*domain_source.Bin)
+	binList, err := s.Repository.GetBins()
+	if err != nil {
+		return nil, err
+	}
+	for _, bin := range binList {
+		bins[bin.Bin] = bin
+	}
+	s.Logger.IPrintf(1, "Fetched %d BIN records from the repository\n", len(bins))
+	return bins, nil
 }
 
 // deleteAll deletes existing consolidated data from the database for the specified year and quarter
@@ -98,7 +128,7 @@ func (s *ConsolidateService) deleteAll(year int, quarter int, delete bool) error
 
 // processDate processes transactions for a specific date and updates the consolidated data maps
 func (s *ConsolidateService) processDate(date time.Time, descontoMap map[string]*domain_target.Desconto, rankingMap map[string]*domain_target.Ranking,
-	intercamMap map[string]*domain_target.Intercam, conccredMap map[string]*domain_target.ConcCred) error {
+	intercamMap map[string]*domain_target.Intercam, conccredMap map[string]*domain_target.ConcCred, bins map[int64]*domain_source.Bin) error {
 	s.Logger.IPrintf(1, "Processing for date: %s\n", date.Format("2006-01-02"))
 
 	// Fetch transactions for the date
@@ -110,17 +140,17 @@ func (s *ConsolidateService) processDate(date time.Time, descontoMap map[string]
 	s.Logger.IPrintf(2, "Got %d transactions for date: %s\n", len(transactions), date.Format("2006-01-02"))
 
 	// Process transactions and consolidate data
-	var desconto domain_target.Desconto
-	var ranking domain_target.Ranking
-	var intercam domain_target.Intercam
-	var conccred domain_target.ConcCred
+	desconto := domain_target.NewDesconto()
+	ranking := domain_target.NewRanking()
+	intercam := domain_target.NewIntercam(bins)
+	conccred := domain_target.NewConcCred()
 
 	// Add transactions to the respective consolidated data maps
 	desconto.AddTransactions(transactions, descontoMap)
 	s.Logger.IPrintf(2, "Consolidated Desconto for date: %s\n", date.Format("2006-01-02"))
 	ranking.AddTransactions(transactions, rankingMap)
 	s.Logger.IPrintf(2, "Consolidated Ranking for date: %s\n", date.Format("2006-01-02"))
-	intercam.AddTransactions(transactions, intercamMap)
+	intercam.AddTransactions(transactions, intercamMap, bins)
 	s.Logger.IPrintf(2, "Consolidated Intercam for date: %s\n", date.Format("2006-01-02"))
 	conccred.AddTransactions(transactions, conccredMap)
 	s.Logger.IPrintf(2, "Consolidated ConcCred for date: %s\n", date.Format("2006-01-02"))

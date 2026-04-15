@@ -22,6 +22,11 @@ type Luccred struct {
 	OthersCost      float64   `gorm:"column:others_cost"`
 }
 
+// NewLuccred creates a new instance of Luccred.
+func NewLuccred() *Luccred {
+	return &Luccred{}
+}
+
 // TableName returns the name of the database table for the Luccred model.
 func (i *Luccred) TableName() string {
 	return "cadoc_6334_v2.luccred"
