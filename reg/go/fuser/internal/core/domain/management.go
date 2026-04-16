@@ -21,11 +21,8 @@ type Management struct {
 	DescontoValor            *float64   `gorm:"column:desconto_valor"`
 	PercentualDesconto       *float64   `gorm:"column:percentual_desconto"`
 	TransacId                *string    `gorm:"column:transac_id"`
-	DtInserter               *time.Time `gorm:"column:dt_inserter;type:timestamp"`
-	TransactionalStatusID    *int64     `gorm:"column:transactional_status_id"`
-	TransactionalStatusDate  *time.Time `gorm:"column:transactional_status_date;type:timestamp"`
-	ReconciliationStatusID   *int64     `gorm:"column:reconciliation_status_id"`
-	ReconciliationStatusDate *time.Time `gorm:"column:reconciliation_status_date;type:timestamp"`
+	AuthorizationCode        *string    `gorm:"column:cd_autorizacao_ext"`
+	Bin					     *string    `gorm:"column:bin"`
 }
 
 // TableName specifies the table name for Management struct
@@ -44,8 +41,8 @@ func (i Management) Translate() *Transaction {
 		EstablishmentNature:         i.GetEstablishmentNature(),
 		EstablishmentMCC:            i.GetEstablishmentMCC(),
 		EstablishmentTerminalCode:   i.GetEstablishmentTerminalCode(),
-		BIN:                         nil,
-		AuthorizationCode:           nil,
+		BIN:                         i.GetBIN(),
+		AuthorizationCode:           i.GetAuthorizationCode(),
 		TransactionNSU:              nil,
 		TransactionDate:             i.GetTransactionDate(),
 		TransactionSecondaryDate:    i.GetTransactionDate(), 
@@ -74,6 +71,24 @@ func (i Management) GetKey1() string {
 		*i.Key1 = "MG_" + i.CdTransacaoFin
 	}
 	return *i.Key1
+}
+
+// GetBIN returns the BIN of the transaction, if available
+func (i Management) GetBIN() *int64 {
+	if i.Bin != nil {
+		if bin, err := strconv.ParseInt(*i.Bin, 10, 64); err == nil {
+			return &bin
+		}
+	}
+	return nil
+}
+
+// GetAuthorizationCode returns the authorization code of the transaction, if available
+func (i Management) GetAuthorizationCode() *string {
+	if i.AuthorizationCode != nil {
+		return i.AuthorizationCode
+	}
+	return nil
 }
 
 // GetEstablishmentCode returns the establishment code of the transaction, if available

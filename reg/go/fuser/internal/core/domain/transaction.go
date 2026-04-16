@@ -48,7 +48,43 @@ func (Transaction) TableName() string {
 // SetForInsert sets the Key2 field of the transaction based on available data
 func (t *Transaction) PrepareForInsert() {
 	// Generate Key2 based on available data
-	str := strconv.FormatFloat(*t.TransactionAmount, 'f', 2, 64) + "_" + strconv.FormatInt(*t.TransactionInstallments, 10) + "_" + *t.TransactionBrand + "_" + *t.TransactionProduct + "_" + *t.TransactionCapture
+	str := strconv.FormatFloat(*t.TransactionAmount, 'f', 2, 64)
+	if t.TransactionInstallments != nil {
+		str += strconv.FormatInt(*t.TransactionInstallments, 10)
+	} else {
+		str += "0"
+	}
+	if t.TransactionBrand != nil {
+		str += *t.TransactionBrand
+	} else {
+		str += "UnknownBrand"
+	}
+	if t.TransactionProduct != nil {
+		str += *t.TransactionProduct
+	} else {
+		str += "UnknownProduct"
+	}
+	if t.TransactionCapture != nil {
+		str += *t.TransactionCapture
+	} else {
+		str += "UnknownCapture"
+	}
+	if t.EstablishmentCode != nil {
+		str += strconv.FormatInt(*t.EstablishmentCode, 10)
+	} else {
+		str += "0"
+	}
+	if t.AuthorizationCode != nil {
+		str += *t.AuthorizationCode
+	} else {
+		str += "UnknownAuthorization"
+	}
+	if t.BIN != nil {
+		str += strconv.FormatInt(*t.BIN, 10)
+	} else {
+		str += "0"
+	}
+	// Generate MD5 hash of the concatenated string and set it as Key2	
 	md5Hash := md5.Sum([]byte(str))
 	hashString := hex.EncodeToString(md5Hash[:])
 	if t.Key2 == nil || *t.Key2 == "" {

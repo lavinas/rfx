@@ -21,11 +21,8 @@ type Intercam struct {
 	Bin                      *string    `gorm:"column:bin"`
 	TransactionNsu           *string    `gorm:"column:transaction_nsu"`
 	AuthorizationCode        *string    `gorm:"column:authorization_code"`
-	DtInserter               *time.Time `gorm:"column:dt_inserter;type:timestamp"`
-	TransactionalStatusID    *int64     `gorm:"column:transactional_status_id"`
-	TransactionalStatusDate  *time.Time `gorm:"column:transactional_status_date;type:timestamp"`
-	ReconciliationStatusID   *int64     `gorm:"column:reconciliation_status_id"`
-	ReconciliationStatusDate *time.Time `gorm:"column:reconciliation_status_date;type:timestamp"`
+	ExtractorID			     *int64     `gorm:"column:extractor_execution_id"`
+	CardAcceptorID           *string    `gorm:"column:card_acceptor_id"`
 }
 
 // TableName specifies the table name for Intercam struct
@@ -40,7 +37,7 @@ func (i Intercam) Translate() *Transaction {
 		CreatedAt:                   time.Now(),
 		UpdatedAt:                   time.Now(),
 		Key1:                        i.GetKey1(),
-		EstablishmentCode:           nil, // This field is not present in Intercam, set to nil or default value
+		EstablishmentCode:           i.GetEstablishmentCode(), 
 		EstablishmentNature:         nil, // This field is not present in Intercam, set to nil or default value
 		EstablishmentMCC:            nil, // This field is not present in Intercam, set to nil or default value
 		EstablishmentTerminalCode:   nil, // This field is not present in Intercam, set to nil or default value
@@ -75,6 +72,16 @@ func (i Intercam) GetKey1() string {
 		*i.Key1 = "IC_" + strconv.FormatInt(time.Now().UnixNano(), 10)
 	}
 	return *i.Key1
+}
+
+// GetEstablishmentCode returns the establishment code of the transaction, if available
+func (i Intercam) GetEstablishmentCode() *int64 {
+	if i.CardAcceptorID != nil {
+		if code, err := strconv.ParseInt(*i.CardAcceptorID, 10, 64); err == nil {
+			return &code
+		}
+	}
+	return nil
 }
 
 // GetBIN returns the BIN of the transaction, if available
