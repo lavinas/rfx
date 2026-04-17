@@ -72,7 +72,6 @@ func (a *GormRepository) GetManagementTransactions(dt_transaction time.Time) ([]
 	return transactions, nil
 }
 
-
 // GetIntercamTransactions retrieves Intercam transactions from the database
 func (a *GormRepository) GetIntercamTransactions(dt_transaction time.Time) ([]*domain.Intercam, error) {
 	var transactions []*domain.Intercam
@@ -93,9 +92,19 @@ func (a *GormRepository) GetTransactionsByKey(keys []string) ([]*domain.Transact
 	return transactions, nil
 }
 
+// GetTransactionsByDateRangeAndStatus retrieves transactions by date range and status from the database
+func (a *GormRepository) GetTransactionsByDateRangeAndStatus(start, end time.Time, status int) ([]*domain.Transaction, error) {
+	var transactions []*domain.Transaction
+	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento >= ? AND dt_processamento < ? AND status = ?", start, end, status).Find(&transactions).Error; err != nil {
+		return nil, err
+	}
+	return transactions, nil
+}
+
 // Insert Transactions inserts a list of transactions into the database
 func (a *GormRepository) InsertTransactions(transactions []*domain.Transaction) error {
 	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
 		UpdateAll: true,
 	}).Create(&transactions).Error
 }
+

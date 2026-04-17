@@ -66,3 +66,16 @@ func (t *Transaction) PrepareForInsert() {
 	}
 	*t.Key2 = hashString
 }
+
+// Cancel cancels the transaction by setting its status to 3 (indicating it has been cancelled) and updating the status count
+func (t *Transaction) Cancel() {
+	if t.StatusID == nil {
+		t.StatusID = new(int64)
+	}
+	if t.StatusName == nil {
+		t.StatusName = new(string)
+	}
+	*t.StatusName = "Cancelado"
+	*t.StatusID = 3
+	t.StatusCount = -1
+}

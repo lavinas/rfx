@@ -60,7 +60,6 @@ func (s *FuseService) mainLogic(start_date time.Time, end_date time.Time, focus 
 			}
 		}
 	}
-	
 	return nil
 }
 
@@ -197,10 +196,12 @@ func (s *FuseService) insertTransactions(transType string, transDate time.Time, 
 	count := 0
 	total := len(transactions)
 	lot := []*domain.Transaction{}
+	// Insert transactions in batches of 2000 to optimize database performance and avoid memory issues
 	for _, transaction := range transactions {
 		transaction.PrepareForInsert()
 		lot = append(lot, transaction)
 		count++
+		// When the batch size reaches 2000, we insert the batch into the repository and reset the batch
 		if count%2000 == 0 {
 			if err := s.Repository.InsertTransactions(lot); err != nil {
 				s.Logger.IPrintf(2, "Error inserting %s transactions for date %s: %v\n", transType, transDate.Format("2006-01-02"), err)
@@ -210,52 +211,115 @@ func (s *FuseService) insertTransactions(transType string, transDate time.Time, 
 			lot = []*domain.Transaction{}
 		}
 	}
+	// Insert any remaining transactions in the batch that were not inserted in the previous loop
 	if len(lot) > 0 {
 		if err := s.Repository.InsertTransactions(lot); err != nil {
 			s.Logger.IPrintf(2, "Error inserting %s transactions for date %s: %v\n", transType, transDate.Format("2006-01-02"), err)
 			return err
 		}
-		s.Logger.Printf("Inserted %s transactions for date %s (%d/%d)\n", transType, transDate.Format("2006-01-02"), count, total)
+		// Log the number of transactions inserted for the last batch
+		s.Logger.IPrintf(2, "Inserted %s transactions for date %s (%d/%d)\n", transType, transDate.Format("2006-01-02"), count, total)
 	}
 	return nil
 }
 
 // filterDuplicates is a helper method to filter out duplicate transactions based on their keys
 func (s *FuseService) filterDuplicates(transactions []*domain.Transaction) []*domain.Transaction {
-	s.Logger.Printf("Filtering duplicates from %d transactions\n", len(transactions))
+	// Log the number of transactions before filtering duplicates
+	s.Logger.IPrintf(2, "Filtering duplicates from %d transactions\n", len(transactions))
+	// Use a map to track unique transactions by their keys
 	unique := make(map[string]*domain.Transaction)
 	for _, transaction := range transactions {
 		if _, exists := unique[transaction.Key1]; exists {
-			s.Logger.Printf("Duplicate transaction found with key: %s\n", transaction.Key1)
+			s.Logger.IPrintf(2, "Duplicate transaction found with key: %s\n", transaction.Key1)
 		}
 		unique[transaction.Key1] = transaction
 	}
+	// Convert the map of unique transactions back to a slice
 	result := []*domain.Transaction{}
 	for _, transaction := range unique {
 		result = append(result, transaction)
 	}
+	// Log the number of transactions after filtering duplicates
 	s.Logger.IPrintf(2, "Filtered duplicates, resulting in %d unique transactions\n", len(result))
 	return result
 }
 
 // LetfOver is a helper that treats transactions that were not merged (i.e., they exist in the repository but not in the local data) - placeholder for actual implementation
 func (s *FuseService) LetfOver(start_date time.Time, end_date time.Time, leftover bool) error {
+	// if the leftover flag is not set, we skip processing leftover transactions and return early
 	if !leftover {
 		s.Logger.IPrintf(1, "Leftover processing is disabled, skipping.\n")
 		return nil
 	}
+	// Log the start of leftover processing
 	s.Logger.IPrintf(1, "Processing leftover transactions...\n")
-
-
-	// Placeholder for actual implementation of handling leftover transactions
-	
+	// Get leftover transactions from the repository for the given date range
+	transactions_0, transactions_1, err := s.GetLeftover(start_date, end_date)
+	if err != nil {
+		return err
+	}
+	// Merge transactions_0 and transactions_1, giving priority to transactions_0 (status 0) over transactions_1 (status 1)
+	merged := s.MergeLeftover(transactions_0, transactions_1)
+	// Insert merged transactions back into the repository
+	err = s.insertTransactions("leftover", time.Now(), merged)
+	if err != nil {
+		return err
+	}
+	// Log the completion of leftover processing
 	s.Logger.IPrintf(1, "Finished processing leftover transactions.\n")
 	return nil
 }
 
 // GetLeftoverTransactions is a helper method to fetch transactions that exist in the repository but were not merged (i.e., they do not exist in the local data) - placeholder for actual implementation
-func (s *FuseService) GetLeftoverTransactions(date time.Time) ([]*domain.Transaction, error) {
+func (s *FuseService) GetLeftover(start, end time.Time) ([]*domain.Transaction, []*domain.Transaction, error) {
 	// Placeholder for actual implementation of fetching leftover transactions
-	s.Logger.IPrintf(2, "Fetching leftover transactions for date %s\n", date.Format("2006-01-02"))
-	return []*domain.Transaction{}, nil
+	s.Logger.IPrintf(2, "Fetching leftover transactions for date %s\n", start.Format("2006-01-02"))
+	// Get transaction with status 0 (not processed) from the repository for the given date range
+	transactions_0, err := s.Repository.GetTransactionsByDateRangeAndStatus(start, end, 0)
+	if err != nil {
+		return nil, nil, err
+	}
+	// Get transaction with status 1 (processed) from the repository for the given extended date range (to account for transactions that might have been processed but not merged)
+	extended_start := start.AddDate(0, 0, -3)
+	extended_end := end.AddDate(0, 0, 3)
+	transactions_1, err := s.Repository.GetTransactionsByDateRangeAndStatus(extended_start, extended_end, 1)
+	if err != nil {
+		return nil, nil, err
+	}
+	// Log the number of leftover transactions fetched for both status 0 and status 1
+	s.Logger.IPrintf(2, "Fetched %d leftover transactions with status 0 and %d with status 1 for date range %s to %s\n", len(transactions_0), len(transactions_1), start.Format("2006-01-02"), end.Format("2006-01-02"))
+	return transactions_0, transactions_1, nil
+}
+
+
+// MergeLeftover is a helper method to merge leftover transactions, giving priority to transactions with status 0 over those with status 1 - placeholder for actual implementation
+func (s *FuseService) MergeLeftover(transactions_0, transactions_1 []*domain.Transaction) ([]*domain.Transaction) {
+	// Placeholder for actual implementation of merging leftover transactions
+	s.Logger.IPrintf(2, "Merging leftover transactions (status 0: %d, status 1: %d)\n", len(transactions_0), len(transactions_1))
+	// Create a map to hold the merged transactions, using the transaction key as the map key
+	t0_map := make(map[string]*domain.Transaction)
+	t1_map := make(map[string]*domain.Transaction)
+	// Add transactions with status 0 to the merged map first
+	for _, transaction := range transactions_0 {
+		t0_map[*transaction.Key2] = transaction
+	}
+	// Add transactions with status 1 to the merged map
+	for _, transaction := range transactions_1 {
+		t1_map[*transaction.Key2] = transaction
+	}
+	// Merge the two maps, giving priority to transactions with status 0 (t0_map) over those with status 1 (t1_map)
+	// Cancel transactions with status 1 that have a corresponding transaction with status 0, and keep transactions with status 0 as they are
+	result := []*domain.Transaction{}
+	for key, t0 := range t0_map {
+		if t1, exists := t1_map[key]; exists {
+			domain.MergeManagement(t1, t0)
+			t1.Cancel()
+			result = append(result, t0)
+			result = append(result, t1)
+		}
+	}
+	// Log the number of merged leftover transactions
+	s.Logger.IPrintf(2, "Merged %d leftover transactions (status 0: %d, status 1: %d)\n", len(result), len(transactions_0), len(transactions_1))
+	return result
 }
