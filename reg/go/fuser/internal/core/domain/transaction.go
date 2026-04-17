@@ -47,43 +47,17 @@ func (Transaction) TableName() string {
 
 // SetForInsert sets the Key2 field of the transaction based on available data
 func (t *Transaction) PrepareForInsert() {
-	// Generate Key2 based on available data
-	str := strconv.FormatFloat(*t.TransactionAmount, 'f', 2, 64)
-	if t.TransactionInstallments != nil {
-		str += strconv.FormatInt(*t.TransactionInstallments, 10)
-	} else {
-		str += "0"
+	// If Key2 is already set, we do not need to generate it again
+	if t.Key2 != nil && *t.Key2 != "" {
+		return
 	}
-	if t.TransactionBrand != nil {
-		str += *t.TransactionBrand
-	} else {
-		str += "UnknownBrand"
+	// if any of the required fields for generating Key2 is nil, we cannot generate the hash, so we return without setting Key2
+	if t.TransactionAmount == nil || t.BIN == nil || t.AuthorizationCode == nil || t.EstablishmentCode == nil {
+		return
 	}
-	if t.TransactionProduct != nil {
-		str += *t.TransactionProduct
-	} else {
-		str += "UnknownProduct"
-	}
-	if t.TransactionCapture != nil {
-		str += *t.TransactionCapture
-	} else {
-		str += "UnknownCapture"
-	}
-	if t.EstablishmentCode != nil {
-		str += strconv.FormatInt(*t.EstablishmentCode, 10)
-	} else {
-		str += "0"
-	}
-	if t.AuthorizationCode != nil {
-		str += *t.AuthorizationCode
-	} else {
-		str += "UnknownAuthorization"
-	}
-	if t.BIN != nil {
-		str += strconv.FormatInt(*t.BIN, 10)
-	} else {
-		str += "0"
-	}
+	// Concatenate the required fields into a single string
+	str := strconv.FormatFloat(*t.TransactionAmount, 'f', 2, 64) + strconv.FormatInt(*t.BIN, 10) + 
+	*t.AuthorizationCode + strconv.FormatInt(*t.EstablishmentCode, 10)
 	// Generate MD5 hash of the concatenated string and set it as Key2	
 	md5Hash := md5.Sum([]byte(str))
 	hashString := hex.EncodeToString(md5Hash[:])

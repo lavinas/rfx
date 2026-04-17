@@ -25,6 +25,7 @@ func (d *FlagDriver) Run() error {
 	start_date := flag.String("start", "", "Start date for processing transactions (format: YYYY-MM-DD)")
 	end_date := flag.String("end", "", "End date for processing transactions (format: YYYY-MM-DD)")
 	focus := flag.String("focus", "all", "Focus of the processing (options: all, transactions, accounts)")
+	leftover := flag.Bool("leftover", true, "Whether to process leftover transactions (default: true)")
 	
 	flag.Parse()
 
@@ -36,8 +37,8 @@ func (d *FlagDriver) Run() error {
 	if err != nil {
 		return fmt.Errorf("invalid command: use fuser -start=yyyy-mm-dd -end=yyyy-mm-dd")
 	}
-	if *focus != "all" && *focus != "intercam" && *focus != "management" {
-		return fmt.Errorf("invalid focus: use fuser -focus=all|intercam|management")
+	if *focus != "all" && *focus != "intercam" && *focus != "management" && *focus != "none" {
+		return fmt.Errorf("invalid focus: use fuser -focus=all|intercam|management|none")
 	}
-	return d.service.Run(sd, ed, *focus)
+	return d.service.Run(sd, ed, *focus, *leftover)
 }

@@ -119,20 +119,64 @@ inner join tmp_management b
       and a.transaction_date <= b.transaction_date + interval '3 day'
 
 
+select md5(a.transaction_amount::text || a.bin::text || a.authorization_code::text || a.establishment_code::text) as hash_intercam
+  from transaction_v3.transaction as a;
 
-select * from transaction_v3.transaction
-where id in (2266379, 2487453);
 
-2067925	2298810
 
-MG_59894723
+update transaction_v3.transaction
+   set key2 = md5(transaction_amount::text || bin::text || authorization_code::text || establishment_code::text);
 
-select * from raw_data_v2.management_transaction where cd_transacao_fin = '59894723';
 
-select * from raw_data_v2.intercambio_transaction where key1 = 'V466002514410518';
 
+commit;
 
 
 select count(1)
-  from raw_data_v2.management_transaction a
-where key1 is null or key1 = '';
+  from transaction_v3.transaction a
+inner join transaction_v3.transaction b
+        on a.transaction_amount = b.transaction_amount
+       and a.bin = b.bin
+       and a.authorization_code = b.authorization_code
+       and a.establishment_code = b.establishment_code
+       and a.transaction_date >= b.transaction_date - interval '3 day'
+       and a.transaction_date <= b.transaction_date + interval '3 day'
+       and b.status_id = 1
+where a.transaction_date >= '2026-01-01'
+  and a.transaction_date < '2026-04-01'
+  and a.status_id = 0;
+
+
+select count(1)
+  from transaction_v3.transaction a
+inner join transaction_v3.transaction b
+        on a.key2 = b.key2
+       and b.status_id = 1
+where a.transaction_date >= '2026-01-01'
+  and a.transaction_date < '2026-04-01'
+  and a.status_id = 0;
+
+
+select count(1)
+  from transaction_v3.transaction a
+inner join transaction_v3.transaction b
+        on b.key2 = a.key2
+       and b.transaction_date >= a.transaction_date - interval '3 day'
+       and b.transaction_date <= a.transaction_date + interval '3 day'
+       and b.status_id = 1
+where a.transaction_date >= '2026-01-01'
+  and a.transaction_date < '2026-04-01'
+  and a.status_id = 0;
+
+
+select count(1)
+  from transaction_v3.transaction a
+left join transaction_v3.transaction b
+        on b.key2 = a.key2
+       and b.transaction_date >= a.transaction_date - interval '3 day'
+       and b.transaction_date <= a.transaction_date + interval '3 day'
+       and b.status_id = 1
+where a.transaction_date >= '2026-01-01'
+  and a.transaction_date < '2026-04-01'
+  and a.status_id = 0
+  and b.key2 is null;
