@@ -42,7 +42,7 @@ type Transaction struct {
 
 // TableName specifies the table name for Transaction struct
 func (Transaction) TableName() string {
-	return "transaction_v3.transaction"
+	return "transaction_v4.transaction"
 }
 
 // SetForInsert sets the Key2 field of the transaction based on available data
