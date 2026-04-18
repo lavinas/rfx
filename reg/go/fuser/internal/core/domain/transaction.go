@@ -38,6 +38,7 @@ type Transaction struct {
 	PeriodDate                  *time.Time `gorm:"column:period_date;type:timestamp"`
 	PeriodClosingID             *int64     `gorm:"column:period_closing_id"`
 	TransacID                   *string    `gorm:"column:transac_id"`
+	ReferenceID                 *int64     `gorm:"column:reference_id"`
 }
 
 // TableName specifies the table name for Transaction struct
@@ -52,13 +53,13 @@ func (t *Transaction) PrepareForInsert() {
 		return
 	}
 	// if any of the required fields for generating Key2 is nil, we cannot generate the hash, so we return without setting Key2
-	if t.TransactionAmount == nil || t.BIN == nil || t.AuthorizationCode == nil || t.EstablishmentCode == nil {
+	if t.TransactionAmount == nil || t.AuthorizationCode == nil || t.EstablishmentCode == nil {
 		return
 	}
 	// Concatenate the required fields into a single string
-	str := strconv.FormatFloat(*t.TransactionAmount, 'f', 2, 64) + strconv.FormatInt(*t.BIN, 10) + 
-	*t.AuthorizationCode + strconv.FormatInt(*t.EstablishmentCode, 10)
-	// Generate MD5 hash of the concatenated string and set it as Key2	
+	str := strconv.FormatFloat(*t.TransactionAmount, 'f', 2, 64) + strconv.FormatInt(*t.BIN, 10) +
+		*t.AuthorizationCode + strconv.FormatInt(*t.EstablishmentCode, 10)
+	// Generate MD5 hash of the concatenated string and set it as Key2
 	md5Hash := md5.Sum([]byte(str))
 	hashString := hex.EncodeToString(md5Hash[:])
 	if t.Key2 == nil || *t.Key2 == "" {

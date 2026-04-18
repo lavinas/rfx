@@ -7,22 +7,22 @@ import (
 
 // Intercam represents the data structure for intercam raw data
 type Intercam struct {
-	CdTransacaoFin           string     `gorm:"column:cd_transacao_fin"`
-	Key1                     *string    `gorm:"column:key1"`
-	FormaCaptura             *string    `gorm:"column:forma_captura"`
-	DtProcessamento          *time.Time `gorm:"column:dt_processamento;type:timestamp "`
-	ValorTransacoes          *float64   `gorm:"column:valor_transacoes"`
-	PercentualDesconto       *float64   `gorm:"column:percentual_desconto"`
-	TaxaIntercambioValor     *float64   `gorm:"column:taxa_intercambio_valor"`
-	Bandeira                 *string    `gorm:"column:bandeira"`
-	Parcela                  *string    `gorm:"column:parcela"`
-	TipoCartao               *string    `gorm:"column:tipo_cartao"`
-	Segmento                 *string    `gorm:"column:segmento"`
-	Bin                      *string    `gorm:"column:bin"`
-	TransactionNsu           *string    `gorm:"column:transaction_nsu"`
-	AuthorizationCode        *string    `gorm:"column:authorization_code"`
-	ExtractorID			     *int64     `gorm:"column:extractor_execution_id"`
-	CardAcceptorID           *string    `gorm:"column:card_acceptor_id"`
+	CdTransacaoFin       string     `gorm:"column:cd_transacao_fin"`
+	Key1                 *string    `gorm:"column:key1"`
+	FormaCaptura         *string    `gorm:"column:forma_captura"`
+	DtProcessamento      *time.Time `gorm:"column:dt_processamento;type:timestamp "`
+	ValorTransacoes      *float64   `gorm:"column:valor_transacoes"`
+	PercentualDesconto   *float64   `gorm:"column:percentual_desconto"`
+	TaxaIntercambioValor *float64   `gorm:"column:taxa_intercambio_valor"`
+	Bandeira             *string    `gorm:"column:bandeira"`
+	Parcela              *string    `gorm:"column:parcela"`
+	TipoCartao           *string    `gorm:"column:tipo_cartao"`
+	Segmento             *string    `gorm:"column:segmento"`
+	Bin                  *string    `gorm:"column:bin"`
+	TransactionNsu       *string    `gorm:"column:transaction_nsu"`
+	AuthorizationCode    *string    `gorm:"column:authorization_code"`
+	ExtractorID          *int64     `gorm:"column:extractor_execution_id"`
+	CardAcceptorID       *string    `gorm:"column:card_acceptor_id"`
 }
 
 // TableName specifies the table name for Intercam struct
@@ -37,7 +37,7 @@ func (i Intercam) Translate() *Transaction {
 		CreatedAt:                   time.Now(),
 		UpdatedAt:                   time.Now(),
 		Key1:                        i.GetKey1(),
-		EstablishmentCode:           i.GetEstablishmentCode(), 
+		EstablishmentCode:           i.GetEstablishmentCode(),
 		EstablishmentNature:         nil, // This field is not present in Intercam, set to nil or default value
 		EstablishmentMCC:            nil, // This field is not present in Intercam, set to nil or default value
 		EstablishmentTerminalCode:   nil, // This field is not present in Intercam, set to nil or default value
@@ -62,7 +62,7 @@ func (i Intercam) Translate() *Transaction {
 		PeriodClosingID:             i.GetPeriodClosingID(),
 		TransacID:                   i.GetTransacID(),
 	}
-	
+
 }
 
 // GetKey1 returns the key1 value of the transaction, if available

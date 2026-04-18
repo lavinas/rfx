@@ -22,7 +22,7 @@ func MergeIntercam(interTransaction *Transaction, repoTransaction *Transaction) 
 	if *repoTransaction.StatusID == 1 {
 		repoTransaction.StatusCount = 0
 		*repoTransaction.StatusID = 2
-		*repoTransaction.StatusName = "Pronto"		
+		*repoTransaction.StatusName = "Pronto"
 	}
 
 }

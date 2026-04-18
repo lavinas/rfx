@@ -95,7 +95,9 @@ func (a *GormRepository) GetTransactionsByKey(keys []string) ([]*domain.Transact
 // GetTransactionsByDateRangeAndStatus retrieves transactions by date range and status from the database
 func (a *GormRepository) GetTransactionsByDateRangeAndStatus(start, end time.Time, status int) ([]*domain.Transaction, error) {
 	var transactions []*domain.Transaction
-	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento >= ? AND dt_processamento < ? AND status = ?", start, end, status).Find(&transactions).Error; err != nil {
+	start_date := start.Format("2006-01-02") + " 00:00:00"
+	end_date := end.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
+	if err := a.DB.WithContext(*a.ctx).Where("transaction_date >= ? AND transaction_date < ? AND status_id = ?", start_date, end_date, status).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 	return transactions, nil
@@ -107,4 +109,3 @@ func (a *GormRepository) InsertTransactions(transactions []*domain.Transaction) 
 		UpdateAll: true,
 	}).Create(&transactions).Error
 }
-

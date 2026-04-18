@@ -1,8 +1,8 @@
 package driven
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
@@ -13,9 +13,9 @@ type JsonConfig struct {
 
 // DBConfig represents the database configuration structure
 type JsonDBConfig struct {
-	Host	 string `json:"host"`
-	Port	 int    `json:"port"`
-	User	 string `json:"user"`
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
+	User     string `json:"user"`
 	Password string `json:"password"`
 	DBName   string `json:"dbname"`
 	SSLMode  string `json:"sslmode"`

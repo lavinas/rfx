@@ -60,16 +60,15 @@ func MergeManagement(interTransaction *Transaction, repoTransaction *Transaction
 	if repoTransaction.RevenueMDRValue == nil {
 		repoTransaction.RevenueMDRValue = interTransaction.RevenueMDRValue
 	}
-	
+
 	// Update secondary date
 	repoTransaction.TransactionSecondaryDate = interTransaction.TransactionDate
-	
+
 	// Calculate status
 	if *repoTransaction.StatusID == 0 {
 		repoTransaction.StatusCount = 0
 		*repoTransaction.StatusID = 2
-		*repoTransaction.StatusName = "Pronto" 
+		*repoTransaction.StatusName = "Pronto"
 	}
 
 }
-

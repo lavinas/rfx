@@ -26,7 +26,7 @@ func (d *FlagDriver) Run() error {
 	end_date := flag.String("end", "", "End date for processing transactions (format: YYYY-MM-DD)")
 	focus := flag.String("focus", "all", "Focus of the processing (options: all, transactions, accounts)")
 	leftover := flag.Bool("leftover", true, "Whether to process leftover transactions (default: true)")
-	
+
 	flag.Parse()
 
 	sd, err := time.Parse("2006-01-02", *start_date)

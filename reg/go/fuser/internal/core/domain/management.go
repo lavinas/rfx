@@ -1,28 +1,27 @@
 package domain
 
 import (
-	
-	"time"
 	"strconv"
+	"time"
 )
 
 // Management represents the data structure for management raw data
 type Management struct {
-	CdTransacaoFin           string     `gorm:"column:cd_transacao_fin"`
-	Key1                     *string    `gorm:"column:key1"`
-	DtProcessamento          *time.Time `gorm:"column:dt_processamento;type:timestamp"`
-	ValorTransacao           *float64   `gorm:"column:valor_transacao"`
-	Bandeira                 *string    `gorm:"column:bandeira"`
-	CdPessoaEstabelecimento  *int64     `gorm:"column:cd_pessoa_estabelecimento"`
-	Mcc                      *string    `gorm:"column:mcc"`
-	FormaCaptura             *string    `gorm:"column:forma_captura"`
-	Funcao                   *string    `gorm:"column:funcao"`
-	NumeroParcelas           *int64     `gorm:"column:numero_parcelas"`
-	DescontoValor            *float64   `gorm:"column:desconto_valor"`
-	PercentualDesconto       *float64   `gorm:"column:percentual_desconto"`
-	TransacId                *string    `gorm:"column:transac_id"`
-	AuthorizationCode        *string    `gorm:"column:cd_autorizacao_ext"`
-	Bin					     *string    `gorm:"column:bin"`
+	CdTransacaoFin          string     `gorm:"column:cd_transacao_fin"`
+	Key1                    *string    `gorm:"column:key1"`
+	DtProcessamento         *time.Time `gorm:"column:dt_processamento;type:timestamp"`
+	ValorTransacao          *float64   `gorm:"column:valor_transacao"`
+	Bandeira                *string    `gorm:"column:bandeira"`
+	CdPessoaEstabelecimento *int64     `gorm:"column:cd_pessoa_estabelecimento"`
+	Mcc                     *string    `gorm:"column:mcc"`
+	FormaCaptura            *string    `gorm:"column:forma_captura"`
+	Funcao                  *string    `gorm:"column:funcao"`
+	NumeroParcelas          *int64     `gorm:"column:numero_parcelas"`
+	DescontoValor           *float64   `gorm:"column:desconto_valor"`
+	PercentualDesconto      *float64   `gorm:"column:percentual_desconto"`
+	TransacId               *string    `gorm:"column:transac_id"`
+	AuthorizationCode       *string    `gorm:"column:cd_autorizacao_ext"`
+	Bin                     *string    `gorm:"column:bin"`
 }
 
 // TableName specifies the table name for Management struct
@@ -45,7 +44,7 @@ func (i Management) Translate() *Transaction {
 		AuthorizationCode:           i.GetAuthorizationCode(),
 		TransactionNSU:              nil,
 		TransactionDate:             i.GetTransactionDate(),
-		TransactionSecondaryDate:    i.GetTransactionDate(), 
+		TransactionSecondaryDate:    i.GetTransactionDate(),
 		TransactionAmount:           i.GetTransactionAmount(),
 		TransactionInstallments:     i.GetTransactionInstallments(),
 		TransactionInstallmentsType: nil,

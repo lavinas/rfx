@@ -1,14 +1,13 @@
 package main
 
 import (
-	"time"
 	"context"
 	"os"
+	"time"
 
 	"fuser/internal/adapters/driven"
 	"fuser/internal/adapters/driver"
 	"fuser/internal/core/service"
-
 )
 
 // Main function to initialize and run the application
@@ -23,7 +22,7 @@ func main() {
 	}
 	// Set the local time zone based on the configuration
 	loc, _ := time.LoadLocation(cfg.GetDBTimeZone())
-    time.Local = loc
+	time.Local = loc
 	// Initialize the repository with the database connection
 	ctx := context.Background()
 	repo, err := driven.NewGormRepository(cfg.GetDNS(), &ctx)

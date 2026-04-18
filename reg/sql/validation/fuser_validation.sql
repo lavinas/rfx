@@ -1,12 +1,14 @@
--- Active: 1774368236280@@192.168.100.78@5436@dev_regulat@transaction_v3
+-- Active: 1766518799113@@127.0.0.1@5434@reg@transaction_v4
 -- total management
 -- 8849392
+-- 8830493
 select count(distinct key1)
   from raw_data_v2.intercambio_transaction a
  where a.dt_processamento >= '2026-01-01'
    and a.dt_processamento < '2026-04-01';
 
 -- 8849392
+-- 8830493
 -- total management
 select count(1) 
   from transaction_v3.transaction
@@ -22,7 +24,7 @@ select count(distinct COALESCE(a.key1,  gen_random_uuid()::text))
 
 -- 8855649
 select count(1) 
-  from transaction_v3.transaction
+  from transaction_v4.transaction
  where transaction_secondary_date >= '2026-01-01'
    and transaction_secondary_date < '2026-04-01'
    and status_id in (1, 2);
@@ -31,7 +33,7 @@ select count(1)
 
 --
 select count(1)
-  from transaction_v3.transaction
+  from transaction_v4.transaction
 where transaction_date >= '2026-01-01'
   and transaction_date < '2026-04-01'
   and status_id = 0;
@@ -39,7 +41,7 @@ where transaction_date >= '2026-01-01'
 
 create table tmp_intercam as
 select *
- from transaction_v3.transaction
+ from transaction_v4.transaction
 where transaction_date >= '2026-01-01'
   and transaction_date < '2026-04-01'
   and status_id = 0;
@@ -47,18 +49,45 @@ where transaction_date >= '2026-01-01'
 
 create table tmp_management as
 select *
- from transaction_v3.transaction
+ from transaction_v4.transaction
 where transaction_date >= '2026-01-01'
   and transaction_date < '2026-04-01'
   and status_id = 1;
 
 
 
+selec
+
 select count(1)
   from tmp_intercam a
 left join tmp_management b
        on a.key2 = b.key2
 where b.key2 is null;
+
+
+select a.transaction_date, b.transaction_date, a.bin, b.bin
+  from tmp_intercam a
+left join tmp_management b
+  on b.transaction_amount = a.transaction_amount
+  and COALESCE(b.bin, '') = COALESCE(a.bin, '')
+  and b.authorization_code = a.authorization_code
+  and b.establishment_code = a.establishment_code
+where b.id is not null;
+
+
+select count(1)
+  from transaction_v4.transaction a
+where bin is null;
+
+select count(1)
+  from transaction_v4.transaction a
+where authorization_code is null;
+
+
+select count(1)
+  from transaction_v4.transaction a
+where establishment_code is null;
+
 
 select count(1)
   from tmp_intercam a
@@ -86,12 +115,12 @@ select count(1)
   from tmp_intercam a 
 left join tmp_management b
        on a.transaction_amount = b.transaction_amount
-      and a.bin = b.bin
+--      and a.bin = b.bin
       and a.authorization_code = b.authorization_code
-      and a.establishment_code = b.establishment_code
-      and a.transaction_date >= b.transaction_date - interval '3 day'
-      and a.transaction_date <= b.transaction_date + interval '3 day'
-where b.transaction_amount is null;
+--      and a.establishment_code = b.establishment_code
+--      and a.transaction_date >= b.transaction_date - interval '3 day'
+--      and a.transaction_date <= b.transaction_date + interval '3 day'
+where b.transaction_amount is not null;
 
 
 
@@ -180,3 +209,104 @@ where a.transaction_date >= '2026-01-01'
   and a.transaction_date < '2026-04-01'
   and a.status_id = 0
   and b.key2 is null;
+
+
+  select count(1)
+    from transaction_v4.transaction a
+  where transaction_date >= '2026-01-01'
+    and transaction_date < '2026-04-01'
+    and status_id = 0
+    and not exists (
+        select 1
+          from transaction_v4.transaction b
+         where b.key2 = a.key2
+           and b.transaction_date >= a.transaction_date - interval '3 day'
+           and b.transaction_date <= a.transaction_date + interval '3 day'
+           and b.status_id = 1
+    );
+
+
+
+
+    select count(1)
+      from transaction_v4.transaction a
+    where reference_id is not null;
+
+
+select *
+  from transaction_v4.transaction
+ where reference_id is not null;
+
+
+
+select count(1)
+  from transaction_v4.transaction a
+inner join transaction_v4.transaction b
+        on b.reference_id = a.id
+      and b.status_id = 3
+where a.reference_id is not null
+  and a.status_id = 2;
+
+
+
+
+
+select count(1)
+  from transaction_v4.transaction a
+inner join transaction_v4.transaction b
+        on b.reference_id = a.id
+      and b.status_id = 3
+where a.reference_id is not null
+  and a.status_id = 2;
+
+
+update transaction_v4.transaction a
+   set reference_id = b.id
+  from transaction_v4.transaction b
+ where b.reference_id = a.id
+   and b.status_id = 3
+    and a.status_id = 2
+    and a.reference_id is not null;
+
+
+select count(1)
+  from transaction_v4.transaction a
+inner join transaction_v4.transaction b
+        on b.id = a.reference_id
+      and b.status_id = 3
+where a.reference_id is not null
+  and a.status_id = 2;
+
+
+select count(1)
+  from transaction_v4.transaction a
+inner join transaction_v4.transaction b
+        on b.id = a.reference_id
+      and b.status_id = 2
+where a.reference_id is not null
+  and a.status_id = 3;
+
+
+
+select count(1)
+  from transaction_v4.transaction a
+where transaction_date >= '2026-01-01'
+  and transaction_date < '2026-04-01'
+  and status_id = 0;
+
+
+select *
+  from transaction_v4.transaction
+ where transaction_date >= '2026-01-01'
+   and transaction_date < '2026-04-01'
+   and status_id = 0;
+
+
+select max (a.transaction_date - b.transaction_date), min (a.transaction_date - b.transaction_date)
+  from transaction_v4.transaction a
+ inner join transaction_v4.transaction b
+        on b.id = a.reference_id
+where a.transaction_date >= '2026-01-01'
+  and a.transaction_date < '2026-04-01'
+  and a.status_id = 2
+  and a.reference_id is not null;

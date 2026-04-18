@@ -136,7 +136,7 @@ func (s *FuseService) getManagementTransactions(date time.Time) ([]*domain.Trans
 }
 
 // getTransactionsByKey is a helper method to fetch transactions by their keys
-func (s *FuseService) getTransactionsByKey(transType string, transDate time.Time,transactions []*domain.Transaction) ([]*domain.Transaction, error) {
+func (s *FuseService) getTransactionsByKey(transType string, transDate time.Time, transactions []*domain.Transaction) ([]*domain.Transaction, error) {
 	repTransactions := []*domain.Transaction{}
 	keys := []string{}
 	count := 0
@@ -292,34 +292,55 @@ func (s *FuseService) GetLeftover(start, end time.Time) ([]*domain.Transaction, 
 	return transactions_0, transactions_1, nil
 }
 
-
 // MergeLeftover is a helper method to merge leftover transactions, giving priority to transactions with status 0 over those with status 1 - placeholder for actual implementation
-func (s *FuseService) MergeLeftover(transactions_0, transactions_1 []*domain.Transaction) ([]*domain.Transaction) {
+func (s *FuseService) MergeLeftover(transactions_0, transactions_1 []*domain.Transaction) []*domain.Transaction {
 	// Placeholder for actual implementation of merging leftover transactions
 	s.Logger.IPrintf(2, "Merging leftover transactions (status 0: %d, status 1: %d)\n", len(transactions_0), len(transactions_1))
-	// Create a map to hold the merged transactions, using the transaction key as the map key
-	t0_map := make(map[string]*domain.Transaction)
-	t1_map := make(map[string]*domain.Transaction)
-	// Add transactions with status 0 to the merged map first
-	for _, transaction := range transactions_0 {
-		t0_map[*transaction.Key2] = transaction
+	t0_map := s.getTransactionsMap(transactions_0)
+	t1_map := s.getTransactionsMap(transactions_1)
+	result := s.mergeMaps(t0_map, t1_map)
+	// Log the number of merged leftover transactions
+	s.Logger.IPrintf(2, "Merged %d leftover transactions (status 0: %d, status 1: %d)\n", len(result), len(transactions_0), len(transactions_1))
+	return result
+}
+
+// get map from slice of transactions based on their keys
+func (s *FuseService) getTransactionsMap(transactions []*domain.Transaction) map[string]*domain.Transaction {
+	tmap := make(map[string]*domain.Transaction)
+	for _, transaction := range transactions {
+		if transaction.Key2 == nil {
+			continue
+		}
+		// Eliminate duplicates by checking if the transaction key already exists in the map, and if it does, we skip adding it again to the map
+		if _, exists := tmap[*transaction.Key2]; exists {
+			delete(tmap, *transaction.Key2)
+			s.Logger.IPrintf(2, "Duplicate transaction found with key: %s, removing from merged map\n", *transaction.Key2)
+			continue
+		}
+		tmap[*transaction.Key2] = transaction
 	}
-	// Add transactions with status 1 to the merged map
-	for _, transaction := range transactions_1 {
-		t1_map[*transaction.Key2] = transaction
-	}
-	// Merge the two maps, giving priority to transactions with status 0 (t0_map) over those with status 1 (t1_map)
-	// Cancel transactions with status 1 that have a corresponding transaction with status 0, and keep transactions with status 0 as they are
+	return tmap
+}
+
+// mergeMap in a slice of transactions based on their keys, giving priority to transactions in the first map over those in the second map
+func (s *FuseService) mergeMaps(t0_map, t1_map map[string]*domain.Transaction) []*domain.Transaction {
 	result := []*domain.Transaction{}
 	for key, t0 := range t0_map {
 		if t1, exists := t1_map[key]; exists {
+			if t0.TransactionDate == nil || t1.TransactionDate == nil {
+				continue
+			}
+			if t0.TransactionDate.After(t1.TransactionDate.AddDate(0, 0, 3)) ||
+				t0.TransactionDate.Before(t1.TransactionDate.AddDate(0, 0, -3)) {
+				continue
+			}
 			domain.MergeManagement(t1, t0)
 			t1.Cancel()
+			t1.ReferenceID = &t0.ID
+			t0.ReferenceID = &t1.ID
 			result = append(result, t0)
 			result = append(result, t1)
 		}
 	}
-	// Log the number of merged leftover transactions
-	s.Logger.IPrintf(2, "Merged %d leftover transactions (status 0: %d, status 1: %d)\n", len(result), len(transactions_0), len(transactions_1))
 	return result
 }
