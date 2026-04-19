@@ -11,7 +11,7 @@ select count(distinct key1)
 -- 8830493
 -- total management
 select count(1) 
-  from transaction_v3.transaction
+  from transaction_v4.transaction
  where transaction_date >= '2026-01-01'
    and transaction_date < '2026-04-01'
    and status_id in (0, 2);
@@ -30,6 +30,11 @@ select count(1)
    and status_id in (1, 2);
 
 
+select status_id, status_name, count(1)
+  from transaction_v4.transaction
+ where transaction_date >= '2026-01-01'
+   and transaction_date < '2026-04-01'
+ group by 1, 2;
 
 --
 select count(1)
@@ -53,10 +58,6 @@ select *
 where transaction_date >= '2026-01-01'
   and transaction_date < '2026-04-01'
   and status_id = 1;
-
-
-
-selec
 
 select count(1)
   from tmp_intercam a
