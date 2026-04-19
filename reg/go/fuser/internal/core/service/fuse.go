@@ -296,16 +296,16 @@ func (s *FuseService) getLeftover(start, end time.Time) ([]*domain.Transaction, 
 func (s *FuseService) mergeLeftover(transactions_0, transactions_1 []*domain.Transaction) []*domain.Transaction {
 	// Placeholder for actual implementation of merging leftover transactions
 	s.Logger.IPrintf(2, "Merging leftover transactions (status 0: %d, status 1: %d)\n", len(transactions_0), len(transactions_1))
-	t0_map := s.getTransactionsMap(transactions_0)
-	t1_map := s.getTransactionsMap(transactions_1)
-	result := s.mergeMaps(t0_map, t1_map)
+	t0_map := s.getLeftoverMap(transactions_0)
+	t1_map := s.getLeftoverMap(transactions_1)
+	result := s.mergeLeftoverMaps(t0_map, t1_map)
 	// Log the number of merged leftover transactions
 	s.Logger.IPrintf(2, "Merged %d leftover transactions (status 0: %d, status 1: %d)\n", len(result), len(transactions_0), len(transactions_1))
 	return result
 }
 
-// getTransactionsMap creates a map from a slice of transactions based on their keys
-func (s *FuseService) getTransactionsMap(transactions []*domain.Transaction) map[string]*domain.Transaction {
+// getLeftoverMap creates a map from a slice of transactions based on their keys
+func (s *FuseService) getLeftoverMap(transactions []*domain.Transaction) map[string]*domain.Transaction {
 	tmap := make(map[string]*domain.Transaction)
 	for _, transaction := range transactions {
 		if transaction.Key2 == nil {
@@ -322,8 +322,8 @@ func (s *FuseService) getTransactionsMap(transactions []*domain.Transaction) map
 	return tmap
 }
 
-// mergeMaps merges two maps of transactions based on their keys, giving priority to transactions in the first map over those in the second map
-func (s *FuseService) mergeMaps(t0_map, t1_map map[string]*domain.Transaction) []*domain.Transaction {
+// mergeLeftoverMaps merges two maps of transactions based on their keys, giving priority to transactions in the first map over those in the second map
+func (s *FuseService) mergeLeftoverMaps(t0_map, t1_map map[string]*domain.Transaction) []*domain.Transaction {
 	result := []*domain.Transaction{}
 	for key, t0 := range t0_map {
 		if t1, exists := t1_map[key]; exists {
