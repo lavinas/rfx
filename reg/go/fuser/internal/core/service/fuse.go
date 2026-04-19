@@ -255,12 +255,12 @@ func (s *FuseService) LetfOver(start_date time.Time, end_date time.Time, leftove
 	// Log the start of leftover processing
 	s.Logger.IPrintf(1, "Processing leftover transactions...\n")
 	// Get leftover transactions from the repository for the given date range
-	transactions_0, transactions_1, err := s.GetLeftover(start_date, end_date)
+	transactions_0, transactions_1, err := s.getLeftover(start_date, end_date)
 	if err != nil {
 		return err
 	}
 	// Merge transactions_0 and transactions_1, giving priority to transactions_0 (status 0) over transactions_1 (status 1)
-	merged := s.MergeLeftover(transactions_0, transactions_1)
+	merged := s.mergeLeftover(transactions_0, transactions_1)
 	// Insert merged transactions back into the repository
 	err = s.insertTransactions("leftover", time.Now(), merged)
 	if err != nil {
@@ -271,8 +271,8 @@ func (s *FuseService) LetfOver(start_date time.Time, end_date time.Time, leftove
 	return nil
 }
 
-// GetLeftoverTransactions is a helper method to fetch transactions that exist in the repository but were not merged (i.e., they do not exist in the local data) - placeholder for actual implementation
-func (s *FuseService) GetLeftover(start, end time.Time) ([]*domain.Transaction, []*domain.Transaction, error) {
+// getLeftover is a helper method to fetch transactions that exist in the repository but were not merged (i.e., they do not exist in the local data) - placeholder for actual implementation
+func (s *FuseService) getLeftover(start, end time.Time) ([]*domain.Transaction, []*domain.Transaction, error) {
 	// Placeholder for actual implementation of fetching leftover transactions
 	s.Logger.IPrintf(2, "Fetching leftover transactions for date %s\n", start.Format("2006-01-02"))
 	// Get transaction with status 0 (not processed) from the repository for the given date range
@@ -292,8 +292,8 @@ func (s *FuseService) GetLeftover(start, end time.Time) ([]*domain.Transaction, 
 	return transactions_0, transactions_1, nil
 }
 
-// MergeLeftover is a helper method to merge leftover transactions, giving priority to transactions with status 0 over those with status 1 - placeholder for actual implementation
-func (s *FuseService) MergeLeftover(transactions_0, transactions_1 []*domain.Transaction) []*domain.Transaction {
+// mergeLeftover is a helper method to merge leftover transactions, giving priority to transactions with status 0 over those with status 1 - placeholder for actual implementation
+func (s *FuseService) mergeLeftover(transactions_0, transactions_1 []*domain.Transaction) []*domain.Transaction {
 	// Placeholder for actual implementation of merging leftover transactions
 	s.Logger.IPrintf(2, "Merging leftover transactions (status 0: %d, status 1: %d)\n", len(transactions_0), len(transactions_1))
 	t0_map := s.getTransactionsMap(transactions_0)
@@ -304,7 +304,7 @@ func (s *FuseService) MergeLeftover(transactions_0, transactions_1 []*domain.Tra
 	return result
 }
 
-// get map from slice of transactions based on their keys
+// getTransactionsMap creates a map from a slice of transactions based on their keys
 func (s *FuseService) getTransactionsMap(transactions []*domain.Transaction) map[string]*domain.Transaction {
 	tmap := make(map[string]*domain.Transaction)
 	for _, transaction := range transactions {
@@ -322,7 +322,7 @@ func (s *FuseService) getTransactionsMap(transactions []*domain.Transaction) map
 	return tmap
 }
 
-// mergeMap in a slice of transactions based on their keys, giving priority to transactions in the first map over those in the second map
+// mergeMaps merges two maps of transactions based on their keys, giving priority to transactions in the first map over those in the second map
 func (s *FuseService) mergeMaps(t0_map, t1_map map[string]*domain.Transaction) []*domain.Transaction {
 	result := []*domain.Transaction{}
 	for key, t0 := range t0_map {
