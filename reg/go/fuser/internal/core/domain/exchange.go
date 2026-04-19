@@ -27,7 +27,7 @@ type Exchange struct {
 
 // TableName specifies the table name for Exchange struct
 func (Exchange) TableName() string {
-	return "raw_data_v2.exchange_transaction"
+	return "raw_data_v2.intercambio_transaction"
 }
 
 // Translate converts an Exchange instance to a Transaction instance
