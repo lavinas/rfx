@@ -46,6 +46,7 @@ func (i Management) Translate() *Transaction {
 		TransactionDate:             i.GetTransactionDate(),
 		TransactionSecondaryDate:    i.GetTransactionDate(),
 		TransactionAmount:           i.GetTransactionAmount(),
+		TransactionSecondaryAmount:  i.GetTransactionAmount(),
 		TransactionInstallments:     i.GetTransactionInstallments(),
 		TransactionInstallmentsType: nil,
 		TransactionBrand:            i.GetBrand(),
