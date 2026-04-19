@@ -57,8 +57,8 @@ func (t *Transaction) PrepareForInsert() {
 		return
 	}
 	// Concatenate the required fields into a single string
-	str := strconv.FormatFloat(*t.TransactionAmount, 'f', 2, 64) + strconv.FormatInt(*t.BIN, 10) +
-		*t.AuthorizationCode + strconv.FormatInt(*t.EstablishmentCode, 10)
+	str := strconv.FormatFloat(*t.TransactionAmount, 'f', 2, 64) + *t.AuthorizationCode +
+		strconv.FormatInt(*t.EstablishmentCode, 10)
 	// Generate MD5 hash of the concatenated string and set it as Key2
 	md5Hash := md5.Sum([]byte(str))
 	hashString := hex.EncodeToString(md5Hash[:])
