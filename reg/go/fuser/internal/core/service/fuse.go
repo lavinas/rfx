@@ -12,7 +12,6 @@ const (
 	saveRate = 2000
 )
 
-
 // FuseService is the service layer that interacts with the repository to perform business logic
 type FuseService struct {
 	Repository ports.Repository

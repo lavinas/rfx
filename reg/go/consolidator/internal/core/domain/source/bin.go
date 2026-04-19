@@ -7,7 +7,7 @@ const (
 
 // Bin represents the Bank Identification Number (BIN) associated with a transaction.
 type Bin struct {
-	Bin      int64  `gorm:"column:bin"`
+	Bin      int64   `gorm:"column:bin"`
 	Product  *int    `gorm:"column:produto_final"`
 	CardType *string `gorm:"column:modalidade_final"`
 }

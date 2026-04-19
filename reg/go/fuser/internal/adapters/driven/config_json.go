@@ -13,19 +13,20 @@ type JsonConfig struct {
 
 // DBConfig represents the database configuration structure
 type JsonDBConfig struct {
-	Host     string `json:"host"`
-	Port     int    `json:"port"`
-	User     string `json:"user"`
-	Password string `json:"password"`
-	DBName   string `json:"dbname"`
-	SSLMode  string `json:"sslmode"`
-	TimeZone string `json:"timezone"`
+	Host           string `json:"host"`
+	Port           int    `json:"port"`
+	User           string `json:"user"`
+	Password       string `json:"password"`
+	DBName         string `json:"dbname"`
+	SSLMode        string `json:"sslmode"`
+	TimeZone       string `json:"timezone"`
+	ConnectTimeout int    `json:"connect_timeout"`
 }
 
 // GetDNS returns the DNS string from the DBConfig struct
 func (v *JsonConfig) GetDNS() string {
-	dns := "postgresql://%s:%s@%s:%d/%s?sslmode=%s&TimeZone=%s"
-	return fmt.Sprintf(dns, v.DB.User, v.DB.Password, v.DB.Host, v.DB.Port, v.DB.DBName, v.DB.SSLMode, v.DB.TimeZone)
+	dns := "postgresql://%s:%s@%s:%d/%s?sslmode=%s&TimeZone=%s&connect_timeout=%d"
+	return fmt.Sprintf(dns, v.DB.User, v.DB.Password, v.DB.Host, v.DB.Port, v.DB.DBName, v.DB.SSLMode, v.DB.TimeZone, v.DB.ConnectTimeout)
 }
 
 // GetDBTimeZone returns the TimeZone from the DBConfig struct

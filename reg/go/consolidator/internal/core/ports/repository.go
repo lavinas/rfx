@@ -15,6 +15,8 @@ type Repository interface {
 	DeleteDesconto(year int, quarter int) error
 	SaveRanking(ranking []*target_domain.Ranking) error
 	DeleteRanking(year int, quarter int) error
+	SaveRankingFiltered(rankingFiltered []*target_domain.RankingFiltered) error
+	DeleteRankingFiltered(year int, quarter int) error
 	SaveIntercam(intercam []*target_domain.Intercam) error
 	DeleteIntercam(year int, quarter int) error
 	SaveConcCred(conccred []*target_domain.ConcCred) error

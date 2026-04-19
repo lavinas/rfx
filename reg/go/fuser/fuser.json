@@ -6,6 +6,7 @@
         "password": "root",
         "dbname": "reg",
         "sslmode": "disable",
-        "timezone": "UTC"
+        "timezone": "UTC",
+        "connect_timeout": 10
     }
 }

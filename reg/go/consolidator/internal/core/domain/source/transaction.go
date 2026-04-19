@@ -22,7 +22,7 @@ type Transaction struct {
 
 // TableName specifies the table name for Transaction struct
 func (Transaction) TableName() string {
-	return "transaction_v2.transaction"
+	return "transaction_v4.transaction"
 }
 
 // GetYear returns the year of the transaction based on the PeriodDate field.

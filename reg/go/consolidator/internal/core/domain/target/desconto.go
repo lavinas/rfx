@@ -34,26 +34,6 @@ func (i *Desconto) TableName() string {
 	return "cadoc_6334_v2.desconto"
 }
 
-// GetFromTransaction returns the discount data for a given transaction.
-func (i *Desconto) GetFromTransaction(transaction *source_domain.Transaction) *Desconto {
-	return &Desconto{
-		Year:                transaction.GetYear(),
-		Quarter:             transaction.GetQuarter(),
-		Function:            transaction.GetFunctionCode(),
-		Brand:               transaction.GetBrandCode(),
-		CaptureMode:         transaction.GetCaptureModeCode(),
-		Installments:        transaction.GetInstallments(),
-		SegmentCode:         transaction.GetSegmentCode(),
-		AvgMDRFee:           transaction.GetRevenueMDRValueRate(),
-		MinMDRFee:           transaction.GetRevenueMDRValueRate(),
-		MaxMDRFee:           transaction.GetRevenueMDRValueRate(),
-		StdevMDRFee:         0,
-		SqrdiffMDRFee:       0,
-		TransactionAmount:   transaction.GetTransactionAmount(),
-		TransactionQuantity: 1,
-	}
-}
-
 // NewDesconto creates a new instance of Desconto.
 func NewDesconto() *Desconto {
 	return &Desconto{}
@@ -66,9 +46,12 @@ func (i *Desconto) GetKey() string {
 
 // GetFromTransactions returns a map of Desconto structs for a given list of transactions.
 func (i *Desconto) AddTransactions(transactions []*source_domain.Transaction, items map[string]*Desconto) {
+	// for each transaction, get the corresponding Desconto instance and update the transaction amount, quantity and mdr fee statistics
 	for _, t := range transactions {
 		desconto := i.GetFromTransaction(t)
 		key := desconto.GetKey()
+
+		// if the key already exists in the items map, update the existing Desconto instance with the new transaction data
 		if existing, exists := items[key]; exists {
 			// sum amount and quantity
 			existing.TransactionAmount += desconto.TransactionAmount
@@ -91,5 +74,25 @@ func (i *Desconto) AddTransactions(transactions []*source_domain.Transaction, it
 		} else {
 			items[key] = desconto
 		}
+	}
+}
+
+// GetFromTransaction returns the discount data for a given transaction.
+func (i *Desconto) GetFromTransaction(transaction *source_domain.Transaction) *Desconto {
+	return &Desconto{
+		Year:                transaction.GetYear(),
+		Quarter:             transaction.GetQuarter(),
+		Function:            transaction.GetFunctionCode(),
+		Brand:               transaction.GetBrandCode(),
+		CaptureMode:         transaction.GetCaptureModeCode(),
+		Installments:        transaction.GetInstallments(),
+		SegmentCode:         transaction.GetSegmentCode(),
+		AvgMDRFee:           transaction.GetRevenueMDRValueRate(),
+		MinMDRFee:           transaction.GetRevenueMDRValueRate(),
+		MaxMDRFee:           transaction.GetRevenueMDRValueRate(),
+		StdevMDRFee:         0,
+		SqrdiffMDRFee:       0,
+		TransactionAmount:   transaction.GetTransactionAmount(),
+		TransactionQuantity: 1,
 	}
 }

@@ -124,6 +124,23 @@ func (a *GormRepository) DeleteRanking(year int, quarter int) error {
 	return nil
 }
 
+// SaveRankingFiltered saves the consolidated RankingFiltered data to the database
+func (a *GormRepository) SaveRankingFiltered(rankingFiltered []*target_domain.RankingFiltered) error {
+	// Placeholder for actual save logic, using GORM to save the consolidated RankingFiltered data to the database
+	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&rankingFiltered).Error
+}
+
+// DeleteRankingFiltered deletes existing consolidated RankingFiltered data from the database for a specific date
+func (a *GormRepository) DeleteRankingFiltered(year int, quarter int) error {
+	// delete all records of ranking filtered for the specified year and quarter
+	if err := a.DB.Where("year = ? AND quarter = ?", year, quarter).Delete(&target_domain.RankingFiltered{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 // SaveIntercam saves the consolidated Intercam data to the database
 func (a *GormRepository) SaveIntercam(intercam []*target_domain.Intercam) error {
 	// Placeholder for actual save logic, using GORM to save the consolidated Intercam data to the database

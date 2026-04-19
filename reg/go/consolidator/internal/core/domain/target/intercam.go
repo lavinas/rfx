@@ -9,21 +9,21 @@ import (
 
 // Intercam represents the interchange fee for a given transaction.
 type Intercam struct {
-	ID                  int64     `gorm:"column:id"`
-	CreatedAt           time.Time `gorm:"column:created_at"`
-	UpdatedAt           time.Time `gorm:"column:updated_at"`
-	Year                int       `gorm:"column:year"`
-	Quarter             int       `gorm:"column:quarter"`
-	ProductCode         int       `gorm:"column:product_code"`
-	CardType            string    `gorm:"column:card_type"`
-	Function            string    `gorm:"column:function"`
-	Brand               int       `gorm:"column:brand"`
-	CaptureMode         int       `gorm:"column:capture_mode"`
-	Installments        int       `gorm:"column:installments"`
-	SegmentCode         int       `gorm:"column:segment_code"`
-	InterchangeFee      float64   `gorm:"column:interchange_fee"`
-	TransactionAmount   float64   `gorm:"column:transaction_amount"`
-	TransactionQuantity int64     `gorm:"column:transaction_quantity"`
+	ID                  int64                        `gorm:"column:id"`
+	CreatedAt           time.Time                    `gorm:"column:created_at"`
+	UpdatedAt           time.Time                    `gorm:"column:updated_at"`
+	Year                int                          `gorm:"column:year"`
+	Quarter             int                          `gorm:"column:quarter"`
+	ProductCode         int                          `gorm:"column:product_code"`
+	CardType            string                       `gorm:"column:card_type"`
+	Function            string                       `gorm:"column:function"`
+	Brand               int                          `gorm:"column:brand"`
+	CaptureMode         int                          `gorm:"column:capture_mode"`
+	Installments        int                          `gorm:"column:installments"`
+	SegmentCode         int                          `gorm:"column:segment_code"`
+	InterchangeFee      float64                      `gorm:"column:interchange_fee"`
+	TransactionAmount   float64                      `gorm:"column:transaction_amount"`
+	TransactionQuantity int64                        `gorm:"column:transaction_quantity"`
 	Bins                map[int64]*source_domain.Bin `gorm:"-"`
 }
 
