@@ -35,7 +35,7 @@ func (s *FuseService) Run(start_date time.Time, end_date time.Time, focus string
 	return nil
 }
 
-// main logic of the FuseService would be implemented in the Run method, which would call helper methods to process Intercam and Management transactions, as well as handle leftover transactions based on the provided flags and focus.
+// main logic of the FuseService would be implemented in the Run method, which would call helper methods to process Exchange and Management transactions, as well as handle leftover transactions based on the provided flags and focus.
 func (s *FuseService) mainLogic(start_date time.Time, end_date time.Time, focus string) error {
 	// If focus is set to "none", we skip processing transactions and return early
 	if focus == "none" {
@@ -45,9 +45,9 @@ func (s *FuseService) mainLogic(start_date time.Time, end_date time.Time, focus 
 	// Process by date range
 	for date := start_date; !date.After(end_date); date = date.AddDate(0, 0, 1) {
 		s.Logger.IPrintf(1, "Processing date: %s\n", date.Format("2006-01-02"))
-		// Process Intercam transactions if the focus is set to "all" or "intercam"
-		if focus == "all" || focus == "intercam" {
-			err := s.processIntercam(date)
+		// Process Exchange transactions if the focus is set to "all" or "exchange"
+		if focus == "all" || focus == "exchange" {
+			err := s.processExchange(date)
 			if err != nil {
 				return err
 			}
@@ -63,25 +63,25 @@ func (s *FuseService) mainLogic(start_date time.Time, end_date time.Time, focus 
 	return nil
 }
 
-// getIntercam is a helper method to fetch Intercam transactions for a specific date
-func (s *FuseService) processIntercam(date time.Time) error {
-	s.Logger.IPrintf(2, "Processing Intercam transactions for date %s\n", date.Format("2006-01-02"))
-	transactions, err := s.getIntercamTransactions(date)
+// getExchange is a helper method to fetch Exchange transactions for a specific date
+func (s *FuseService) processExchange(date time.Time) error {
+	s.Logger.IPrintf(2, "Processing Exchange transactions for date %s\n", date.Format("2006-01-02"))
+	transactions, err := s.getExchangeTransactions(date)
 	if err != nil {
 		return err
 	}
-	byKey, err := s.getTransactionsByKey("intercam", date, transactions)
+	byKey, err := s.getTransactionsByKey("exchange", date, transactions)
 	if err != nil {
 		return err
 	}
-	merged := s.mergeTransactions("intercam", date, transactions, byKey)
+	merged := s.mergeTransactions("exchange", date, transactions, byKey)
 	merged = s.filterDuplicates(merged)
 
-	err = s.insertTransactions("intercam", date, merged)
+	err = s.insertTransactions("exchange", date, merged)
 	if err != nil {
 		return err
 	}
-	s.Logger.IPrintf(2, "Finished processing Intercam transactions for date %s\n", date.Format("2006-01-02"))
+	s.Logger.IPrintf(2, "Finished processing Exchange transactions for date %s\n", date.Format("2006-01-02"))
 	return nil
 }
 
@@ -107,16 +107,16 @@ func (s *FuseService) processManagement(date time.Time) error {
 	return nil
 }
 
-// getIntercamTransactions is a helper method to fetch Intercam transactions for a specific date
-func (s *FuseService) getIntercamTransactions(date time.Time) ([]*domain.Transaction, error) {
-	intercams, err := s.Repository.GetIntercamTransactions(date)
+// getExchangeTransactions is a helper method to fetch Exchange transactions for a specific date
+func (s *FuseService) getExchangeTransactions(date time.Time) ([]*domain.Transaction, error) {
+	exchanges, err := s.Repository.GetExchangeTransactions(date)
 	if err != nil {
-		s.Logger.IPrintf(3, "Error fetching intercamtransactions for date %s: %v\n", date.Format("2006-01-02"), err)
+		s.Logger.IPrintf(3, "Error fetching exchange transactions for date %s: %v\n", date.Format("2006-01-02"), err)
 		return nil, err
 	}
 	transactions := []*domain.Transaction{}
-	for _, intercam := range intercams {
-		transactions = append(transactions, intercam.Translate())
+	for _, exchange := range exchanges {
+		transactions = append(transactions, exchange.Translate())
 	}
 	return transactions, nil
 }
@@ -165,7 +165,7 @@ func (s *FuseService) getTransactionsByKey(transType string, transDate time.Time
 	return repTransactions, nil
 }
 
-// mergeTransactions is a helper method to merge Intercam transactions with existing transactions in the repository
+// mergeTransactions is a helper method to merge Exchange transactions with existing transactions in the repository
 func (s *FuseService) mergeTransactions(transType string, transDate time.Time, localTransactions []*domain.Transaction, repositoryTransactions []*domain.Transaction) []*domain.Transaction {
 	merged := []*domain.Transaction{}
 	repoMap := make(map[string]*domain.Transaction)
@@ -175,8 +175,8 @@ func (s *FuseService) mergeTransactions(transType string, transDate time.Time, l
 	for _, localTrans := range localTransactions {
 		if repoTrans, exists := repoMap[localTrans.Key1]; exists {
 			switch transType {
-			case "intercam":
-				domain.MergeIntercam(localTrans, repoTrans)
+			case "exchange":
+				domain.MergeExchange(localTrans, repoTrans)
 			case "management":
 				domain.MergeManagement(localTrans, repoTrans)
 			default:

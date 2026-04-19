@@ -72,9 +72,9 @@ func (a *GormRepository) GetManagementTransactions(dt_transaction time.Time) ([]
 	return transactions, nil
 }
 
-// GetIntercamTransactions retrieves Intercam transactions from the database
-func (a *GormRepository) GetIntercamTransactions(dt_transaction time.Time) ([]*domain.Intercam, error) {
-	var transactions []*domain.Intercam
+// GetExchangeTransactions retrieves Exchange transactions from the database
+func (a *GormRepository) GetExchangeTransactions(dt_transaction time.Time) ([]*domain.Exchange, error) {
+	var transactions []*domain.Exchange
 	start_date := dt_transaction.Format("2006-01-02") + " 00:00:00"
 	end_date := dt_transaction.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
 	if err := a.DB.WithContext(*a.ctx).Where("dt_processamento >= ? AND dt_processamento < ?", start_date, end_date).Find(&transactions).Error; err != nil {

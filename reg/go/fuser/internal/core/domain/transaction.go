@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Transaction represents the data structure for transactions which will be used for fusing data between intercam, management and webservice
+// Transaction represents the data structure for transactions which will be used for fusing data between exchange and management
 type Transaction struct {
 	ID                          int64      `gorm:"column:id"`
 	CreatedAt                   time.Time  `gorm:"column:created_at;type:timestamp"`
@@ -24,6 +24,7 @@ type Transaction struct {
 	TransactionDate             *time.Time `gorm:"column:transaction_date;type:timestamp"`
 	TransactionSecondaryDate    *time.Time `gorm:"column:transaction_secondary_date;type:timestamp"`
 	TransactionAmount           *float64   `gorm:"column:transaction_amount"`
+	TransactionSecondaryAmount  *float64   `gorm:"column:transaction_secondary_amount"`
 	TransactionInstallments     *int64     `gorm:"column:transaction_installments"`
 	TransactionInstallmentsType *string    `gorm:"column:transaction_installments_type"`
 	TransactionBrand            *string    `gorm:"column:transaction_brand"`

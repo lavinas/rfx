@@ -37,8 +37,8 @@ func (d *FlagDriver) Run() error {
 	if err != nil {
 		return fmt.Errorf("invalid command: use fuser -start=yyyy-mm-dd -end=yyyy-mm-dd")
 	}
-	if *focus != "all" && *focus != "intercam" && *focus != "management" && *focus != "none" {
-		return fmt.Errorf("invalid focus: use fuser -focus=all|intercam|management|none")
+	if *focus != "all" && *focus != "exchange" && *focus != "management" && *focus != "none" {
+		return fmt.Errorf("invalid focus: use fuser -focus=all|exchange|management|none")
 	}
 	return d.service.Run(sd, ed, *focus, *leftover)
 }

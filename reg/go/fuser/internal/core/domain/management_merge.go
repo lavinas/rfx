@@ -1,68 +1,69 @@
 package domain
 
 // MergeManagement merges two  transactions into one, prioritizing Intercam values over Management values when both are available
-func MergeManagement(interTransaction *Transaction, repoTransaction *Transaction) {
+func MergeManagement(manegTransaction *Transaction, repoTransaction *Transaction) {
 	// Update fields from Intercam transaction if they are not nil
 	if repoTransaction.EstablishmentCode == nil {
-		repoTransaction.EstablishmentCode = interTransaction.EstablishmentCode
+		repoTransaction.EstablishmentCode = manegTransaction.EstablishmentCode
 	}
 	if repoTransaction.EstablishmentNature == nil {
-		repoTransaction.EstablishmentNature = interTransaction.EstablishmentNature
+		repoTransaction.EstablishmentNature = manegTransaction.EstablishmentNature
 	}
 	if repoTransaction.EstablishmentMCC == nil {
-		repoTransaction.EstablishmentMCC = interTransaction.EstablishmentMCC
+		repoTransaction.EstablishmentMCC = manegTransaction.EstablishmentMCC
 	}
 	if repoTransaction.EstablishmentTerminalCode == nil {
-		repoTransaction.EstablishmentTerminalCode = interTransaction.EstablishmentTerminalCode
+		repoTransaction.EstablishmentTerminalCode = manegTransaction.EstablishmentTerminalCode
 	}
 	if repoTransaction.BIN == nil {
-		repoTransaction.BIN = interTransaction.BIN
+		repoTransaction.BIN = manegTransaction.BIN
 	}
 	if repoTransaction.AuthorizationCode == nil {
-		repoTransaction.AuthorizationCode = interTransaction.AuthorizationCode
+		repoTransaction.AuthorizationCode = manegTransaction.AuthorizationCode
 	}
 	if repoTransaction.TransactionNSU == nil {
-		repoTransaction.TransactionNSU = interTransaction.TransactionNSU
+		repoTransaction.TransactionNSU = manegTransaction.TransactionNSU
 	}
 	if repoTransaction.TransactionDate == nil {
-		repoTransaction.TransactionDate = interTransaction.TransactionDate
+		repoTransaction.TransactionDate = manegTransaction.TransactionDate
 	}
 	if repoTransaction.TransactionAmount == nil {
-		repoTransaction.TransactionAmount = interTransaction.TransactionAmount
+		repoTransaction.TransactionAmount = manegTransaction.TransactionAmount
 	}
 	if repoTransaction.TransactionInstallments == nil {
-		repoTransaction.TransactionInstallments = interTransaction.TransactionInstallments
+		repoTransaction.TransactionInstallments = manegTransaction.TransactionInstallments
 	}
 	if repoTransaction.TransactionBrand == nil {
-		repoTransaction.TransactionBrand = interTransaction.TransactionBrand
+		repoTransaction.TransactionBrand = manegTransaction.TransactionBrand
 	}
 	if repoTransaction.TransactionProduct == nil {
-		repoTransaction.TransactionProduct = interTransaction.TransactionProduct
+		repoTransaction.TransactionProduct = manegTransaction.TransactionProduct
 	}
 	if repoTransaction.TransactionCapture == nil {
-		repoTransaction.TransactionCapture = interTransaction.TransactionCapture
+		repoTransaction.TransactionCapture = manegTransaction.TransactionCapture
 	}
 	if repoTransaction.CostInterchangeValue == nil {
-		repoTransaction.CostInterchangeValue = interTransaction.CostInterchangeValue
+		repoTransaction.CostInterchangeValue = manegTransaction.CostInterchangeValue
 	}
 	if repoTransaction.HighSourcePriority == nil {
-		repoTransaction.HighSourcePriority = interTransaction.HighSourcePriority
+		repoTransaction.HighSourcePriority = manegTransaction.HighSourcePriority
 	}
 	if repoTransaction.PeriodDate == nil {
-		repoTransaction.PeriodDate = interTransaction.PeriodDate
+		repoTransaction.PeriodDate = manegTransaction.PeriodDate
 	}
 	if repoTransaction.PeriodClosingID == nil {
-		repoTransaction.PeriodClosingID = interTransaction.PeriodClosingID
+		repoTransaction.PeriodClosingID = manegTransaction.PeriodClosingID
 	}
 	if repoTransaction.TransacID == nil {
-		repoTransaction.TransacID = interTransaction.TransacID
+		repoTransaction.TransacID = manegTransaction.TransacID
 	}
 	if repoTransaction.RevenueMDRValue == nil {
-		repoTransaction.RevenueMDRValue = interTransaction.RevenueMDRValue
+		repoTransaction.RevenueMDRValue = manegTransaction.RevenueMDRValue
 	}
 
 	// Update secondary date
-	repoTransaction.TransactionSecondaryDate = interTransaction.TransactionDate
+	repoTransaction.TransactionSecondaryDate = manegTransaction.TransactionDate
+	repoTransaction.TransactionSecondaryAmount = manegTransaction.TransactionAmount
 
 	// Calculate status
 	if *repoTransaction.StatusID == 0 {

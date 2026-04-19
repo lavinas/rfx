@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// Intercam represents the data structure for intercam raw data
-type Intercam struct {
+// Exchange represents the data structure for exchange raw data
+type Exchange struct {
 	CdTransacaoFin       string     `gorm:"column:cd_transacao_fin"`
 	Key1                 *string    `gorm:"column:key1"`
 	FormaCaptura         *string    `gorm:"column:forma_captura"`
@@ -25,22 +25,22 @@ type Intercam struct {
 	CardAcceptorID       *string    `gorm:"column:card_acceptor_id"`
 }
 
-// TableName specifies the table name for Intercam struct
-func (Intercam) TableName() string {
-	return "raw_data_v2.intercambio_transaction"
+// TableName specifies the table name for Exchange struct
+func (Exchange) TableName() string {
+	return "raw_data_v2.exchange_transaction"
 }
 
-// Translate converts an Intercam instance to a Transaction instance
-func (i Intercam) Translate() *Transaction {
+// Translate converts an Exchange instance to a Transaction instance
+func (i Exchange) Translate() *Transaction {
 	return &Transaction{
 		ID:                          0, // ID will be set by the database upon insertion
 		CreatedAt:                   time.Now(),
 		UpdatedAt:                   time.Now(),
 		Key1:                        i.GetKey1(),
 		EstablishmentCode:           i.GetEstablishmentCode(),
-		EstablishmentNature:         nil, // This field is not present in Intercam, set to nil or default value
-		EstablishmentMCC:            nil, // This field is not present in Intercam, set to nil or default value
-		EstablishmentTerminalCode:   nil, // This field is not present in Intercam, set to nil or default value
+		EstablishmentNature:         nil, 
+		EstablishmentMCC:            nil, 
+		EstablishmentTerminalCode:   nil, 
 		BIN:                         i.GetBIN(),
 		AuthorizationCode:           i.GetAuthorizationCode(),
 		TransactionNSU:              i.GetTransactionNSU(),
@@ -66,7 +66,7 @@ func (i Intercam) Translate() *Transaction {
 }
 
 // GetKey1 returns the key1 value of the transaction, if available
-func (i Intercam) GetKey1() string {
+func (i *Exchange) GetKey1() string {
 	if i.Key1 == nil || *i.Key1 == "" {
 		i.Key1 = new(string)
 		*i.Key1 = "IC_" + strconv.FormatInt(time.Now().UnixNano(), 10)
@@ -75,7 +75,7 @@ func (i Intercam) GetKey1() string {
 }
 
 // GetEstablishmentCode returns the establishment code of the transaction, if available
-func (i Intercam) GetEstablishmentCode() *int64 {
+func (i *Exchange) GetEstablishmentCode() *int64 {
 	if i.CardAcceptorID != nil {
 		if code, err := strconv.ParseInt(*i.CardAcceptorID, 10, 64); err == nil {
 			return &code
@@ -85,7 +85,7 @@ func (i Intercam) GetEstablishmentCode() *int64 {
 }
 
 // GetBIN returns the BIN of the transaction, if available
-func (i Intercam) GetBIN() *int64 {
+func (i *Exchange) GetBIN() *int64 {
 	if i.Bin != nil {
 		if bin, err := strconv.ParseInt(*i.Bin, 10, 64); err == nil {
 			return &bin
@@ -95,7 +95,7 @@ func (i Intercam) GetBIN() *int64 {
 }
 
 // GetAuthorizationCode returns the authorization code of the transaction, if available
-func (i Intercam) GetAuthorizationCode() *string {
+func (i *Exchange) GetAuthorizationCode() *string {
 	if i.AuthorizationCode != nil {
 		str := new(string)
 		*str = *i.AuthorizationCode
@@ -105,7 +105,7 @@ func (i Intercam) GetAuthorizationCode() *string {
 }
 
 // GetTransactionNSU returns the transaction NSU of the transaction, if available
-func (i Intercam) GetTransactionNSU() *string {
+func (i *Exchange) GetTransactionNSU() *string {
 	if i.TransactionNsu != nil {
 		str := new(string)
 		*str = *i.TransactionNsu
@@ -115,7 +115,7 @@ func (i Intercam) GetTransactionNSU() *string {
 }
 
 // GetTransactionDate returns the transaction date of the transaction, if available
-func (i Intercam) GetTransactionDate() *time.Time {
+func (i *Exchange) GetTransactionDate() *time.Time {
 	if i.DtProcessamento != nil {
 		ret := new(time.Time)
 		*ret = *i.DtProcessamento
@@ -125,7 +125,7 @@ func (i Intercam) GetTransactionDate() *time.Time {
 }
 
 // GetTransactionAmount returns the transaction amount of the transaction, if available
-func (i Intercam) GetTransactionAmount() *float64 {
+func (i *Exchange) GetTransactionAmount() *float64 {
 	if i.ValorTransacoes != nil {
 		amount := new(float64)
 		*amount = *i.ValorTransacoes
@@ -135,7 +135,7 @@ func (i Intercam) GetTransactionAmount() *float64 {
 }
 
 // GetTransactionInstallments returns the transaction installments of the transaction, if available
-func (i Intercam) GetTransactionInstallments() *int64 {
+func (i *Exchange) GetTransactionInstallments() *int64 {
 	if i.Parcela != nil {
 		if installments, err := strconv.ParseInt(*i.Parcela, 10, 64); err == nil {
 			return &installments
@@ -145,7 +145,7 @@ func (i Intercam) GetTransactionInstallments() *int64 {
 }
 
 // Getbrand returns the brand of the transaction, if available
-func (i Intercam) GetBrand() *string {
+func (i *Exchange) GetBrand() *string {
 	mapping := map[string]string{
 		"VISA":       "V",
 		"MASTERCARD": "M",
@@ -162,7 +162,7 @@ func (i Intercam) GetBrand() *string {
 }
 
 // GetProduct returns the product of the transaction, if available
-func (i Intercam) GetProduct() *string {
+func (i *Exchange) GetProduct() *string {
 	mapping := map[string]string{
 		"CREDIT": "CR",
 		"DEBIT":  "DB",
@@ -178,7 +178,7 @@ func (i Intercam) GetProduct() *string {
 }
 
 // GetCapture returns the capture method of the transaction, if available
-func (i Intercam) GetCapture() *string {
+func (i *Exchange) GetCapture() *string {
 	mapping := map[string]string{
 		"07": "CTC",
 		"02": "CHP",
@@ -198,7 +198,7 @@ func (i Intercam) GetCapture() *string {
 }
 
 // GetCostInterchangeValue returns the cost interchange value of the transaction, if available
-func (i Intercam) GetCostInterchangeValue() *float64 {
+func (i *Exchange) GetCostInterchangeValue() *float64 {
 	if i.TaxaIntercambioValor != nil {
 		cost := new(float64)
 		*cost = *i.TaxaIntercambioValor
@@ -208,31 +208,31 @@ func (i Intercam) GetCostInterchangeValue() *float64 {
 }
 
 // GetHighPriority returns the high source priority of the transaction, if available
-func (i Intercam) GetHighPriority() *int64 {
+func (i *Exchange) GetHighPriority() *int64 {
 	priority := int64(20) // Default value for high source priority
 	return &priority
 }
 
 // GetStatusID returns the status ID of the transaction, if available
-func (i Intercam) GetStatusID() *int64 {
+func (i *Exchange) GetStatusID() *int64 {
 	statusID := int64(0) // Default value for status ID
 	return &statusID
 }
 
 // GetStatusName returns the status name of the transaction, if available
-func (i Intercam) GetStatusName() *string {
-	statusName := "Intercam" // Default value for status name
+func (i *Exchange) GetStatusName() *string {
+	statusName := "Exchange" // Default value for status name
 	return &statusName
 }
 
 // GetPeriodClosingID returns the period closing ID of the transaction, if available
-func (i Intercam) GetPeriodClosingID() *int64 {
+func (i *Exchange) GetPeriodClosingID() *int64 {
 	periodClosingID := int64(1) // Default value for period closing ID
 	return &periodClosingID
 }
 
 // GetTransacID returns the transac ID of the transaction, if available
-func (i Intercam) GetTransacID() *string {
+func (i *Exchange) GetTransacID() *string {
 	if i.CdTransacaoFin != "" {
 		str := new(string)
 		*str = i.CdTransacaoFin
