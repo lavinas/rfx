@@ -7,6 +7,12 @@ import (
 	"fuser/internal/core/ports"
 )
 
+const (
+	loadRate = 4000
+	saveRate = 2000
+)
+
+
 // FuseService is the service layer that interacts with the repository to perform business logic
 type FuseService struct {
 	Repository ports.Repository
@@ -141,10 +147,12 @@ func (s *FuseService) getTransactionsByKey(transType string, transDate time.Time
 	keys := []string{}
 	count := 0
 	total := len(transactions)
+	// Fetch transactions in batches of const loadRate to optimize database performance and avoid memory issues
 	for _, transaction := range transactions {
 		keys = append(keys, transaction.Key1)
 		count++
-		if count%2000 == 0 {
+		// When the batch size reaches loadRate, we fetch the transactions from the repository by their keys and reset the batch
+		if count%loadRate == 0 {
 			repTrans, err := s.Repository.GetTransactionsByKey(keys)
 			if err != nil {
 				return nil, err
@@ -154,6 +162,7 @@ func (s *FuseService) getTransactionsByKey(transType string, transDate time.Time
 			keys = []string{}
 		}
 	}
+	// Fetch any remaining transactions from the repository by their keys that were not fetched in the previous loop
 	if len(keys) > 0 {
 		repTrans, err := s.Repository.GetTransactionsByKey(keys)
 		if err != nil {
@@ -196,13 +205,13 @@ func (s *FuseService) insertTransactions(transType string, transDate time.Time, 
 	count := 0
 	total := len(transactions)
 	lot := []*domain.Transaction{}
-	// Insert transactions in batches of 2000 to optimize database performance and avoid memory issues
+	// Insert transactions in batches of const saveRate to optimize database performance and avoid memory issues
 	for _, transaction := range transactions {
 		transaction.PrepareForInsert()
 		lot = append(lot, transaction)
 		count++
-		// When the batch size reaches 2000, we insert the batch into the repository and reset the batch
-		if count%2000 == 0 {
+		// When the batch size reaches saveRate, we insert the batch into the repository and reset the batch
+		if count%saveRate == 0 {
 			if err := s.Repository.InsertTransactions(lot); err != nil {
 				s.Logger.IPrintf(2, "Error inserting %s transactions for date %s: %v\n", transType, transDate.Format("2006-01-02"), err)
 				return err
