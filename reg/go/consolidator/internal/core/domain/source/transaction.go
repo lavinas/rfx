@@ -102,6 +102,14 @@ func (t *Transaction) GetInstallments() int {
 	return int(*t.TransactionInstallments)
 }
 
+// GetMccCode returns the Merchant Category Code (MCC) of the transaction based on the EstablishmentMCC field.
+func (t *Transaction) GetMccCode() int {
+	if t.EstablishmentMCC != nil {
+		return int(*t.EstablishmentMCC)
+	}
+	return 0
+}
+
 // GetSegmentCode returns the segment code of the transaction based on the EstablishmentNature field.
 func (t *Transaction) GetSegmentCode() int {
 	if t.EstablishmentMCC == nil {
@@ -120,6 +128,15 @@ func (t *Transaction) GetSegmentCode() int {
 		return segment
 	}
 	return 0
+}
+
+// GetSegmentName returns the segment name of the transaction based on the EstablishmentMCC field.
+func (t *Transaction) GetSegmentName() string {
+	code := t.GetSegmentCode()
+	if code == 0 {
+		return ""
+	}
+	return SegmentNameMap[code]
 }
 
 // GetTransactionAmount returns the transaction amount of the transaction based on the TransactionAmount field.

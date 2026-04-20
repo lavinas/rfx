@@ -174,3 +174,20 @@ func (a *GormRepository) DeleteConcCred(year int, quarter int) error {
 	}
 	return nil
 }
+
+// SaveSegmento saves the consolidated Segmento data to the database
+func (a *GormRepository) SaveSegmento(segmento []*target_domain.Segmento) error {
+	// Placeholder for actual save logic, using GORM to save the consolidated Segmento data to the database
+	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&segmento).Error
+}
+
+// DeleteSegmento deletes existing consolidated Segmento data from the database for a specific date
+func (a *GormRepository) DeleteSegmento(year int, quarter int) error {
+	// delete all records of segmento for the specified year and quarter
+	if err := a.DB.Where("year = ? AND quarter = ?", year, quarter).Delete(&target_domain.Segmento{}).Error; err != nil {
+		return err
+	}
+	return nil
+}

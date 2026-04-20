@@ -1,0 +1,1 @@
+select * from cadoc_6334_v2.segmento

@@ -21,4 +21,6 @@ type Repository interface {
 	DeleteIntercam(year int, quarter int) error
 	SaveConcCred(conccred []*target_domain.ConcCred) error
 	DeleteConcCred(year int, quarter int) error
+	SaveSegmento(segmento []*target_domain.Segmento) error
+	DeleteSegmento(year int, quarter int) error
 }
