@@ -57,13 +57,7 @@ func FilterRanking(items map[string]*Ranking) map[string]*RankingFiltered {
 	filtered := make(map[string]*RankingFiltered)
 
 	// Group establishments by segment code and sum transaction amounts
-	segmentEstablishments := make(map[int]map[int64]float64)
-	for _, ranking := range items {
-		if _, exists := segmentEstablishments[ranking.SegmentCode]; !exists {
-			segmentEstablishments[ranking.SegmentCode] = make(map[int64]float64)
-		}
-		segmentEstablishments[ranking.SegmentCode][ranking.EstablishmentCode] += ranking.TransactionAmount
-	}
+	segmentEstablishments := getSegmentEstablishmentsMap(items)
 
 	// for each segment code, filter top and bottom establishments
 	for segmentCode := range segmentEstablishments {
@@ -71,10 +65,16 @@ func FilterRanking(items map[string]*Ranking) map[string]*RankingFiltered {
 		establishments := getRankingSortedEstablishments(segmentCode, segmentEstablishments)
 
 		// get top establishments
-		filtered = filterTopRanking(items, segmentCode, establishments)
+		top := filterTopRanking(items, segmentCode, establishments)
+
+		// add top establishments to filtered
+		for key, tp := range top {
+			filtered[key] = tp
+		}
 
 		// get bottom establishments
 		bottom := filterBottomRanking(items, segmentCode, establishments)
+
 		// consolidate bottom establishments
 		bottom = consolidateBottomRanking(bottom)
 
@@ -86,6 +86,18 @@ func FilterRanking(items map[string]*Ranking) map[string]*RankingFiltered {
 	}
 
 	return filtered
+}
+
+// getSegmentEstablishments returns a map of segment code to a map of establishment code and transaction amount
+func getSegmentEstablishmentsMap(items map[string]*Ranking) map[int]map[int64]float64 {
+	segmentEstablishments := make(map[int]map[int64]float64)
+	for _, ranking := range items {
+		if _, exists := segmentEstablishments[ranking.SegmentCode]; !exists {
+			segmentEstablishments[ranking.SegmentCode] = make(map[int64]float64)
+		}
+		segmentEstablishments[ranking.SegmentCode][ranking.EstablishmentCode] += ranking.TransactionAmount
+	}
+	return segmentEstablishments
 }
 
 // getRankingSortedEstablishments returns a sorted slice of establishments based on transaction amount for a given segment code

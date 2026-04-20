@@ -1,5 +1,10 @@
 -- Active: 1766518799113@@127.0.0.1@5434@reg@cadoc_6334_v2
 
+
+-------------------------------------------------------------
+-- validate desconto table
+-------------------------------------------------------------
+
 create table cadoc_6334_v2.tmp_desconto as
 select extract(year from a.transaction_date) as year,
        extract(quarter from a.transaction_date) as quarter,
@@ -98,6 +103,24 @@ inner join cadoc_6334_v2.tmp_desconto b
 where abs(a.stdev_mdr_fee - b.stdev_mdr_fee) > 0.01
 order by 3
 ) as x;
+
+
+select a.stdev_mdr_fee as desconto,
+       b.stdev_mdr_fee as tmp_desconto,
+       a.stdev_mdr_fee - b.stdev_mdr_fee as diff,
+       a.avg_mdr_fee as avg_desconto,
+       a.transaction_quantity
+  from cadoc_6334_v2.desconto a
+inner join cadoc_6334_v2.tmp_desconto b
+  on a.year = b.year
+  and a.quarter = b.quarter
+  and a.function = b.function
+  and a.brand = b.brand
+  and a.capture_mode = b.capture_mode
+  and a.installments = b.installments
+  and a.segment_code = b.segment_code
+where abs(a.stdev_mdr_fee - b.stdev_mdr_fee) > 0.01
+order by 3
 
 
 select a.stdev_mdr_fee std1,
