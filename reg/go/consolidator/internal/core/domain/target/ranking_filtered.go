@@ -157,9 +157,6 @@ func filterTopRanking(items map[string]*Ranking, segmentCode int, establishments
 
 // filterBottomRanking filters the ranking data to include only the bottom 200 establishments based on transaction amount
 func filterBottomRanking(items map[string]*Ranking, segmentCode int, establishments []establishment) map[string]*RankingFiltered {
-	// Group establishments by segment code and sum transaction amounts
-	filtered := make(map[string]*RankingFiltered)
-
 	// get last 200 establishments
 	count := bottomCount
 	if len(establishments) < count {
@@ -167,12 +164,12 @@ func filterBottomRanking(items map[string]*Ranking, segmentCode int, establishme
 	}
 
 	// filter bottom establishments and add to filtered_bottom
-	filtered_bottom := make(map[string]*Ranking)
+	filtered_bottom := make(map[string]*RankingFiltered)
 	for i := len(establishments) - count; i < len(establishments); i++ {
 		code := establishments[i].Code
 		for key, ranking := range items {
 			if ranking.SegmentCode == segmentCode && ranking.EstablishmentCode == code {
-				filtered_bottom[key] = &Ranking{
+				filtered_bottom[key] = &RankingFiltered{
 					Year:                ranking.Year,
 					Quarter:             ranking.Quarter,
 					EstablishmentCode:   ranking.EstablishmentCode,
@@ -190,7 +187,7 @@ func filterBottomRanking(items map[string]*Ranking, segmentCode int, establishme
 	}
 
 	// Return the filtered ranking data containing only the bottom establishments
-	return filtered
+	return filtered_bottom
 
 }
 
@@ -247,11 +244,11 @@ func consolidateRanking(ranking map[string]*RankingFiltered) map[string]*Ranking
 
 		// if the key already exists in consRanking, sum the transaction amount and quantity and calculate the new average mcc fee
 		if existing, exists := consRanking[key]; exists {
-			existing.TransactionAmount += r.TransactionAmount
-			existing.TransactionQuantity += r.TransactionQuantity
 			fee := existing.AvgMccFee / 100 * existing.TransactionAmount
 			fee += r.AvgMccFee / 100 * r.TransactionAmount
-			existing.AvgMccFee = fee / existing.TransactionAmount * 100
+			existing.AvgMccFee = fee / (existing.TransactionAmount + r.TransactionAmount) * 100
+			existing.TransactionAmount += r.TransactionAmount
+			existing.TransactionQuantity += r.TransactionQuantity
 		} else {
 			consRanking[key] = NewRanking
 		}
