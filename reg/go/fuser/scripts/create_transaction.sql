@@ -1,4 +1,6 @@
-CREATE TABLE transaction(
+create schema if not exists transaction_v4;
+
+CREATE TABLE transaction_v4.transaction(
     id BIGSERIAL NOT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -42,12 +44,3 @@ CREATE INDEX transaction_transaction_date_status_id_idx ON transaction_v4.transa
 CREATE INDEX idx_transaction_reference_id ON transaction_v4.transaction USING btree (reference_id);
 
 
--- create table transaction_v4.transaction_reference
-CREATE TABLE transaction_reference (
-    transaction_id BIGSERIAL NOT NULL,
-    reference_type VARCHAR(50) NOT NULL,
-    reference_id VARCHAR(50) NOT NULL,
-    PRIMARY KEY(transaction_id, reference_type, reference_id)
-);
-
-CREATE INDEX idx_transaction_reference_transaction_id ON transaction_reference USING btree (transaction_id);

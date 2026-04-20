@@ -1,14 +1,12 @@
--- Active: 1766518799113@@127.0.0.1@5434@reg@transaction_v4
+-- Active: 1774368236280@@192.168.100.78@5436@dev_regulat@transaction_v4
 -- total management
 -- 8849392
--- 8830493
 select count(distinct key1)
   from raw_data_v2.intercambio_transaction a
  where a.dt_processamento >= '2026-01-01'
    and a.dt_processamento < '2026-04-01';
 
 -- 8849392
--- 8830493
 -- total management
 select count(1) 
   from transaction_v4.transaction
