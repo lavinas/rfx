@@ -13,7 +13,7 @@ select extract(year from a.transaction_date) as year,
        0 as others_cost
   from transaction_v4.transaction a
 where a.transaction_date >= '2026-01-01'
-  and a.transaction_date < '2026-01-06'
+  and a.transaction_date < '2026-04-01'
   and a.status_id = 2
   group by 1, 2;
 
@@ -52,4 +52,6 @@ inner join cadoc_6334_v2.tmp_luccred b
    a.risk_cost != b.risk_cost or
    a.processing_cost != b.processing_cost or
    a.others_cost != b.others_cost
-  )  ;
+  );
+
+drop table cadoc_6334_v2.tmp_luccred;

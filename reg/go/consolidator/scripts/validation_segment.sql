@@ -12,13 +12,11 @@ left join apoio.segmentos b
   on a.establishment_mcc >= b.mcc_init
   and a.establishment_mcc <= b.mcc_end
 where a.transaction_date >= '2026-01-01'
-  and a.transaction_date < '2026-01-06'
+  and a.transaction_date < '2026-04-01'
   and a.status_id = 2
 group by 1, 2, 3, 4
 order by 1, 2, 3, 4
 
-
-select * from cadoc_6334_v2.tmp_segment_group where segment = 413;
 
 drop table if exists cadoc_6334_v2.tmp_segmento;
 
@@ -67,3 +65,8 @@ left join cadoc_6334_v2.tmp_segmento b
   and a.segment_code = b.segment_code
   and a.segment_name = b.segment_name
 where a.segment_description != b.segment_description
+
+
+drop table cadoc_6334_v2.tmp_segment_group;
+
+drop table cadoc_6334_v2.tmp_segmento;

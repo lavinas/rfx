@@ -1,6 +1,7 @@
 -- Active: 1766518799113@@127.0.0.1@5434@reg@cadoc_6334_v2
 
 
+drop table if exists cadoc_6334_v2.tmp_ranking_group;
 
 CREATE TABLE cadoc_6334_v2.tmp_ranking_group AS
 SELECT
@@ -184,4 +185,9 @@ inner join cadoc_6334_v2.ranking_filtered b
   and a.installments = b.installments
   and a.segment_code = b.segment_code
 where a.establishment_code = -1;
+
+drop table cadoc_6334_v2.tmp_ranking_group;
+drop table cadoc_6334_v2.tmp_ranking_15;
+drop table cadoc_6334_v2.tmp_ranking_200;
+drop table cadoc_6334_v2.tmp_ranking_filtered;
 
