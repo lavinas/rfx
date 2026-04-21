@@ -7,6 +7,11 @@ type Terminal struct {
 	TerminalType      string `gorm:"column:terminal_type"`
 }
 
+// TableName specifies the table name for Terminal struct
+func (Terminal) TableName() string {
+	return "raw_data_v2.terminals_transaction"
+}
+
 // GetPOSQuantity returns the total quantity of POS terminals based on the TerminalType field.
 func (t *Terminal) GetPOSQuantity() int {
 	if t.TerminalType == "POS" {
@@ -30,8 +35,13 @@ func (t *Terminal) GetPOSChipQuantity() int {
 
 // GetPDVQuantity returns the quantity of PDV terminals based on the TerminalType field.
 func (t *Terminal) GetPDVQuantity() int {
-	if t.TerminalType == "PDV" {
+	if t.TerminalType == "TEF" {
 		return 1
 	}
 	return 0
+}
+
+// GetEstablishmentCode returns the establishment code of the terminal.
+func (t *Terminal) GetEstablishmentCode() int64 {
+	return t.EstablishmentCode
 }

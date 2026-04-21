@@ -38,7 +38,12 @@ type Establishment struct {
 
 // TableName specifies the table name for Establishment struct
 func (Establishment) TableName() string {
-	return "raw_date_v2.establishments"
+	return "raw_data_v2.establishments"
+}
+
+// GetEstablishmentCode returns the establishment code of the establishment.
+func (e *Establishment) GetCode() int64 {
+	return e.EstablishmentCode
 }
 
 // GetFederationUnit returns the federation unit of the establishment.
@@ -101,23 +106,24 @@ func (e *Establishment) GetBrandCodes() []int {
 }
 
 // IsAccredited returns true if the establishment is accredited, otherwise returns false.
-func (e *Establishment) IsAccredited(year int, quarter int) int {
-	lastDayOfQuarter := time.Date(year, time.Month(quarter*3), 1, 0, 0, 0, 0, time.UTC).AddDate(0, 1, -1)
+func (e *Establishment) IsAccredited(year int, quarter int) bool {
+	lastDayOfQuarter := time.Date(year, time.Month(quarter*3), 1, 0, 0, 0, 0, time.UTC).AddDate(0, 1, 0)
 	if e.AccreditationDate != nil && e.AccreditationDate.Before(lastDayOfQuarter) {
-		return 1
+		return true
 	}
-	return 0
+	return false
 }
 
 // IsActive returns true if the establishment is active, otherwise returns false.
-func (e *Establishment) IsActive(year int, quarter int) int {
-	if e.IsAccredited(year, quarter) == 0 {
-		return 0
+func (e *Establishment) IsActive(year int, quarter int) bool {
+	if !e.IsAccredited(year, quarter) {
+		return false
 	}
 	lastDayOfQuarter := time.Date(year, time.Month(quarter*3), 1, 0, 0, 0, 0, time.UTC).AddDate(0, 1, -1)
 	backLimitDate := lastDayOfQuarter.AddDate(0, 0, -180)
 	if e.AccreditationDate != nil && e.AccreditationDate.After(backLimitDate) {
-		return 1
+		return true
 	}
-	return 0
+	return false
 }
+

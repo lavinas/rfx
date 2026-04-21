@@ -50,9 +50,17 @@ func (i *Infresta) GetKey() string {
 }
 
 // AddEstablishments processes a slice of establishments and updates the Infresta instance accordingly.
-func (i *Infresta) AddEstablishments(establishments []*source_domain.Establishment, items map[string]*Infresta) {
+func (i *Infresta) AddEstablishments(year int, quarter int, establishments []*source_domain.Establishment, items map[string]*Infresta) {
+	// iterate over establishments and update the infresta data accordingly
 	for _, e := range establishments {
-		infresta := i.GetFromEstablishment(i.Year, i.Quarter, e)
+
+		// only consider accredited establishments for the consolidation
+		if !e.IsAccredited(year, quarter) {
+			continue
+		}
+
+		// consolidate infresta data for the establishment
+		infresta := i.GetFromEstablishment(year, quarter, e)
 		key := infresta.GetKey()
 		if existing, exists := items[key]; exists {
 			existing.EstablishmentTotalQuantity += infresta.EstablishmentTotalQuantity

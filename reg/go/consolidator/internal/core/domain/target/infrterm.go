@@ -32,11 +32,15 @@ func (i *Infrterm) TableName() string {
 }
 
 // GetFromTerminal returns an Infrterm instance populated with data from a given terminal.
-func (i *Infrterm) GetFromTerminal(year int, quarter int, term *source_domain.Terminal) *Infrterm {
+func (i *Infrterm) GetFromTerminal(year int, quarter int, term *source_domain.Terminal, clientsFU map[int64]string) *Infrterm {
+	fu, exists := clientsFU[term.GetEstablishmentCode()]
+	if !exists {
+		return nil
+	}
 	return &Infrterm{
 		Year:              year,
 		Quarter:           quarter,
-		FederationUnit:    "SP", // DO IT
+		FederationUnit:    fu,
 		PosTotalQuantity:  int64(term.GetPOSQuantity()),
 		PosSharedQuantity: int64(term.GetPOSSharedQuantity()),
 		PosChipQuantity:   int64(term.GetPOSChipQuantity()),
@@ -50,12 +54,15 @@ func (i *Infrterm) GetKey() string {
 }
 
 // AddTerminals processes a slice of terminals and updates the Infrterm instance accordingly.
-func (i *Infrterm) AddTerminals(terminals []*source_domain.Terminal, items map[string]*Infrterm) {
+func (i *Infrterm) AddTerminals(year int, quarter int, clientsFU map[int64]string, terminals []*source_domain.Terminal, items map[string]*Infrterm) {
 	for _, t := range terminals {
-		infrterm := i.GetFromTerminal(i.Year, i.Quarter, t)
+		infrterm := i.GetFromTerminal(year, quarter, t, clientsFU)
+		if infrterm == nil {
+			continue
+		}
 		key := infrterm.GetKey()
 		if existing, exists := items[key]; exists {
-			existing.PosTotalQuantity += infrterm.PosTotalQuantity
+			existing.PosTotalQuantity += infrterm.PosSharedQuantity + infrterm.PosChipQuantity + infrterm.PdvQuantity
 			existing.PosSharedQuantity += infrterm.PosSharedQuantity
 			existing.PosChipQuantity += infrterm.PosChipQuantity
 			existing.PdvQuantity += infrterm.PdvQuantity
@@ -64,4 +71,14 @@ func (i *Infrterm) AddTerminals(terminals []*source_domain.Terminal, items map[s
 			items[key] = infrterm
 		}
 	}
+}
+
+
+// getEstablishmentFUMap creates a map of establishment codes to their corresponding federation units.
+func getEstablishmentFUMap(establishments []*source_domain.Establishment) map[int64]string {
+	establishmentFUMap := make(map[int64]string)
+	for _, e := range establishments {
+		establishmentFUMap[e.GetCode()] = e.GetFederationUnit()
+	}
+	return establishmentFUMap
 }

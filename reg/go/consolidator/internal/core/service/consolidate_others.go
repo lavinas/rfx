@@ -1,6 +1,7 @@
 package service
 
 import (
+	source_domain "consolidator/internal/core/domain/source"
 	domain_target "consolidator/internal/core/domain/target"
 )
 
@@ -16,16 +17,16 @@ func (s *ConsolidateService) runOthers(year int, quarter int) error {
 	}
 
 	// read establishments from the database
-	s.Logger.IPrintf(2, " *Reading establishments from the database\n")
+	s.Logger.IPrintf(2, "*Reading establishments from the database\n")
 	establishments, err := s.Repository.GetEstablishments()
 	if err != nil {
 		s.Logger.IPrintf(2, "Error fetching establishments: %v\n", err)
 		return err
 	}
-	s.Logger.IPrintf(2, " *Read %d establishments\n", len(establishments))
+	s.Logger.IPrintf(2, "*Read %d establishments\n", len(establishments))
 
 	// read terminals from the database
-	s.Logger.IPrintf(2, " *Reading terminals from the database\n")
+	s.Logger.IPrintf(2, "*Reading terminals from the database\n")
 	terminals, err := s.Repository.GetTerminals()
 	if err != nil {
 		s.Logger.IPrintf(2, "Error fetching terminals: %v\n", err)
@@ -34,10 +35,21 @@ func (s *ConsolidateService) runOthers(year int, quarter int) error {
 	s.Logger.IPrintf(2, " *Read %d terminals\n", len(terminals))
 
 	// process others consolidation
+	s.Logger.IPrintf(2, "Processing consolidation for other data types\n")
 	infrestaMap := make(map[string]*domain_target.Infresta)
-	domain_target.NewInfresta().AddEstablishments(establishments, infrestaMap)
+	domain_target.NewInfresta().AddEstablishments(year, quarter, establishments, infrestaMap)
 	infrtermMap := make(map[string]*domain_target.Infrterm)
-	domain_target.NewInfrterm().AddTerminals(terminals, infrtermMap)
+	domain_target.NewInfrterm().AddTerminals(year, quarter, s.getEstablishmentFUMap(year, quarter, establishments), terminals, infrtermMap)
+	s.Logger.IPrintf(2, "Processed consolidation for other data types\n")
+
+	// save consolidated data for other data types to the database
+	if err := s.saveOthers(infrestaMap, infrtermMap); err != nil {
+		s.Logger.IPrintf(1, "Error saving consolidated data for other data types: %v\n", err)
+		return err
+	}
+
+	// Log the completion of the consolidation process for other data types
+	s.Logger.IPrintf(1, "Completed consolidation for other data types for year %d and quarter %d\n", year, quarter)
 
 	// Placeholder for the actual consolidation logic for other data types (e.g., Infresta, INfreterm, etc) for a specific date.
 	return nil
@@ -144,4 +156,16 @@ func (s *ConsolidateService) saveInfrterm(infrtermMap map[string]*domain_target.
 		s.Logger.IPrintf(2, "Saved remaining %d consolidated Infrterm\n", len(infrtermList))
 	}
 	return nil
+}
+
+// getEstablishmentFUMap creates a map of establishment codes to their corresponding federation units.
+func (s *ConsolidateService) getEstablishmentFUMap(year int, quarter int, establishments []*source_domain.Establishment) map[int64]string {
+	establishmentFUMap := make(map[int64]string)
+	for _, e := range establishments {
+		if !e.IsAccredited(year, quarter) {
+			continue
+		}
+		establishmentFUMap[e.GetCode()] = e.GetFederationUnit()
+	}
+	return establishmentFUMap
 }
