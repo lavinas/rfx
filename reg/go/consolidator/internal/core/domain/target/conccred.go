@@ -55,6 +55,39 @@ func (i *ConcCred) AddTransactions(transactions []*source_domain.Transaction, it
 	}
 }
 
+// AddEstablishments processes a slice of establishments and updates the ConcCred instance with the number of accredited and active establishments.
+func (i *ConcCred) AddEstablishments(year int, quarter int, establishments []*source_domain.Establishment, items map[string]*ConcCred) {
+	// get new ConcCred instances for each establishment and aggregate the number of accredited and active establishments by brand and function
+	estabItems := make(map[string]*ConcCred)
+	for _, e := range establishments {
+		if !e.IsAccredited(year, quarter) {
+			continue
+		}
+		concCreds := i.GetFromEstablishment(year, quarter, e)
+		for _, concCred := range concCreds {
+			key := concCred.GetKey()
+			if existing, exists := estabItems[key]; exists {
+				existing.NumberAccreditedEstablishments += concCred.NumberAccreditedEstablishments
+				existing.NumberActiveEstablishments += concCred.NumberActiveEstablishments
+				estabItems[key] = existing
+			} else {
+				estabItems[key] = concCred
+			}
+		}
+	}
+
+	// merge the establishment data into the main items map
+	for key, estabConcCred := range estabItems {
+		if existing, exists := items[key]; exists {
+			existing.NumberAccreditedEstablishments = estabConcCred.NumberAccreditedEstablishments
+			existing.NumberActiveEstablishments = estabConcCred.NumberActiveEstablishments
+			items[key] = existing
+		} else {
+			items[key] = estabConcCred
+		}
+	}
+}
+
 // GetFromTransaction returns a ConcCred instance populated with data from a given transaction.
 func (i *ConcCred) GetFromTransaction(transaction *source_domain.Transaction) *ConcCred {
 	return &ConcCred{
@@ -62,9 +95,40 @@ func (i *ConcCred) GetFromTransaction(transaction *source_domain.Transaction) *C
 		Quarter:                        transaction.GetQuarter(),
 		Brand:                          transaction.GetBrandCode(),
 		Function:                       transaction.GetFunctionCode(),
-		NumberAccreditedEstablishments: 0, // This would require additional logic to determine the number of accredited establishments
-		NumberActiveEstablishments:     0, // This would require additional logic to determine the number of active establishments
+		NumberAccreditedEstablishments: 0,
+		NumberActiveEstablishments:     0,
 		TransactionAmount:              transaction.GetTransactionAmount(),
 		TransactionQuantity:            1,
 	}
+}
+
+// GetFromEstablishment returns a ConcCred instance populated with data from a given establishment.
+func (i *ConcCred) GetFromEstablishment(year int, quarter int, establishment *source_domain.Establishment) []*ConcCred {
+	// Get the brand codes and function codes for the establishment
+	brands := establishment.GetBrandCodes()
+	functions := establishment.GetFunctionCodes()
+
+	var concCreds []*ConcCred
+
+	// Determine the number of active establishments based on the establishment's status for the given year and quarter
+	activeCount := int64(0)
+	if establishment.IsActive(year, quarter) {
+		activeCount = 1
+	} 
+
+	// Create a ConcCred instance for each combination of brand and function, populating the establishment counts accordingly
+	for _, function := range functions {
+		for _, brand := range brands {
+			concCreds = append(concCreds, &ConcCred{
+				Year:                           year,
+				Quarter:                        quarter,
+				Brand:                          brand,
+				Function:                       function,
+				NumberAccreditedEstablishments: 1,
+				NumberActiveEstablishments:     activeCount,
+			})
+		}
+	}
+
+	return concCreds
 }

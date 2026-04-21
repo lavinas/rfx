@@ -21,6 +21,7 @@ type Repository interface {
 	DeleteRankingFiltered(year int, quarter int) error
 	SaveIntercam(intercam []*target_domain.Intercam) error
 	DeleteIntercam(year int, quarter int) error
+	GetConcCred(year int, quarter int) ([]*target_domain.ConcCred, error)
 	SaveConcCred(conccred []*target_domain.ConcCred) error
 	DeleteConcCred(year int, quarter int) error
 	SaveSegmento(segmento []*target_domain.Segmento) error

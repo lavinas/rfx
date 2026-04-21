@@ -59,3 +59,10 @@ on a.year = b.year
 and a.quarter = b.quarter
 and a.function = b.function
 and a.brand = b.brand;
+
+
+select * from cadoc_6334_v2.conccred
+
+
+select sum(establishment_total_quantity)
+  from cadoc_6334_v2.infresta;

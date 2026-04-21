@@ -73,7 +73,6 @@ func (i *Infrterm) AddTerminals(year int, quarter int, clientsFU map[int64]strin
 	}
 }
 
-
 // getEstablishmentFUMap creates a map of establishment codes to their corresponding federation units.
 func getEstablishmentFUMap(establishments []*source_domain.Establishment) map[int64]string {
 	establishmentFUMap := make(map[int64]string)

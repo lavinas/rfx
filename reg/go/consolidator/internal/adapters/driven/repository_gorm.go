@@ -260,3 +260,12 @@ func (a *GormRepository) DeleteInfrterm(year int, quarter int) error {
 	}
 	return nil
 }
+
+// GetConcCred retrieves consolidated credit card transactions from the database for a specific year and quarter
+func (a *GormRepository) GetConcCred(year int, quarter int) ([]*target_domain.ConcCred, error) {
+	var conccred []*target_domain.ConcCred
+	if err := a.DB.WithContext(*a.ctx).Where("year = ? AND quarter = ?", year, quarter).Find(&conccred).Error; err != nil {
+		return nil, err
+	}
+	return conccred, nil
+}

@@ -127,3 +127,29 @@ func (e *Establishment) IsActive(year int, quarter int) bool {
 	return false
 }
 
+// GetBrands returns the brand codes of the establishment based on its card acceptance capabilities.
+func (e *Establishment) GetBrands() []int {
+	var brands []int
+	if e.HasVisa {
+		brands = append(brands, BrandMap["V"])
+	}
+	if e.HasMastercard {
+		brands = append(brands, BrandMap["M"])
+	}
+	if e.HasElo {
+		brands = append(brands, BrandMap["E"])
+	}
+	return brands
+}
+
+// GetFunctions returns the function codes of the establishment based on its capture capabilities.
+func (e *Establishment) GetFunctions() []string {
+	var functions []string
+	if e.HasCredit {
+		functions = append(functions, ProductMap["CR"])
+	}
+	if e.HasDebit {
+		functions = append(functions, ProductMap["DB"])
+	}
+	return functions
+}

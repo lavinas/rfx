@@ -32,7 +32,20 @@ func (s *ConsolidateService) runOthers(year int, quarter int) error {
 		s.Logger.IPrintf(2, "Error fetching terminals: %v\n", err)
 		return err
 	}
-	s.Logger.IPrintf(2, " *Read %d terminals\n", len(terminals))
+	s.Logger.IPrintf(2, "*Read %d terminals\n", len(terminals))
+
+	// read ConcCred data from the database
+	s.Logger.IPrintf(2, "*Reading ConcCred data from the database\n")
+	conccredData, err := s.Repository.GetConcCred(year, quarter)
+	if err != nil {
+		s.Logger.IPrintf(2, "Error fetching ConcCred data: %v\n", err)
+		return err
+	}
+	conccredMap := make(map[string]*domain_target.ConcCred)
+	for _, c := range conccredData {
+		conccredMap[c.GetKey()] = c
+	}
+	s.Logger.IPrintf(2, "*Read %d ConcCred records\n", len(conccredData))
 
 	// process others consolidation
 	s.Logger.IPrintf(2, "Processing consolidation for other data types\n")
@@ -41,9 +54,10 @@ func (s *ConsolidateService) runOthers(year int, quarter int) error {
 	infrtermMap := make(map[string]*domain_target.Infrterm)
 	domain_target.NewInfrterm().AddTerminals(year, quarter, s.getEstablishmentFUMap(year, quarter, establishments), terminals, infrtermMap)
 	s.Logger.IPrintf(2, "Processed consolidation for other data types\n")
+	domain_target.NewConcCred().AddEstablishments(year, quarter, establishments, conccredMap)
 
 	// save consolidated data for other data types to the database
-	if err := s.saveOthers(infrestaMap, infrtermMap); err != nil {
+	if err := s.saveOthers(infrestaMap, infrtermMap, conccredMap); err != nil {
 		s.Logger.IPrintf(1, "Error saving consolidated data for other data types: %v\n", err)
 		return err
 	}
@@ -77,7 +91,8 @@ func (s *ConsolidateService) deleteOthers(year int, quarter int) error {
 }
 
 // saveOthers saves the consolidated data for other data types (e.g., Infresta, INfreterm, etc) to the database.
-func (s *ConsolidateService) saveOthers(infrestaMap map[string]*domain_target.Infresta, infrtermMap map[string]*domain_target.Infrterm) error {
+func (s *ConsolidateService) saveOthers(infrestaMap map[string]*domain_target.Infresta, infrtermMap map[string]*domain_target.Infrterm,
+	conccredMap map[string]*domain_target.ConcCred) error {
 
 	// save Infresta
 	if err := s.saveInfresta(infrestaMap); err != nil {
@@ -88,6 +103,12 @@ func (s *ConsolidateService) saveOthers(infrestaMap map[string]*domain_target.In
 	// save Infrterm
 	if err := s.saveInfrterm(infrtermMap); err != nil {
 		s.Logger.IPrintf(2, "Error saving Infrterm data: %v\n", err)
+		return err
+	}
+
+	// save ConcCred
+	if err := s.saveConcCred(conccredMap); err != nil {
+		s.Logger.IPrintf(2, "Error saving ConcCred data: %v\n", err)
 		return err
 	}
 
