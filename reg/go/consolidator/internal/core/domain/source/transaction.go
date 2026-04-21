@@ -4,6 +4,11 @@ import (
 	"time"
 )
 
+
+const (
+	DefaultSegmentCode = 423 // Default segment code for transactions that do not match any specific segment
+)
+
 // Transaction represents the data structure for transactions which will be used for fusing data between intercam, management and webservice
 type Transaction struct {
 	ID                      int64      `gorm:"column:id"`
@@ -127,7 +132,8 @@ func (t *Transaction) GetSegmentCode() int {
 	if segment, ok := SegmentMap[int(*t.EstablishmentMCC)]; ok {
 		return segment
 	}
-	return 0
+	// If the EstablishmentMCC does not match any of the specified ranges or mappings, return the default segment code.
+	return DefaultSegmentCode
 }
 
 // GetSegmentName returns the segment name of the transaction based on the EstablishmentMCC field.
