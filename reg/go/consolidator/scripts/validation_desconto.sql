@@ -33,7 +33,7 @@ left join apoio.segmentos b
   on a.establishment_mcc >= b.mcc_init
   and a.establishment_mcc <= b.mcc_end
 where a.transaction_date >= '2026-01-01'
-  and a.transaction_date < '2026-01-06'
+  and a.transaction_date < '2026-04-01'
   and a.status_id = 2
   group by 1, 2, 3, 4, 5, 6, 7
   order by 1, 2, 3, 4, 5, 6, 7;
@@ -137,3 +137,6 @@ inner join cadoc_6334_v2.tmp_desconto b
   and a.installments = b.installments
   and a.segment_code = b.segment_code
 order by 4 desc;
+
+
+drop table cadoc_6334_v2.tmp_desconto;

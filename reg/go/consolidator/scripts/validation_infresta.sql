@@ -37,3 +37,4 @@ left join cadoc_6334_v2.infresta b
     or a.establishment_eletronic_capture_quantity != b.establishment_eletronic_capture_quantity
     or a.establishment_remote_capture_quantity != b.establishment_remote_capture_quantity;
 
+drop table cadoc_6334_v2.tmp_infresta;

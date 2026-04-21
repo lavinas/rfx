@@ -24,14 +24,12 @@ func (s *ConsolidateService) Run(year int, quarter int, days int) error {
 	// running the consolidation process for transactions dependencies
 	var err error
 
-	/*
-		// running the consolidation process for transactions dependencies
-		err = s.runTransaction(year, quarter, days)
-		if err != nil {
-			s.Logger.IPrintf(1, "Error running consolidation transaction: %v\n", err)
-			return err
-		}
-	*/
+	// running the consolidation process for transactions dependencies
+	err = s.runTransaction(year, quarter, days)
+	if err != nil {
+		s.Logger.IPrintf(1, "Error running consolidation transaction: %v\n", err)
+		return err
+	}
 
 	// running the consolidation process for other dependencies
 	err = s.runOthers(year, quarter)

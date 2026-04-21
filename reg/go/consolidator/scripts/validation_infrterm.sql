@@ -1,8 +1,3 @@
-select terminal_type,
-       count(1)
-  from raw_data_v2.terminals_transaction
-group by terminal_type;
-
 
 
 create table cadoc_6334_v2.tmp_infrterm as
@@ -23,15 +18,6 @@ select count(1)
 
 select count(1)
   from cadoc_6334_v2.infrterm;
-
-select count(1)
-  from cadoc_6334_v2.infresta;
-
-
-select federation_unit, count(1)
-   from cadoc_6334_v2.infresta a
-group by 1
-having count(1) > 1;
 
 
 select a.*
@@ -63,3 +49,4 @@ left join cadoc_6334_v2.infrterm b
  and a.pdv_quantity = b.pdv_quantity
 where b.federation_unit is null;
 
+drop table cadoc_6334_v2.tmp_infrterm;

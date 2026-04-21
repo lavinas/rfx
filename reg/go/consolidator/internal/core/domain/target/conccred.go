@@ -7,7 +7,6 @@ import (
 	source_domain "consolidator/internal/core/domain/source"
 )
 
-
 const (
 	EstimatedActiveEstablishmentRatio = 0.76 // Estimated ratio of active establishments to accredited establishments
 )
