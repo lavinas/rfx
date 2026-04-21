@@ -55,7 +55,7 @@ func (s *ConsolidateService) runTransaction(year int, quarter int, days int) err
 		return err
 	}
 	// Log the completion of the consolidation process
-	s.Logger.IPrintf(0, "Consolidation transaction process completed successfully for year: %d, quarter: %d\n", year, quarter)
+	s.Logger.IPrintf(1, "Consolidation transaction process completed successfully for year: %d, quarter: %d\n", year, quarter)
 	return nil
 }
 
