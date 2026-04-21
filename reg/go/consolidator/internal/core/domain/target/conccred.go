@@ -7,6 +7,11 @@ import (
 	source_domain "consolidator/internal/core/domain/source"
 )
 
+
+const (
+	EstimatedActiveEstablishmentRatio = 0.76 // Estimated ratio of active establishments to accredited establishments
+)
+
 // ConcCred represents the consolidated credit card transactions for a specific year, quarter, brand, and function.
 type ConcCred struct {
 	ID                             int       `gorm:"column:id;primaryKey"`
@@ -80,7 +85,9 @@ func (i *ConcCred) AddEstablishments(year int, quarter int, establishments []*so
 	for key, estabConcCred := range estabItems {
 		if existing, exists := items[key]; exists {
 			existing.NumberAccreditedEstablishments = estabConcCred.NumberAccreditedEstablishments
-			existing.NumberActiveEstablishments = estabConcCred.NumberActiveEstablishments
+			// workaround to set the number of active establishments to 76% of the accredited establishments
+			// this is a temporary solution until we have the actual number of active establishments from the transactions data
+			existing.NumberActiveEstablishments = int64(float64(estabConcCred.NumberAccreditedEstablishments) * EstimatedActiveEstablishmentRatio)
 			items[key] = existing
 		} else {
 			items[key] = estabConcCred
@@ -114,7 +121,7 @@ func (i *ConcCred) GetFromEstablishment(year int, quarter int, establishment *so
 	activeCount := int64(0)
 	if establishment.IsActive(year, quarter) {
 		activeCount = 1
-	} 
+	}
 
 	// Create a ConcCred instance for each combination of brand and function, populating the establishment counts accordingly
 	for _, function := range functions {

@@ -207,7 +207,7 @@ func (s *ConsolidateService) saveTransactions(descontoMap map[string]*domain_tar
 // saveDesconto saves the consolidated Desconto data to the database
 func (s *ConsolidateService) saveDesconto(descontoMap map[string]*domain_target.Desconto) error {
 	// Log the number of consolidated Desconto records being saved
-	s.Logger.IPrintf(1, "Saving %d consolidated Desconto\n", len(descontoMap))
+	s.Logger.IPrintf(2, "Saving %d consolidated Desconto\n", len(descontoMap))
 
 	// Convert the map of Desconto to a slice for batch saving
 	descontoList := make([]*domain_target.Desconto, 0, 2000)
@@ -230,7 +230,7 @@ func (s *ConsolidateService) saveDesconto(descontoMap map[string]*domain_target.
 	}
 
 	// Log the completion of saving consolidated Desconto records to the database
-	s.Logger.IPrintf(1, "Saved  %d consolidated Desconto\n", len(descontoMap))
+	s.Logger.IPrintf(2, "Saved  %d consolidated Desconto\n", len(descontoMap))
 
 	// Return nil to indicate successful completion of the save operation
 	return nil
@@ -239,7 +239,7 @@ func (s *ConsolidateService) saveDesconto(descontoMap map[string]*domain_target.
 // saveRanking saves the consolidated Ranking data to the database
 func (s *ConsolidateService) saveRanking(rankingMap map[string]*domain_target.Ranking) error {
 	// Log the number of consolidated Ranking records being saved
-	s.Logger.IPrintf(1, "Saving %d consolidated Ranking\n", len(rankingMap))
+	s.Logger.IPrintf(2, "Saving %d consolidated Ranking\n", len(rankingMap))
 
 	// Convert the map of Ranking to a slice for batch saving
 	rankingList := make([]*domain_target.Ranking, 0, 2000)
@@ -264,14 +264,14 @@ func (s *ConsolidateService) saveRanking(rankingMap map[string]*domain_target.Ra
 	}
 
 	// Log the completion of saving consolidated Ranking records to the database
-	s.Logger.IPrintf(1, "Saved  %d consolidated Ranking\n", len(rankingMap))
+	s.Logger.IPrintf(2, "Saved  %d consolidated Ranking\n", len(rankingMap))
 	return nil
 }
 
 // saveRankingFiltered saves the consolidated RankingFiltered data to the database
 func (s *ConsolidateService) saveRankingFiltered(rankingFilteredMap map[string]*domain_target.RankingFiltered) error {
 	// Log the number of consolidated RankingFiltered records being saved
-	s.Logger.IPrintf(1, "Saving %d consolidated RankingFiltered\n", len(rankingFilteredMap))
+	s.Logger.IPrintf(2, "Saving %d consolidated RankingFiltered\n", len(rankingFilteredMap))
 
 	// Convert the map of RankingFiltered to a slice for batch saving
 	rankingFilteredList := make([]*domain_target.RankingFiltered, 0, 2000)
@@ -296,14 +296,14 @@ func (s *ConsolidateService) saveRankingFiltered(rankingFilteredMap map[string]*
 	}
 
 	// Log the completion of saving consolidated RankingFiltered records to the database
-	s.Logger.IPrintf(1, "Saved  %d consolidated RankingFiltered\n", len(rankingFilteredMap))
+	s.Logger.IPrintf(2, "Saved  %d consolidated RankingFiltered\n", len(rankingFilteredMap))
 	return nil
 }
 
 // saveIntercam saves the consolidated Intercam data to the database
 func (s *ConsolidateService) saveIntercam(intercamMap map[string]*domain_target.Intercam) error {
 	// Log the number of consolidated Intercam records being saved
-	s.Logger.IPrintf(1, "Saving %d consolidated Intercam\n", len(intercamMap))
+	s.Logger.IPrintf(2, "Saving %d consolidated Intercam\n", len(intercamMap))
 
 	// Convert the map of Intercam to a slice for batch saving
 	intercamList := make([]*domain_target.Intercam, 0, 2000)
@@ -328,14 +328,14 @@ func (s *ConsolidateService) saveIntercam(intercamMap map[string]*domain_target.
 	}
 
 	// Log the completion of saving consolidated Intercam records to the database
-	s.Logger.IPrintf(1, "Saved  %d consolidated Intercam\n", len(intercamMap))
+	s.Logger.IPrintf(2, "Saved  %d consolidated Intercam\n", len(intercamMap))
 	return nil
 }
 
 // saveConcCred saves the consolidated ConcCred data to the database
 func (s *ConsolidateService) saveConcCred(conccredMap map[string]*domain_target.ConcCred) error {
 	// Log the number of consolidated ConcCred records being saved
-	s.Logger.IPrintf(1, "Saving %d consolidated ConcCred\n", len(conccredMap))
+	s.Logger.IPrintf(2, "Saving %d consolidated ConcCred\n", len(conccredMap))
 
 	// Convert the map of ConcCred to a slice for batch saving
 	conccredList := make([]*domain_target.ConcCred, 0, 2000)
@@ -360,14 +360,14 @@ func (s *ConsolidateService) saveConcCred(conccredMap map[string]*domain_target.
 	}
 
 	// Log the completion of saving consolidated ConcCred records to the database
-	s.Logger.IPrintf(1, "Saved  %d consolidated ConcCred\n", len(conccredMap))
+	s.Logger.IPrintf(2, "Saved  %d consolidated ConcCred\n", len(conccredMap))
 	return nil
 }
 
 // saveSegmento saves the consolidated Segmento data to the database
 func (s *ConsolidateService) saveSegmento(segmentoMap map[string]*domain_target.Segmento) error {
 	// Log the number of consolidated Segmento records being saved
-	s.Logger.IPrintf(1, "Saving %d consolidated Segmento\n", len(segmentoMap))
+	s.Logger.IPrintf(2, "Saving %d consolidated Segmento\n", len(segmentoMap))
 
 	// Convert the map of Segmento to a slice for batch saving
 	segmentoList := make([]*domain_target.Segmento, 0, 2000)
@@ -392,14 +392,14 @@ func (s *ConsolidateService) saveSegmento(segmentoMap map[string]*domain_target.
 	}
 
 	// Log the completion of saving consolidated Segmento records to the database
-	s.Logger.IPrintf(1, "Saved  %d consolidated Segmento\n", len(segmentoMap))
+	s.Logger.IPrintf(2, "Saved  %d consolidated Segmento\n", len(segmentoMap))
 	return nil
 }
 
 // saveLuccred saves the consolidated Luccred data to the database
 func (s *ConsolidateService) saveLuccred(luccredMap map[string]*domain_target.Luccred) error {
 	// Log the number of consolidated Luccred records being saved
-	s.Logger.IPrintf(1, "Saving %d consolidated Luccred\n", len(luccredMap))
+	s.Logger.IPrintf(2, "Saving %d consolidated Luccred\n", len(luccredMap))
 
 	// Convert the map of Luccred to a slice for batch saving
 	luccredList := make([]*domain_target.Luccred, 0, 2000)
@@ -424,7 +424,7 @@ func (s *ConsolidateService) saveLuccred(luccredMap map[string]*domain_target.Lu
 	}
 
 	// Log the completion of saving consolidated Luccred records to the database
-	s.Logger.IPrintf(1, "Saved  %d consolidated Luccred\n", len(luccredMap))
+	s.Logger.IPrintf(2, "Saved  %d consolidated Luccred\n", len(luccredMap))
 	return nil
 }
 
