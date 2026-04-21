@@ -11,6 +11,8 @@ import (
 type Repository interface {
 	GetTransactionsByDate(date time.Time) ([]*source_domain.Transaction, error)
 	GetBins() ([]*source_domain.Bin, error)
+	GetEstablishments() ([]*source_domain.Establishment, error)
+	GetTerminals() ([]*source_domain.Terminal, error)
 	SaveDesconto(desconto []*target_domain.Desconto) error
 	DeleteDesconto(year int, quarter int) error
 	SaveRanking(ranking []*target_domain.Ranking) error
@@ -25,4 +27,8 @@ type Repository interface {
 	DeleteSegmento(year int, quarter int) error
 	SaveLuccred(luccred []*target_domain.Luccred) error
 	DeleteLuccred(year int, quarter int) error
+	SaveInfresta(infresta []*target_domain.Infresta) error
+	DeleteInfresta(year int, quarter int) error
+	SaveInfrterm(infrterm []*target_domain.Infrterm) error
+	DeleteInfrterm(year int, quarter int) error
 }

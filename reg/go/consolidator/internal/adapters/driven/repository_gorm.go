@@ -90,6 +90,24 @@ func (a *GormRepository) GetBins() ([]*source_domain.Bin, error) {
 	return bins, nil
 }
 
+// GetEstablishments retrieves establishment information from the database
+func (a *GormRepository) GetEstablishments() ([]*source_domain.Establishment, error) {
+	var establishments []*source_domain.Establishment
+	if err := a.DB.WithContext(*a.ctx).Find(&establishments).Error; err != nil {
+		return nil, err
+	}
+	return establishments, nil
+}
+
+// GetTerminals retrieves terminal information from the database
+func (a *GormRepository) GetTerminals() ([]*source_domain.Terminal, error) {
+	var terminals []*source_domain.Terminal
+	if err := a.DB.WithContext(*a.ctx).Find(&terminals).Error; err != nil {
+		return nil, err
+	}
+	return terminals, nil
+}
+
 // SaveDesconto saves the consolidated Desconto data to the database
 func (a *GormRepository) SaveDesconto(desconto []*target_domain.Desconto) error {
 	// Placeholder for actual save logic, using GORM to save the consolidated Desconto data to the database
@@ -204,6 +222,40 @@ func (a *GormRepository) SaveLuccred(luccred []*target_domain.Luccred) error {
 func (a *GormRepository) DeleteLuccred(year int, quarter int) error {
 	// delete all records of luccred for the specified year and quarter
 	if err := a.DB.Where("year = ? AND quarter = ?", year, quarter).Delete(&target_domain.Luccred{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// SaveInfresta saves the consolidated Infresta data to the database
+func (a *GormRepository) SaveInfresta(infresta []*target_domain.Infresta) error {
+	// Placeholder for actual save logic, using GORM to save the consolidated Infresta data to the database
+	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&infresta).Error
+}
+
+// DeleteInfresta deletes existing consolidated Infresta data from the database for a specific date
+func (a *GormRepository) DeleteInfresta(year int, quarter int) error {
+	// delete all records of infresta for the specified year and quarter
+	if err := a.DB.Where("year = ? AND quarter = ?", year, quarter).Delete(&target_domain.Infresta{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// SaveInfrterm saves the consolidated Infrterm data to the database
+func (a *GormRepository) SaveInfrterm(infrterm []*target_domain.Infrterm) error {
+	// Placeholder for actual save logic, using GORM to save the consolidated Infrterm data to the database
+	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&infrterm).Error
+}
+
+// DeleteInfrterm deletes existing consolidated Infrterm data from the database for a specific date
+func (a *GormRepository) DeleteInfrterm(year int, quarter int) error {
+	// delete all records of infrterm for the specified year and quarter
+	if err := a.DB.Where("year = ? AND quarter = ?", year, quarter).Delete(&target_domain.Infrterm{}).Error; err != nil {
 		return err
 	}
 	return nil
