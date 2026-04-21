@@ -114,33 +114,33 @@ func (s *FuseService) processManagement(date time.Time) error {
 
 // getExchangeTransactions is a helper method to fetch Exchange transactions for a specific date
 func (s *FuseService) getExchangeTransactions(date time.Time) ([]*domain.Transaction, error) {
-	s.Logger.IPrintf(3, "Fetching Exchange transactions for date %s\n", date.Format("2006-01-02"))
+	s.Logger.IPrintf(3, "* Reading Exchange transactions for date %s\n", date.Format("2006-01-02"))
 	exchanges, err := s.Repository.GetExchangeTransactions(date)
 	if err != nil {
-		s.Logger.IPrintf(3, "Error fetching exchange transactions for date %s: %v\n", date.Format("2006-01-02"), err)
+		s.Logger.IPrintf(3, "Error reading exchange transactions for date %s: %v\n", date.Format("2006-01-02"), err)
 		return nil, err
 	}
 	transactions := []*domain.Transaction{}
 	for _, exchange := range exchanges {
 		transactions = append(transactions, exchange.Translate())
 	}
-	s.Logger.IPrintf(3, "Fetched %d Exchange transactions for date %s\n", len(transactions), date.Format("2006-01-02"))
+	s.Logger.IPrintf(3, "* Read %d Exchange transactions for date %s\n", len(transactions), date.Format("2006-01-02"))
 	return transactions, nil
 }
 
 // getManagementTransactions is a helper method to fetch Management transactions for a specific date
 func (s *FuseService) getManagementTransactions(date time.Time) ([]*domain.Transaction, error) {
-	s.Logger.IPrintf(3, "Fetching Management transactions for date %s\n", date.Format("2006-01-02"))
+	s.Logger.IPrintf(3, "* Reading Management transactions for date %s\n", date.Format("2006-01-02"))
 	managements, err := s.Repository.GetManagementTransactions(date)
 	if err != nil {
-		s.Logger.IPrintf(3, "Error fetching management transactions for date %s: %v\n", date.Format("2006-01-02"), err)
+		s.Logger.IPrintf(3, "Error reading management transactions for date %s: %v\n", date.Format("2006-01-02"), err)
 		return nil, err
 	}
 	transactions := []*domain.Transaction{}
 	for _, management := range managements {
 		transactions = append(transactions, management.Translate())
 	}
-	s.Logger.IPrintf(3, "Fetched %d Management transactions for date %s\n", len(transactions), date.Format("2006-01-02"))
+	s.Logger.IPrintf(3, "* Read %d Management transactions for date %s\n", len(transactions), date.Format("2006-01-02"))
 	return transactions, nil
 }
 
@@ -160,7 +160,7 @@ func (s *FuseService) getTransactionsByKey(transType string, transDate time.Time
 			if err != nil {
 				return nil, err
 			}
-			s.Logger.IPrintf(2, "Fetched %d %s transactions by keys for %s date %s (%d/%d)\n", len(repTrans), transType, transType, transDate.Format("2006-01-02"), count, total)
+			s.Logger.IPrintf(3, "Fetched %d %s transactions by keys for %s date %s (%d/%d)\n", len(repTrans), transType, transType, transDate.Format("2006-01-02"), count, total)
 			repTransactions = append(repTransactions, repTrans...)
 			keys = []string{}
 		}
@@ -171,7 +171,7 @@ func (s *FuseService) getTransactionsByKey(transType string, transDate time.Time
 		if err != nil {
 			return nil, err
 		}
-		s.Logger.IPrintf(2, "Fetched %d %s transactions by keys for %s date %s (%d/%d)\n", len(repTrans), transType, transType, transDate.Format("2006-01-02"), count, total)
+		s.Logger.IPrintf(3, "Fetched %d %s transactions by keys for %s date %s (%d/%d)\n", len(repTrans), transType, transType, transDate.Format("2006-01-02"), count, total)
 		repTransactions = append(repTransactions, repTrans...)
 	}
 	return repTransactions, nil
@@ -199,7 +199,7 @@ func (s *FuseService) mergeTransactions(transType string, transDate time.Time, l
 			merged = append(merged, localTrans)
 		}
 	}
-	s.Logger.IPrintf(2, "Merged %s transactions for date %s (local: %d, repository: %d, merged: %d)\n", transType, transDate.Format("2006-01-02"), len(localTransactions), len(repositoryTransactions), len(merged))
+	s.Logger.IPrintf(3, "Merged %s transactions for date %s (local: %d, repository: %d, merged: %d)\n", transType, transDate.Format("2006-01-02"), len(localTransactions), len(repositoryTransactions), len(merged))
 	return merged
 }
 
@@ -216,21 +216,21 @@ func (s *FuseService) insertTransactions(transType string, transDate time.Time, 
 		// When the batch size reaches saveRate, we insert the batch into the repository and reset the batch
 		if count%saveRate == 0 {
 			if err := s.Repository.InsertTransactions(lot); err != nil {
-				s.Logger.IPrintf(2, "Error inserting %s transactions for date %s: %v\n", transType, transDate.Format("2006-01-02"), err)
+				s.Logger.IPrintf(3, "Error inserting %s transactions for date %s: %v\n", transType, transDate.Format("2006-01-02"), err)
 				return err
 			}
-			s.Logger.IPrintf(2, "Inserted %s transactions for date %s (%d/%d)\n", transType, transDate.Format("2006-01-02"), count, total)
+			s.Logger.IPrintf(3, "Inserted %s transactions for date %s (%d/%d)\n", transType, transDate.Format("2006-01-02"), count, total)
 			lot = []*domain.Transaction{}
 		}
 	}
 	// Insert any remaining transactions in the batch that were not inserted in the previous loop
 	if len(lot) > 0 {
 		if err := s.Repository.InsertTransactions(lot); err != nil {
-			s.Logger.IPrintf(2, "Error inserting %s transactions for date %s: %v\n", transType, transDate.Format("2006-01-02"), err)
+			s.Logger.IPrintf(3, "Error inserting %s transactions for date %s: %v\n", transType, transDate.Format("2006-01-02"), err)
 			return err
 		}
 		// Log the number of transactions inserted for the last batch
-		s.Logger.IPrintf(2, "Inserted %s transactions for date %s (%d/%d)\n", transType, transDate.Format("2006-01-02"), count, total)
+		s.Logger.IPrintf(3, "Inserted %s transactions for date %s (%d/%d)\n", transType, transDate.Format("2006-01-02"), count, total)
 	}
 	return nil
 }
@@ -238,12 +238,12 @@ func (s *FuseService) insertTransactions(transType string, transDate time.Time, 
 // filterDuplicates is a helper method to filter out duplicate transactions based on their keys
 func (s *FuseService) filterDuplicates(transactions []*domain.Transaction) []*domain.Transaction {
 	// Log the number of transactions before filtering duplicates
-	s.Logger.IPrintf(2, "Filtering duplicates from %d transactions\n", len(transactions))
+	s.Logger.IPrintf(3, "Filtering duplicates from %d transactions\n", len(transactions))
 	// Use a map to track unique transactions by their keys
 	unique := make(map[string]*domain.Transaction)
 	for _, transaction := range transactions {
 		if _, exists := unique[transaction.Key1]; exists {
-			s.Logger.IPrintf(2, "Duplicate transaction found with key: %s\n", transaction.Key1)
+			s.Logger.IPrintf(3, "Duplicate transaction found with key: %s\n", transaction.Key1)
 		}
 		unique[transaction.Key1] = transaction
 	}
@@ -253,7 +253,7 @@ func (s *FuseService) filterDuplicates(transactions []*domain.Transaction) []*do
 		result = append(result, transaction)
 	}
 	// Log the number of transactions after filtering duplicates
-	s.Logger.IPrintf(2, "Filtered duplicates, resulting in %d unique transactions\n", len(result))
+	s.Logger.IPrintf(3, "Filtered duplicates, resulting in %d unique transactions\n", len(result))
 	return result
 }
 
