@@ -114,6 +114,7 @@ func (s *FuseService) processManagement(date time.Time) error {
 
 // getExchangeTransactions is a helper method to fetch Exchange transactions for a specific date
 func (s *FuseService) getExchangeTransactions(date time.Time) ([]*domain.Transaction, error) {
+	s.Logger.IPrintf(3, "Fetching Exchange transactions for date %s\n", date.Format("2006-01-02"))
 	exchanges, err := s.Repository.GetExchangeTransactions(date)
 	if err != nil {
 		s.Logger.IPrintf(3, "Error fetching exchange transactions for date %s: %v\n", date.Format("2006-01-02"), err)
@@ -123,11 +124,13 @@ func (s *FuseService) getExchangeTransactions(date time.Time) ([]*domain.Transac
 	for _, exchange := range exchanges {
 		transactions = append(transactions, exchange.Translate())
 	}
+	s.Logger.IPrintf(3, "Fetched %d Exchange transactions for date %s\n", len(transactions), date.Format("2006-01-02"))
 	return transactions, nil
 }
 
 // getManagementTransactions is a helper method to fetch Management transactions for a specific date
 func (s *FuseService) getManagementTransactions(date time.Time) ([]*domain.Transaction, error) {
+	s.Logger.IPrintf(3, "Fetching Management transactions for date %s\n", date.Format("2006-01-02"))
 	managements, err := s.Repository.GetManagementTransactions(date)
 	if err != nil {
 		s.Logger.IPrintf(3, "Error fetching management transactions for date %s: %v\n", date.Format("2006-01-02"), err)
@@ -137,6 +140,7 @@ func (s *FuseService) getManagementTransactions(date time.Time) ([]*domain.Trans
 	for _, management := range managements {
 		transactions = append(transactions, management.Translate())
 	}
+	s.Logger.IPrintf(3, "Fetched %d Management transactions for date %s\n", len(transactions), date.Format("2006-01-02"))
 	return transactions, nil
 }
 

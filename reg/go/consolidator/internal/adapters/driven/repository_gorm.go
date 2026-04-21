@@ -191,3 +191,20 @@ func (a *GormRepository) DeleteSegmento(year int, quarter int) error {
 	}
 	return nil
 }
+
+// SaveLuccred saves the consolidated Luccred data to the database
+func (a *GormRepository) SaveLuccred(luccred []*target_domain.Luccred) error {
+	// Placeholder for actual save logic, using GORM to save the consolidated Luccred data to the database
+	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(&luccred).Error
+}
+
+// DeleteLuccred deletes existing consolidated Luccred data from the database for a specific date
+func (a *GormRepository) DeleteLuccred(year int, quarter int) error {
+	// delete all records of luccred for the specified year and quarter
+	if err := a.DB.Where("year = ? AND quarter = ?", year, quarter).Delete(&target_domain.Luccred{}).Error; err != nil {
+		return err
+	}
+	return nil
+}

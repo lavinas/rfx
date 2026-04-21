@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-
 const (
 	DefaultSegmentCode = 423 // Default segment code for transactions that do not match any specific segment
 )
@@ -154,6 +153,14 @@ func (t *Transaction) GetTransactionAmount() float64 {
 }
 
 // GetInterchangeFee returns the interchange fee of the transaction based on the CostInterchangeValue field.
+func (t *Transaction) GetInterchangeFee() float64 {
+	if t.CostInterchangeValue != nil {
+		return *t.CostInterchangeValue
+	}
+	return 0
+}
+
+// GetInterchangeFee returns the interchange fee of the transaction based on the CostInterchangeValue field.
 func (t *Transaction) GetInterchangeFeeRate() float64 {
 	if t.CostInterchangeValue != nil && t.TransactionAmount != nil && *t.TransactionAmount != 0 {
 		return *t.CostInterchangeValue / *t.TransactionAmount * 100
@@ -165,6 +172,14 @@ func (t *Transaction) GetInterchangeFeeRate() float64 {
 func (t *Transaction) GetRevenueMDRValueRate() float64 {
 	if t.RevenueMDRValue != nil && t.TransactionAmount != nil && *t.TransactionAmount != 0 {
 		return *t.RevenueMDRValue / *t.TransactionAmount * 100
+	}
+	return 0
+}
+
+// GetRevenueMDRValue returns the revenue MDR value of the transaction based on the RevenueMDRValue field.
+func (t *Transaction) GetRevenueMDRValue() float64 {
+	if t.RevenueMDRValue != nil {
+		return *t.RevenueMDRValue
 	}
 	return 0
 }

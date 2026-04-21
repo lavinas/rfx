@@ -1,7 +1,10 @@
 package target_domain
 
 import (
+	"fmt"
 	"time"
+
+	source_domain "consolidator/internal/core/domain/source"
 )
 
 // Luccred represents the financial data for a specific year and quarter.
@@ -30,4 +33,44 @@ func NewLuccred() *Luccred {
 // TableName returns the name of the database table for the Luccred model.
 func (i *Luccred) TableName() string {
 	return "cadoc_6334_v2.luccred"
+}
+
+// GetFromTransaction returns a ConcCred instance populated with data from a given transaction.
+func (i *Luccred) GetFromTransaction(transaction *source_domain.Transaction) *Luccred {
+	return &Luccred{
+		Year:            transaction.GetYear(),
+		Quarter:         transaction.GetQuarter(),
+		GrossRevenue:    transaction.GetRevenueMDRValue(),
+		RentalRevenue:   0,
+		OthersRevenue:   0,
+		InterchangeCost: transaction.GetInterchangeFee(),
+		MarketingCost:   0,
+		BrandAccessCost: 0,
+		RiskCost:        0,
+		ProcessingCost:  0,
+		OthersCost:      0,
+	}
+}
+
+// GetKey generates a unique key for the Luccred struct based on its fields.
+func (i *Luccred) GetKey() string {
+	return fmt.Sprintf("%d-%d", i.Year, i.Quarter)
+}
+
+// AddTransactions processes a slice of transactions and updates the Luccred instance accordingly.
+func (i *Luccred) AddTransactions(transactions []*source_domain.Transaction, items map[string]*Luccred) {
+	// for each transaction, get the corresponding Luccred instance and update the transaction amount, quantity and establishment counts
+	for _, t := range transactions {
+		luccred := i.GetFromTransaction(t)
+		key := luccred.GetKey()
+
+		// if the key already exists in the items map, update the existing Luccred instance with the new transaction data
+		if existing, exists := items[key]; exists {
+			existing.GrossRevenue += luccred.GrossRevenue
+			existing.InterchangeCost += luccred.InterchangeCost
+			items[key] = existing
+		} else {
+			items[key] = luccred
+		}
+	}
 }

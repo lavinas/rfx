@@ -23,4 +23,6 @@ type Repository interface {
 	DeleteConcCred(year int, quarter int) error
 	SaveSegmento(segmento []*target_domain.Segmento) error
 	DeleteSegmento(year int, quarter int) error
+	SaveLuccred(luccred []*target_domain.Luccred) error
+	DeleteLuccred(year int, quarter int) error
 }

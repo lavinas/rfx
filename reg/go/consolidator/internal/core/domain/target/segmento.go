@@ -1,11 +1,11 @@
 package target_domain
 
 import (
-	"strings"
-	"time"
-	"strconv"
 	"fmt"
 	"sort"
+	"strconv"
+	"strings"
+	"time"
 
 	source_domain "consolidator/internal/core/domain/source"
 )
@@ -15,8 +15,8 @@ type Segmento struct {
 	ID          int64     `gorm:"column:id"`
 	CreatedAt   time.Time `gorm:"column:created_at"`
 	UpdatedAt   time.Time `gorm:"column:updated_at"`
-	Year		int       `gorm:"column:year"`
-	Quarter		int       `gorm:"column:quarter"`
+	Year        int       `gorm:"column:year"`
+	Quarter     int       `gorm:"column:quarter"`
 	SegmentName string    `gorm:"column:segment_name"`
 	Description string    `gorm:"column:segment_description"`
 	SegmentCode int       `gorm:"column:segment_code"`
@@ -32,9 +32,8 @@ func (i *Segmento) TableName() string {
 	return "cadoc_6334_v2.segmento"
 }
 
-
 // AddTransactions adds the transaction amount and quantity from another Segmento to the current one.
-func (s *Segmento)  AddTransactions(transactions []*source_domain.Transaction, items map[string]*Segmento) {
+func (s *Segmento) AddTransactions(transactions []*source_domain.Transaction, items map[string]*Segmento) {
 
 	// Iterate over the transactions and update the Segmento instance with the segment code, segment name and description based on the mcc code.
 	for _, transaction := range transactions {
@@ -49,13 +48,13 @@ func (s *Segmento)  AddTransactions(transactions []*source_domain.Transaction, i
 
 		// Generate a key for the segment code to be used in the items map.
 		key := strconv.Itoa(segmentCode)
-		
+
 		// Create a new Segmento instance from the transaction data if the key does not exist in the items map and continue to the next transaction.
 		segment, exists := items[key]
 		if !exists {
 			items[key] = &Segmento{
-				Year: transaction.GetYear(),
-				Quarter: transaction.GetQuarter(),
+				Year:        transaction.GetYear(),
+				Quarter:     transaction.GetQuarter(),
 				SegmentCode: segmentCode,
 				SegmentName: transaction.GetSegmentName(),
 				Description: s.mountDescription(mccCode, ""),
@@ -64,7 +63,7 @@ func (s *Segmento)  AddTransactions(transactions []*source_domain.Transaction, i
 		}
 
 		// If the key already exists in the items map, update the description of the existing Segmento instance with the new mcc code.
-	    segment.Description = s.mountDescription(mccCode, segment.Description)
+		segment.Description = s.mountDescription(mccCode, segment.Description)
 	}
 
 }
@@ -88,9 +87,9 @@ func (s *Segmento) mountDescription(mccCode int, description string) string {
 
 	// sort the mcc codes in the description and return the updated description.
 	sort.Slice(mccs, func(i, j int) bool {
-		mccCodeI, _ := strconv.Atoi(mccs[i])
-		mccCodeJ, _ := strconv.Atoi(mccs[j])
-		return mccCodeI < mccCodeJ
+		// mccCodeI, _ := strconv.Atoi(mccs[i])
+		// mccCodeJ, _ := strconv.Atoi(mccs[j])
+		return mccs[i] < mccs[j]
 	})
 
 	return fmt.Sprintf("%s: %s", prefs[0], strings.Join(mccs, ", "))

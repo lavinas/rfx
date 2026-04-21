@@ -49,9 +49,10 @@ func (s *ConsolidateService) Run(year int, quarter int, days int) error {
 	intercamMap := make(map[string]*domain_target.Intercam)
 	conccredMap := make(map[string]*domain_target.ConcCred)
 	segmentoMap := make(map[string]*domain_target.Segmento)
+	luccredMap := make(map[string]*domain_target.Luccred)
 	// Process transactions for each date in the specified range and update the consolidation maps
 	for date := start_date; !date.After(end_date); date = date.AddDate(0, 0, 1) {
-		if err := s.processDate(date, descontoMap, rankingMap, intercamMap, conccredMap, segmentoMap, bins); err != nil {
+		if err := s.processDate(date, descontoMap, rankingMap, intercamMap, conccredMap, segmentoMap, luccredMap, bins); err != nil {
 			s.Logger.IPrintf(1, "Error processing date %s: %v\n", date.Format("2006-01-02"), err)
 			return err
 		}
@@ -61,7 +62,7 @@ func (s *ConsolidateService) Run(year int, quarter int, days int) error {
 	rankingfilteredMap := domain_target.FilterRanking(rankingMap)
 	s.Logger.IPrintf(1, "Filtered ranking data to %d records\n", len(rankingfilteredMap))
 	// save consolidated data to the database
-	if err := s.saveAll(descontoMap, rankingMap, rankingfilteredMap, intercamMap, conccredMap, segmentoMap); err != nil {
+	if err := s.saveAll(descontoMap, rankingMap, rankingfilteredMap, intercamMap, conccredMap, segmentoMap, luccredMap); err != nil {
 		s.Logger.IPrintf(1, "Error saving consolidations: %v\n", err)
 		return err
 	}
@@ -124,6 +125,13 @@ func (s *ConsolidateService) deleteAll(year int, quarter int) error {
 		return err
 	}
 
+	// delete luccred
+	if err := s.Repository.DeleteLuccred(year, quarter); err != nil {
+		s.Logger.IPrintf(2, "Error deleting Luccred data: %v\n", err)
+		return err
+	}
+
+	// Log the completion of deleting existing consolidated data for the specified year and quarter
 	s.Logger.IPrintf(1, "Deleted existing consolidated data  for year: %d, quarter: %d\n", year, quarter)
 
 	return nil
@@ -131,8 +139,8 @@ func (s *ConsolidateService) deleteAll(year int, quarter int) error {
 
 // processDate processes transactions for a specific date and updates the consolidated data maps
 func (s *ConsolidateService) processDate(date time.Time, descontoMap map[string]*domain_target.Desconto, rankingMap map[string]*domain_target.Ranking,
-	intercamMap map[string]*domain_target.Intercam, conccredMap map[string]*domain_target.ConcCred, segmentoMap map[string]*domain_target.Segmento, 
-	bins map[int64]*domain_source.Bin) error {
+	intercamMap map[string]*domain_target.Intercam, conccredMap map[string]*domain_target.ConcCred, segmentoMap map[string]*domain_target.Segmento,
+	luccredMap map[string]*domain_target.Luccred, bins map[int64]*domain_source.Bin) error {
 	s.Logger.IPrintf(1, "Processing for date: %s\n", date.Format("2006-01-02"))
 
 	// Fetch transactions for the date
@@ -154,6 +162,8 @@ func (s *ConsolidateService) processDate(date time.Time, descontoMap map[string]
 	s.Logger.IPrintf(2, "Consolidated ConcCred for date: %s\n", date.Format("2006-01-02"))
 	domain_target.NewSegmento().AddTransactions(transactions, segmentoMap)
 	s.Logger.IPrintf(2, "Consolidated Segmento for date: %s\n", date.Format("2006-01-02"))
+	domain_target.NewLuccred().AddTransactions(transactions, luccredMap)
+	s.Logger.IPrintf(2, "Consolidated Luccred for date: %s\n", date.Format("2006-01-02"))
 
 	// Log the completion of processing for the date
 	s.Logger.IPrintf(1, "Processed  for date: %s\n", date.Format("2006-01-02"))
@@ -162,7 +172,7 @@ func (s *ConsolidateService) processDate(date time.Time, descontoMap map[string]
 
 // saveAll saves all the consolidated data to the database
 func (s *ConsolidateService) saveAll(descontoMap map[string]*domain_target.Desconto, rankingMap map[string]*domain_target.Ranking, rakkintFiltered map[string]*domain_target.RankingFiltered,
-	intercamMap map[string]*domain_target.Intercam, conccredMap map[string]*domain_target.ConcCred, segmentoMap map[string]*domain_target.Segmento) error {
+	intercamMap map[string]*domain_target.Intercam, conccredMap map[string]*domain_target.ConcCred, segmentoMap map[string]*domain_target.Segmento, luccredMap map[string]*domain_target.Luccred) error {
 	s.Logger.IPrintf(1, "Saving consolidated data to the database\n")
 
 	// save discounts
@@ -192,6 +202,11 @@ func (s *ConsolidateService) saveAll(descontoMap map[string]*domain_target.Desco
 
 	// save segmento
 	if err := s.saveSegmento(segmentoMap); err != nil {
+		return err
+	}
+
+	// save luccred
+	if err := s.saveLuccred(luccredMap); err != nil {
 		return err
 	}
 
@@ -389,6 +404,38 @@ func (s *ConsolidateService) saveSegmento(segmentoMap map[string]*domain_target.
 
 	// Log the completion of saving consolidated Segmento records to the database
 	s.Logger.IPrintf(1, "Saved  %d consolidated Segmento\n", len(segmentoMap))
+	return nil
+}
+
+// saveLuccred saves the consolidated Luccred data to the database
+func (s *ConsolidateService) saveLuccred(luccredMap map[string]*domain_target.Luccred) error {
+	// Log the number of consolidated Luccred records being saved
+	s.Logger.IPrintf(1, "Saving %d consolidated Luccred\n", len(luccredMap))
+
+	// Convert the map of Luccred to a slice for batch saving
+	luccredList := make([]*domain_target.Luccred, 0, 2000)
+	count := 0
+
+	// Iterate over the luccredMap and append each Luccred to the luccredList slice
+	for _, luccred := range luccredMap {
+		luccredList = append(luccredList, luccred)
+		count++
+		if count%2000 == 0 {
+			if err := s.Repository.SaveLuccred(luccredList); err != nil {
+				return err
+			}
+			s.Logger.IPrintf(2, "Saved batch of 2000 consolidated Luccred\n")
+			luccredList = make([]*domain_target.Luccred, 0, 2000)
+		}
+	}
+
+	// Save any remaining Luccred records that were not saved in the batch loop
+	if err := s.Repository.SaveLuccred(luccredList); err != nil {
+		return err
+	}
+
+	// Log the completion of saving consolidated Luccred records to the database
+	s.Logger.IPrintf(1, "Saved  %d consolidated Luccred\n", len(luccredMap))
 	return nil
 }
 
