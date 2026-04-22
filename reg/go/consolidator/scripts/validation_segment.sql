@@ -8,7 +8,7 @@ select extract(year from a.transaction_date) as year,
        coalesce(b.segment,  423) as segment,
        a.establishment_mcc mcc
   from transaction_v4.transaction a
-left join apoio.segmentos b
+left join cadoc_6334_v2.mcc_segmentos b
   on a.establishment_mcc >= b.mcc_init
   and a.establishment_mcc <= b.mcc_end
 where a.transaction_date >= '2026-01-01'
@@ -27,7 +27,7 @@ select year,
        concat('MCC: ', string_agg(distinct a.mcc::text, ', ' ORDER BY a.mcc::text)) AS segment_description,
        b.id segment_code
   from cadoc_6334_v2.tmp_segment_group a
-left join apoio.segmentos_descricao b
+left join cadoc_6334_v2.segmentos_descricao b
     on a.segment = b.id
 group by 1, 2, 5, 3;
 
@@ -36,7 +36,7 @@ group by 1, 2, 5, 3;
 select count(1) from cadoc_6334_v2.tmp_segmento;
 
 
-select count(1) from cadoc_6334_v2.segmento
+select count(1) from cadoc_6334_v2.segmento;
 
 
 select count(1) from cadoc_6334_v2.segmento a
@@ -70,3 +70,6 @@ where a.segment_description != b.segment_description
 drop table cadoc_6334_v2.tmp_segment_group;
 
 drop table cadoc_6334_v2.tmp_segmento;
+
+
+select * from cadoc_6334_v2.segmento

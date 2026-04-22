@@ -191,3 +191,9 @@ drop table cadoc_6334_v2.tmp_ranking_15;
 drop table cadoc_6334_v2.tmp_ranking_200;
 drop table cadoc_6334_v2.tmp_ranking_filtered;
 
+
+
+select segment_code, count(distinct(establishment_code))
+  from cadoc_6334_v2.ranking_filtered
+group by 1
+order by 1;

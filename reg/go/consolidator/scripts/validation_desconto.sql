@@ -1,4 +1,4 @@
--- Active: 1766518799113@@127.0.0.1@5434@reg@cadoc_6334_v2
+-- Active: 1774368236280@@192.168.100.78@5436@dev_regulat
 
 
 -------------------------------------------------------------
@@ -29,7 +29,7 @@ select extract(year from a.transaction_date) as year,
        round(sum(transaction_amount), 2) as transaction_amount,
        count(1) as transaction_quantity
   from transaction_v4.transaction a
-left join apoio.segmentos b
+left join cadoc_6334_v2.mcc_segmentos b
   on a.establishment_mcc >= b.mcc_init
   and a.establishment_mcc <= b.mcc_end
 where a.transaction_date >= '2026-01-01'
@@ -37,6 +37,11 @@ where a.transaction_date >= '2026-01-01'
   and a.status_id = 2
   group by 1, 2, 3, 4, 5, 6, 7
   order by 1, 2, 3, 4, 5, 6, 7;
+
+select count(1) from cadoc_6334_v2.tmp_desconto;
+
+select count(1) from cadoc_6334_v2.desconto;
+
 
 select count(1)
   from cadoc_6334_v2.tmp_desconto a

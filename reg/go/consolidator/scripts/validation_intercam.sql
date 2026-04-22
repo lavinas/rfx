@@ -1,3 +1,4 @@
+-- Active: 1774368236280@@192.168.100.78@5436@dev_regulat
 
 
 
@@ -23,7 +24,7 @@ select extract(year from a.transaction_date) as year,
        round(sum(transaction_amount), 2) as transaction_amount,
        count(1) as transaction_quantity
   from transaction_v4.transaction a
-left join apoio.segmentos b
+left join cadoc_6334_v2.mcc_segmentos b
   on a.establishment_mcc >= b.mcc_init
   and a.establishment_mcc <= b.mcc_end
 left join bins.bins c

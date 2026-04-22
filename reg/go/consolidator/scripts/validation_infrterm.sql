@@ -9,7 +9,7 @@ select b.federation_unit,
   from raw_data_v2.terminals_transaction a
 inner join raw_data_v2.establishments b
     on a.establishment_code = b.establishment_code
-   and b.accreditation_date <= '2026-03-31'
+   and b.accreditation_date < '2026-04-01'::date
 group by 1;
 
 

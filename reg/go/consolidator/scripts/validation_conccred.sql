@@ -1,7 +1,6 @@
--- Active: 1766518799113@@127.0.0.1@5434@reg
+-- Active: 1774368236280@@192.168.100.78@5436@dev_regulat
 -- amounts
 
-drop table if exists cadoc_6334_v2.tmp_conccred;
 
 create table cadoc_6334_v2.tmp_conccred as
 select extract(year from a.transaction_date) as year,
@@ -18,7 +17,7 @@ select extract(year from a.transaction_date) as year,
        round(sum(transaction_amount), 2) as transaction_amount,
        count(1) as transaction_quantity
   from transaction_v4.transaction a
-left join apoio.segmentos b
+left join cadoc_6334_v2.mcc_segmentos b
   on a.establishment_mcc >= b.mcc_init
   and a.establishment_mcc <= b.mcc_end
 where a.transaction_date >= '2026-01-01'

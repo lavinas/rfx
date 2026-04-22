@@ -61,7 +61,7 @@ func (s *ConsolidateService) runTransaction(year int, quarter int, days int) err
 
 // GetBins retrieves BIN information from the repository
 func (s *ConsolidateService) GetBins() (map[int64]*domain_source.Bin, error) {
-	s.Logger.IPrintf(1, "Fetching BIN information from the repository\n")
+	s.Logger.IPrintf(2, "Fetching BIN information from the repository\n")
 	bins := make(map[int64]*domain_source.Bin)
 	binList, err := s.Repository.GetBins()
 	if err != nil {
@@ -70,7 +70,7 @@ func (s *ConsolidateService) GetBins() (map[int64]*domain_source.Bin, error) {
 	for _, bin := range binList {
 		bins[bin.Bin] = bin
 	}
-	s.Logger.IPrintf(1, "Fetched %d BIN records from the repository\n", len(bins))
+	s.Logger.IPrintf(2, "Fetched %d BIN records from the repository\n", len(bins))
 	return bins, nil
 }
 

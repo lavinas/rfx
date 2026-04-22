@@ -20,7 +20,7 @@ select extract(year from a.transaction_date) as year,
        count(1) as transaction_quantity,
        round(avg(a.revenue_mdr_value / a.transaction_amount * 100), 2) as avg_mcc_fee
   from transaction_v4.transaction a
-left join apoio.segmentos b
+left join cadoc_6334_v2.mcc_segmentos b
   on a.establishment_mcc >= b.mcc_init
   and a.establishment_mcc <= b.mcc_end
 where a.transaction_date >= '2026-01-01'
