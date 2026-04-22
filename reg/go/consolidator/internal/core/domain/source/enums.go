@@ -333,7 +333,7 @@ var (
 		412: "Alimentação",
 		413: "Móveis e construção",
 		414: "Pequenos supermercados e afins",
-		415: "Combustíveis e afins    ",
+		415: "Combustíveis e afins",
 		416: "Roupas, sapatos, acessórios e afins",
 		417: "Serviços médicos e afins",
 		418: "Turismo e afins",

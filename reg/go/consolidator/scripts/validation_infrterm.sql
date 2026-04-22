@@ -1,3 +1,4 @@
+-- Active: 1774368236280@@192.168.100.78@5436@dev_regulat
 
 
 create table cadoc_6334_v2.tmp_infrterm as
