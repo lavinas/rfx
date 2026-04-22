@@ -212,7 +212,7 @@ func (i Management) GetProduct() *string {
 func (i Management) GetCapture() *string {
 	mapping := map[string]string{
 		"07": "CTC",
-		"02": "CHP",
+		"02": "TAR",
 	}
 	if i.FormaCaptura != nil {
 		if capture, exists := mapping[*i.FormaCaptura]; exists {
@@ -221,7 +221,7 @@ func (i Management) GetCapture() *string {
 			return ret
 		} else {
 			ret := new(string)
-			*ret = "TAR" // Default value for unknown capture methods
+			*ret = "CHP" // Default value for other capture methods
 			return ret
 		}
 	}
