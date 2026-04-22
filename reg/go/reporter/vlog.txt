@@ -1,0 +1,136 @@
+lavinas@paulo:~/projects/rfx/reg/go/reporter$ go run cmd/compare/main.go 
+Reconciliating ./files/in/RANKING.TXT
+
+2026/04/22 14:24:36 /home/lavinas/projects/rfx/reg/go/reporter/internal/adapter/gorm.go:57 SLOW SQL >= 200ms
+[489.544ms] [rows:7963] SELECT * FROM "cadoc_6334_v2"."ranking_filtered"
+Discrepancies found in ./files/in/RANKING.TXT:
+length mismatch: DB has 7963 records, File has 151519 records
+---------------------------------------------------------------------------------------------------------
+Reconciliating ./files/in/CONCCRED.TXT
+No discrepancies found in ./files/in/CONCCRED.TXT
+---------------------------------------------------------------------------------------------------------
+Reconciliating ./files/in/INFRESTA.TXT
+No discrepancies found in ./files/in/INFRESTA.TXT
+---------------------------------------------------------------------------------------------------------
+Reconciliating ./files/in/INFRTERM.TXT
+No discrepancies found in ./files/in/INFRTERM.TXT
+---------------------------------------------------------------------------------------------------------
+Reconciliating ./files/in/DESCONTO.TXT
+Discrepancies found in ./files/in/DESCONTO.TXT:
+mismatch for key 2026|1|C|1|1|5|407:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 1, Installments: 5, Segment: 407, AvgFee: 3.01, MinFee: 1.79, MaxFee: 5.31, StdDevFee: 0.77, Value: 25914.61, Qtty: 41
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 1, Installments: 5, Segment: 407, AvgFee: 3.01, MinFee: 1.79, MaxFee: 5.31, StdDevFee: 0.78, Value: 25914.61, Qtty: 41
+mismatch for key 2026|1|C|1|5|3|412:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 3, Segment: 412, AvgFee: 2.80, MinFee: 2.15, MaxFee: 4.32, StdDevFee: 0.58, Value: 30309.51, Qtty: 51
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 3, Segment: 412, AvgFee: 2.80, MinFee: 2.15, MaxFee: 4.32, StdDevFee: 0.59, Value: 30309.51, Qtty: 51
+mismatch for key 2026|1|C|8|2|1|402:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 2, Installments: 1, Segment: 402, AvgFee: 3.35, MinFee: 2.40, MaxFee: 3.75, StdDevFee: 0.31, Value: 1776.67, Qtty: 85
+File: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 2, Installments: 1, Segment: 402, AvgFee: 3.35, MinFee: 2.40, MaxFee: 3.75, StdDevFee: 0.30, Value: 1776.67, Qtty: 85
+mismatch for key 2026|1|C|1|5|4|416:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 4, Segment: 416, AvgFee: 2.92, MinFee: 2.30, MaxFee: 4.75, StdDevFee: 0.59, Value: 35976.20, Qtty: 75
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 4, Segment: 416, AvgFee: 2.92, MinFee: 2.30, MaxFee: 4.75, StdDevFee: 0.60, Value: 35976.20, Qtty: 75
+mismatch for key 2026|1|C|2|5|6|409:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 6, Segment: 409, AvgFee: 2.63, MinFee: 2.29, MaxFee: 4.18, StdDevFee: 0.43, Value: 64509.96, Qtty: 40
+File: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 6, Segment: 409, AvgFee: 2.63, MinFee: 2.29, MaxFee: 4.18, StdDevFee: 0.42, Value: 64509.96, Qtty: 40
+mismatch for key 2026|1|C|8|1|3|401:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 3, Segment: 401, AvgFee: 3.39, MinFee: 3.10, MaxFee: 4.32, StdDevFee: 0.29, Value: 7880.22, Qtty: 24
+File: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 3, Segment: 401, AvgFee: 3.39, MinFee: 3.10, MaxFee: 4.32, StdDevFee: 0.30, Value: 7880.22, Qtty: 24
+mismatch for key 2026|1|C|8|1|1|404:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 1, Segment: 404, AvgFee: 2.48, MinFee: 2.00, MaxFee: 4.52, StdDevFee: 0.51, Value: 14179.56, Qtty: 204
+File: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 1, Segment: 404, AvgFee: 2.48, MinFee: 2.00, MaxFee: 4.52, StdDevFee: 0.52, Value: 14179.56, Qtty: 204
+mismatch for key 2026|1|C|1|5|4|418:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 4, Segment: 418, AvgFee: 3.10, MinFee: 2.91, MaxFee: 3.25, StdDevFee: 0.13, Value: 13184.00, Qtty: 4
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 4, Segment: 418, AvgFee: 3.10, MinFee: 2.91, MaxFee: 3.25, StdDevFee: 0.15, Value: 13184.00, Qtty: 4
+mismatch for key 2026|1|C|8|1|3|420:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 3, Segment: 420, AvgFee: 3.64, MinFee: 2.92, MaxFee: 4.34, StdDevFee: 0.38, Value: 14850.40, Qtty: 28
+File: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 3, Segment: 420, AvgFee: 3.64, MinFee: 2.92, MaxFee: 4.34, StdDevFee: 0.39, Value: 14850.40, Qtty: 28
+mismatch for key 2026|1|C|8|5|3|415:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 5, Installments: 3, Segment: 415, AvgFee: 3.98, MinFee: 2.93, MaxFee: 4.94, StdDevFee: 0.53, Value: 2314.00, Qtty: 11
+File: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 5, Installments: 3, Segment: 415, AvgFee: 3.98, MinFee: 2.93, MaxFee: 4.94, StdDevFee: 0.54, Value: 2314.00, Qtty: 11
+mismatch for key 2026|1|C|2|5|12|406:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 12, Segment: 406, AvgFee: 2.73, MinFee: 2.43, MaxFee: 3.00, StdDevFee: 0.22, Value: 23699.96, Qtty: 6
+File: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 12, Segment: 406, AvgFee: 2.73, MinFee: 2.43, MaxFee: 3.00, StdDevFee: 0.23, Value: 23699.96, Qtty: 6
+mismatch for key 2026|1|C|1|5|8|413:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 8, Segment: 413, AvgFee: 2.68, MinFee: 1.85, MaxFee: 2.89, StdDevFee: 0.38, Value: 4144.83, Qtty: 5
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 8, Segment: 413, AvgFee: 2.68, MinFee: 1.85, MaxFee: 2.89, StdDevFee: 0.40, Value: 4144.83, Qtty: 5
+mismatch for key 2026|1|C|2|1|5|404:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 1, Installments: 5, Segment: 404, AvgFee: 2.57, MinFee: 2.30, MaxFee: 3.60, StdDevFee: 0.25, Value: 15121.76, Qtty: 21
+File: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 1, Installments: 5, Segment: 404, AvgFee: 2.57, MinFee: 2.30, MaxFee: 3.60, StdDevFee: 0.26, Value: 15121.76, Qtty: 21
+mismatch for key 2026|1|C|2|1|5|415:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 1, Installments: 5, Segment: 415, AvgFee: 3.03, MinFee: 2.45, MaxFee: 4.90, StdDevFee: 0.81, Value: 45254.00, Qtty: 7
+File: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 1, Installments: 5, Segment: 415, AvgFee: 3.03, MinFee: 2.45, MaxFee: 4.90, StdDevFee: 0.76, Value: 45254.00, Qtty: 7
+mismatch for key 2026|1|C|2|5|2|415:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 2, Segment: 415, AvgFee: 2.90, MinFee: 1.79, MaxFee: 4.50, StdDevFee: 0.72, Value: 54799.45, Qtty: 266
+File: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 2, Segment: 415, AvgFee: 2.90, MinFee: 1.79, MaxFee: 4.50, StdDevFee: 0.73, Value: 54799.45, Qtty: 266
+mismatch for key 2026|1|C|1|1|1|410:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 1, Installments: 1, Segment: 410, AvgFee: 3.62, MinFee: 3.60, MaxFee: 3.65, StdDevFee: 0.02, Value: 487.00, Qtty: 10
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 1, Installments: 1, Segment: 410, AvgFee: 3.62, MinFee: 3.60, MaxFee: 3.65, StdDevFee: 0.01, Value: 487.00, Qtty: 10
+mismatch for key 2026|1|C|2|5|6|409:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 6, Segment: 409, AvgFee: 2.63, MinFee: 2.29, MaxFee: 4.18, StdDevFee: 0.43, Value: 64509.96, Qtty: 40
+File: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 6, Segment: 409, AvgFee: 2.63, MinFee: 2.29, MaxFee: 4.18, StdDevFee: 0.42, Value: 64509.96, Qtty: 40
+mismatch for key 2026|1|C|2|1|5|415:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 1, Installments: 5, Segment: 415, AvgFee: 3.03, MinFee: 2.45, MaxFee: 4.90, StdDevFee: 0.81, Value: 45254.00, Qtty: 7
+File: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 1, Installments: 5, Segment: 415, AvgFee: 3.03, MinFee: 2.45, MaxFee: 4.90, StdDevFee: 0.76, Value: 45254.00, Qtty: 7
+mismatch for key 2026|1|C|2|5|2|415:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 2, Segment: 415, AvgFee: 2.90, MinFee: 1.79, MaxFee: 4.50, StdDevFee: 0.72, Value: 54799.45, Qtty: 266
+File: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 2, Segment: 415, AvgFee: 2.90, MinFee: 1.79, MaxFee: 4.50, StdDevFee: 0.73, Value: 54799.45, Qtty: 266
+mismatch for key 2026|1|C|1|5|4|416:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 4, Segment: 416, AvgFee: 2.92, MinFee: 2.30, MaxFee: 4.75, StdDevFee: 0.59, Value: 35976.20, Qtty: 75
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 4, Segment: 416, AvgFee: 2.92, MinFee: 2.30, MaxFee: 4.75, StdDevFee: 0.60, Value: 35976.20, Qtty: 75
+mismatch for key 2026|1|C|1|1|5|407:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 1, Installments: 5, Segment: 407, AvgFee: 3.01, MinFee: 1.79, MaxFee: 5.31, StdDevFee: 0.77, Value: 25914.61, Qtty: 41
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 1, Installments: 5, Segment: 407, AvgFee: 3.01, MinFee: 1.79, MaxFee: 5.31, StdDevFee: 0.78, Value: 25914.61, Qtty: 41
+mismatch for key 2026|1|C|2|1|5|404:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 1, Installments: 5, Segment: 404, AvgFee: 2.57, MinFee: 2.30, MaxFee: 3.60, StdDevFee: 0.25, Value: 15121.76, Qtty: 21
+File: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 1, Installments: 5, Segment: 404, AvgFee: 2.57, MinFee: 2.30, MaxFee: 3.60, StdDevFee: 0.26, Value: 15121.76, Qtty: 21
+mismatch for key 2026|1|C|8|1|3|401:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 3, Segment: 401, AvgFee: 3.39, MinFee: 3.10, MaxFee: 4.32, StdDevFee: 0.29, Value: 7880.22, Qtty: 24
+File: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 3, Segment: 401, AvgFee: 3.39, MinFee: 3.10, MaxFee: 4.32, StdDevFee: 0.30, Value: 7880.22, Qtty: 24
+mismatch for key 2026|1|C|8|5|3|415:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 5, Installments: 3, Segment: 415, AvgFee: 3.98, MinFee: 2.93, MaxFee: 4.94, StdDevFee: 0.53, Value: 2314.00, Qtty: 11
+File: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 5, Installments: 3, Segment: 415, AvgFee: 3.98, MinFee: 2.93, MaxFee: 4.94, StdDevFee: 0.54, Value: 2314.00, Qtty: 11
+mismatch for key 2026|1|C|1|5|8|413:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 8, Segment: 413, AvgFee: 2.68, MinFee: 1.85, MaxFee: 2.89, StdDevFee: 0.38, Value: 4144.83, Qtty: 5
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 8, Segment: 413, AvgFee: 2.68, MinFee: 1.85, MaxFee: 2.89, StdDevFee: 0.40, Value: 4144.83, Qtty: 5
+mismatch for key 2026|1|C|1|5|3|412:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 3, Segment: 412, AvgFee: 2.80, MinFee: 2.15, MaxFee: 4.32, StdDevFee: 0.58, Value: 30309.51, Qtty: 51
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 3, Segment: 412, AvgFee: 2.80, MinFee: 2.15, MaxFee: 4.32, StdDevFee: 0.59, Value: 30309.51, Qtty: 51
+mismatch for key 2026|1|C|8|1|1|404:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 1, Segment: 404, AvgFee: 2.48, MinFee: 2.00, MaxFee: 4.52, StdDevFee: 0.51, Value: 14179.56, Qtty: 204
+File: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 1, Segment: 404, AvgFee: 2.48, MinFee: 2.00, MaxFee: 4.52, StdDevFee: 0.52, Value: 14179.56, Qtty: 204
+mismatch for key 2026|1|C|2|5|12|406:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 12, Segment: 406, AvgFee: 2.73, MinFee: 2.43, MaxFee: 3.00, StdDevFee: 0.22, Value: 23699.96, Qtty: 6
+File: Year: 2026, Quarter: 1, Function: C, Brand: 2, Capture: 5, Installments: 12, Segment: 406, AvgFee: 2.73, MinFee: 2.43, MaxFee: 3.00, StdDevFee: 0.23, Value: 23699.96, Qtty: 6
+mismatch for key 2026|1|C|8|1|3|420:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 3, Segment: 420, AvgFee: 3.64, MinFee: 2.92, MaxFee: 4.34, StdDevFee: 0.38, Value: 14850.40, Qtty: 28
+File: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 1, Installments: 3, Segment: 420, AvgFee: 3.64, MinFee: 2.92, MaxFee: 4.34, StdDevFee: 0.39, Value: 14850.40, Qtty: 28
+mismatch for key 2026|1|C|8|2|1|402:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 2, Installments: 1, Segment: 402, AvgFee: 3.35, MinFee: 2.40, MaxFee: 3.75, StdDevFee: 0.31, Value: 1776.67, Qtty: 85
+File: Year: 2026, Quarter: 1, Function: C, Brand: 8, Capture: 2, Installments: 1, Segment: 402, AvgFee: 3.35, MinFee: 2.40, MaxFee: 3.75, StdDevFee: 0.30, Value: 1776.67, Qtty: 85
+mismatch for key 2026|1|C|1|5|4|418:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 4, Segment: 418, AvgFee: 3.10, MinFee: 2.91, MaxFee: 3.25, StdDevFee: 0.13, Value: 13184.00, Qtty: 4
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 5, Installments: 4, Segment: 418, AvgFee: 3.10, MinFee: 2.91, MaxFee: 3.25, StdDevFee: 0.15, Value: 13184.00, Qtty: 4
+mismatch for key 2026|1|C|1|1|1|410:
+DB: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 1, Installments: 1, Segment: 410, AvgFee: 3.62, MinFee: 3.60, MaxFee: 3.65, StdDevFee: 0.02, Value: 487.00, Qtty: 10
+File: Year: 2026, Quarter: 1, Function: C, Brand: 1, Capture: 1, Installments: 1, Segment: 410, AvgFee: 3.62, MinFee: 3.60, MaxFee: 3.65, StdDevFee: 0.01, Value: 487.00, Qtty: 10
+---------------------------------------------------------------------------------------------------------
+Reconciliating ./files/in/INTERCAM.TXT
+No discrepancies found in ./files/in/INTERCAM.TXT
+---------------------------------------------------------------------------------------------------------
+Reconciliating ./files/in/SEGMENTO.TXT
+1 Name: ServiA§os PAºblicos, Description: MCC: 9402, Code: 0
+File validation errors found:
+validation error for DB record with key 000: invalid code in segment
+---------------------------------------------------------------------------------------------------------
+Reconciliating ./files/in/LUCRCRED.TXT
+Discrepancies found in ./files/in/LUCRCRED.TXT:
+mismatch for key 20261:
+DB: Year: 2026, Quarter: 1, DiscountRevenue: 7699241.77, RentRevenue: 0.00, OtherRevenue: 0.00, InterchangeCost: 3858040.77, MarketingCost: 0.00, BrandAccessCost: 0.00, RiskCost: 0.00, ProcessingCost: 0.00, OtherCost: 0.00
+File: Year: 2026, Quarter: 1, DiscountRevenue: 7884916.66, RentRevenue: 2183751.22, OtherRevenue: 1512410.24, InterchangeCost: 3910021.60, MarketingCost: 191077.94, BrandAccessCost: 1515123.96, RiskCost: 0.00, ProcessingCost: 406930.64, OtherCost: 5686873.32
+mismatch for key 20261:
+DB: Year: 2026, Quarter: 1, DiscountRevenue: 7699241.77, RentRevenue: 0.00, OtherRevenue: 0.00, InterchangeCost: 3858040.77, MarketingCost: 0.00, BrandAccessCost: 0.00, RiskCost: 0.00, ProcessingCost: 0.00, OtherCost: 0.00
+File: Year: 2026, Quarter: 1, DiscountRevenue: 7884916.66, RentRevenue: 2183751.22, OtherRevenue: 1512410.24, InterchangeCost: 3910021.60, MarketingCost: 191077.94, BrandAccessCost: 1515123.96, RiskCost: 0.00, ProcessingCost: 406930.64, OtherCost: 5686873.32
+---------------------------------------------------------------------------------------------------------
+Reconciliating ./files/in/CONTATOS.TXT
+No discrepancies found in ./files/in/CONTATOS.TXT
+---------------------------------------------------------------------------------------------------------

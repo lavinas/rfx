@@ -1,8 +1,9 @@
+-- Active: 1774368236280@@192.168.100.78@5436@dev_regulat
 create table cadoc_6334_v2.luccred_save as
 select * from cadoc_6334_v2.luccred;
 
 
-update luccred
+update cadoc_6334_v2.luccred
    set gross_revenue =      7884916.66,
        rental_revenue =     2183751.22,
        others_revenue =     1512410.24,

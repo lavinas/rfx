@@ -51,3 +51,5 @@ left join cadoc_6334_v2.infrterm b
 where b.federation_unit is null;
 
 drop table cadoc_6334_v2.tmp_infrterm;
+
+

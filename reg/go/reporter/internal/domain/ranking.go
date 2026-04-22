@@ -49,7 +49,11 @@ func (r *Ranking) Format() string {
 	ret := ""
 	ret += fmt.Sprintf("%04d", r.Year)
 	ret += fmt.Sprintf("%01d", r.Quarter)
-	ret += fmt.Sprintf("%-8s", r.ClientCode)
+	clientCode := r.ClientCode
+	if clientCode == "-1" {
+		clientCode = "group200"
+	}
+	ret += fmt.Sprintf("%-8s", clientCode)
 	ret += fmt.Sprintf("%01s", r.Function)
 	ret += fmt.Sprintf("%02d", r.Brand)
 	ret += fmt.Sprintf("%01d", r.Capture)
@@ -118,7 +122,11 @@ func (r *Ranking) GetDB(repo port.Repository) (map[string]port.Report, error) {
 	ret := make(map[string]port.Report)
 	for _, rec := range records {
 		if cc, err := strconv.Atoi(rec.ClientCode); err == nil {
-			rec.ClientCode = fmt.Sprintf("%08d", cc)
+			if cc == -1 {
+				rec.ClientCode = "group200"
+			} else {
+				rec.ClientCode = fmt.Sprintf("%08d", cc)
+			}
 		}
 		ret[rec.GetKey()] = rec
 	}
