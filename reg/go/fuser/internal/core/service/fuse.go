@@ -7,11 +7,6 @@ import (
 	"fuser/internal/core/ports"
 )
 
-const (
-	loadRate = 4000
-	saveRate = 2000
-)
-
 // FuseService is the service layer that interacts with the repository to perform business logic
 type FuseService struct {
 	Repository ports.Repository
@@ -40,7 +35,7 @@ func (s *FuseService) Run(start_date time.Time, end_date time.Time, focus string
 	return nil
 }
 
-// main logic of the FuseService would be implemented in the Run method, which would call helper methods to process Exchange and Management transactions, as well as handle leftover transactions based on the provided flags and focus.
+// main logic of the FuseService would be implemented in the Run method.
 func (s *FuseService) mainLogic(start_date time.Time, end_date time.Time, focus string) error {
 	// If focus is set to "none", we skip processing transactions and return early
 	if focus == "none" {
@@ -114,7 +109,7 @@ func (s *FuseService) processManagement(date time.Time) error {
 
 // getExchangeTransactions is a helper method to fetch Exchange transactions for a specific date
 func (s *FuseService) getExchangeTransactions(date time.Time) ([]*domain.Transaction, error) {
-	s.Logger.IPrintf(3, "* Reading Exchange transactions for date %s\n", date.Format("2006-01-02"))
+	s.Logger.IPrintf(3, "Reading Exchange transactions for date %s\n", date.Format("2006-01-02"))
 	exchanges, err := s.Repository.GetExchangeTransactions(date)
 	if err != nil {
 		s.Logger.IPrintf(3, "Error reading exchange transactions for date %s: %v\n", date.Format("2006-01-02"), err)
@@ -124,13 +119,13 @@ func (s *FuseService) getExchangeTransactions(date time.Time) ([]*domain.Transac
 	for _, exchange := range exchanges {
 		transactions = append(transactions, exchange.Translate())
 	}
-	s.Logger.IPrintf(3, "* Read %d Exchange transactions for date %s\n", len(transactions), date.Format("2006-01-02"))
+	s.Logger.IPrintf(3, "Read %d Exchange transactions for date %s\n", len(transactions), date.Format("2006-01-02"))
 	return transactions, nil
 }
 
 // getManagementTransactions is a helper method to fetch Management transactions for a specific date
 func (s *FuseService) getManagementTransactions(date time.Time) ([]*domain.Transaction, error) {
-	s.Logger.IPrintf(3, "* Reading Management transactions for date %s\n", date.Format("2006-01-02"))
+	s.Logger.IPrintf(3, "Reading Management transactions for date %s\n", date.Format("2006-01-02"))
 	managements, err := s.Repository.GetManagementTransactions(date)
 	if err != nil {
 		s.Logger.IPrintf(3, "Error reading management transactions for date %s: %v\n", date.Format("2006-01-02"), err)
@@ -140,40 +135,24 @@ func (s *FuseService) getManagementTransactions(date time.Time) ([]*domain.Trans
 	for _, management := range managements {
 		transactions = append(transactions, management.Translate())
 	}
-	s.Logger.IPrintf(3, "* Read %d Management transactions for date %s\n", len(transactions), date.Format("2006-01-02"))
+	s.Logger.IPrintf(3, "Read %d Management transactions for date %s\n", len(transactions), date.Format("2006-01-02"))
 	return transactions, nil
 }
 
 // getTransactionsByKey is a helper method to fetch transactions by their keys
 func (s *FuseService) getTransactionsByKey(transType string, transDate time.Time, transactions []*domain.Transaction) ([]*domain.Transaction, error) {
-	repTransactions := []*domain.Transaction{}
+	s.Logger.IPrintf(3, "Fetching %s transactions by keys for date %s\n", transType, transDate.Format("2006-01-02"))
 	keys := []string{}
-	count := 0
-	total := len(transactions)
 	// Fetch transactions in batches of const loadRate to optimize database performance and avoid memory issues
 	for _, transaction := range transactions {
 		keys = append(keys, transaction.Key1)
-		count++
-		// When the batch size reaches loadRate, we fetch the transactions from the repository by their keys and reset the batch
-		if count%loadRate == 0 {
-			repTrans, err := s.Repository.GetTransactionsByKey(keys)
-			if err != nil {
-				return nil, err
-			}
-			s.Logger.IPrintf(3, "Fetched %d %s transactions by keys for %s date %s (%d/%d)\n", len(repTrans), transType, transType, transDate.Format("2006-01-02"), count, total)
-			repTransactions = append(repTransactions, repTrans...)
-			keys = []string{}
-		}
 	}
 	// Fetch any remaining transactions from the repository by their keys that were not fetched in the previous loop
-	if len(keys) > 0 {
-		repTrans, err := s.Repository.GetTransactionsByKey(keys)
-		if err != nil {
-			return nil, err
-		}
-		s.Logger.IPrintf(3, "Fetched %d %s transactions by keys for %s date %s (%d/%d)\n", len(repTrans), transType, transType, transDate.Format("2006-01-02"), count, total)
-		repTransactions = append(repTransactions, repTrans...)
+	repTransactions, err := s.Repository.GetTransactionsByKey(keys)
+	if err != nil {
+		return nil, err
 	}
+	s.Logger.IPrintf(3, "Fetched %d %s transactions by keys for date %s\n", len(repTransactions), transType, transDate.Format("2006-01-02"))
 	return repTransactions, nil
 }
 
@@ -203,35 +182,14 @@ func (s *FuseService) mergeTransactions(transType string, transDate time.Time, l
 	return merged
 }
 
-// insertTransactions is a helper method to insert a batch of transactions into the repository
+// insertTransactionsBatch is a helper method to insert a batch of transactions into the repository using batch processing to optimize performance and reduce memory usage
 func (s *FuseService) insertTransactions(transType string, transDate time.Time, transactions []*domain.Transaction) error {
-	count := 0
-	total := len(transactions)
-	lot := []*domain.Transaction{}
-	// Insert transactions in batches of const saveRate to optimize database performance and avoid memory issues
-	for _, transaction := range transactions {
-		transaction.PrepareForInsert()
-		lot = append(lot, transaction)
-		count++
-		// When the batch size reaches saveRate, we insert the batch into the repository and reset the batch
-		if count%saveRate == 0 {
-			if err := s.Repository.InsertTransactions(lot); err != nil {
-				s.Logger.IPrintf(3, "Error inserting %s transactions for date %s: %v\n", transType, transDate.Format("2006-01-02"), err)
-				return err
-			}
-			s.Logger.IPrintf(3, "Inserted %s transactions for date %s (%d/%d)\n", transType, transDate.Format("2006-01-02"), count, total)
-			lot = []*domain.Transaction{}
-		}
+	s.Logger.IPrintf(3, "Inserting %d %s transactions for date %s using batch processing\n", len(transactions), transType, transDate.Format("2006-01-02"))
+	if err := s.Repository.InsertTransactions(transactions); err != nil {
+		s.Logger.IPrintf(3, "Error inserting %s transactions for date %s using batch processing: %v\n", transType, transDate.Format("2006-01-02"), err)
+		return err
 	}
-	// Insert any remaining transactions in the batch that were not inserted in the previous loop
-	if len(lot) > 0 {
-		if err := s.Repository.InsertTransactions(lot); err != nil {
-			s.Logger.IPrintf(3, "Error inserting %s transactions for date %s: %v\n", transType, transDate.Format("2006-01-02"), err)
-			return err
-		}
-		// Log the number of transactions inserted for the last batch
-		s.Logger.IPrintf(3, "Inserted %s transactions for date %s (%d/%d)\n", transType, transDate.Format("2006-01-02"), count, total)
-	}
+	s.Logger.IPrintf(3, "Inserted %d %s transactions for date %s using batch processing\n", len(transactions), transType, transDate.Format("2006-01-02"))
 	return nil
 }
 

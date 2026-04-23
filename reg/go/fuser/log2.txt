@@ -1,0 +1,71 @@
+2026/04/23 21:43:44 Running FuseService...
+2026/04/23 21:43:44     Processing date: 2026-01-01
+2026/04/23 21:43:44             Processing Exchange transactions for date 2026-01-01
+2026/04/23 21:43:44                     * Reading Exchange transactions for date 2026-01-01
+2026/04/23 21:43:45                     * Read 78684 Exchange transactions for date 2026-01-01
+2026/04/23 21:43:45                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (4000/78684)
+2026/04/23 21:43:45                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (8000/78684)
+2026/04/23 21:43:45                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (12000/78684)
+2026/04/23 21:43:45                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (16000/78684)
+2026/04/23 21:43:45                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (20000/78684)
+2026/04/23 21:43:45                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (24000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (28000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (32000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (36000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (40000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (44000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (48000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (52000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (56000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (60000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (64000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (68000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (72000/78684)
+2026/04/23 21:43:46                     Fetched 4000 exchange transactions by keys for exchange date 2026-01-01 (76000/78684)
+2026/04/23 21:43:46                     Fetched 2684 exchange transactions by keys for exchange date 2026-01-01 (78684/78684)
+2026/04/23 21:43:46                     Merged exchange transactions for date 2026-01-01 (local: 78684, repository: 78684, merged: 78684)
+2026/04/23 21:43:46                     Filtering duplicates from 78684 transactions
+2026/04/23 21:43:46                     Filtered duplicates, resulting in 78684 unique transactions
+2026/04/23 21:43:46                     Inserting 78684 exchange transactions for date 2026-01-01
+2026/04/23 21:44:10                     Inserted 78684 exchange transactions for date 2026-01-01
+2026/04/23 21:44:10             Finished processing Exchange transactions for date 2026-01-01
+2026/04/23 21:44:10             Processing Management transactions for date 2026-01-01
+2026/04/23 21:44:10                     * Reading Management transactions for date 2026-01-01
+2026/04/23 21:44:10                     * Read 86040 Management transactions for date 2026-01-01
+2026/04/23 21:44:10                     Fetched 4000 management transactions by keys for management date 2026-01-01 (4000/86040)
+2026/04/23 21:44:10                     Fetched 4000 management transactions by keys for management date 2026-01-01 (8000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (12000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (16000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (20000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (24000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (28000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (32000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (36000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (40000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (44000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (48000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (52000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (56000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (60000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (64000/86040)
+2026/04/23 21:44:11                     Fetched 4000 management transactions by keys for management date 2026-01-01 (68000/86040)
+2026/04/23 21:44:12                     Fetched 4000 management transactions by keys for management date 2026-01-01 (72000/86040)
+2026/04/23 21:44:12                     Fetched 4000 management transactions by keys for management date 2026-01-01 (76000/86040)
+2026/04/23 21:44:12                     Fetched 4000 management transactions by keys for management date 2026-01-01 (80000/86040)
+2026/04/23 21:44:12                     Fetched 4000 management transactions by keys for management date 2026-01-01 (84000/86040)
+2026/04/23 21:44:12                     Fetched 2040 management transactions by keys for management date 2026-01-01 (86040/86040)
+2026/04/23 21:44:12                     Merged management transactions for date 2026-01-01 (local: 86040, repository: 86040, merged: 86040)
+2026/04/23 21:44:12                     Filtering duplicates from 86040 transactions
+2026/04/23 21:44:12                     Filtered duplicates, resulting in 86040 unique transactions
+2026/04/23 21:44:12                     Inserting 86040 management transactions for date 2026-01-01
+2026/04/23 21:44:26                     Inserted 86040 management transactions for date 2026-01-01
+2026/04/23 21:44:26             Finished processing Management transactions for date 2026-01-01
+2026/04/23 21:44:26     Processing leftover transactions...
+2026/04/23 21:44:26             Fetching leftover transactions for date 2026-01-01
+2026/04/23 21:44:26             Fetched 0 leftover transactions with status 0 and 3549 with status 1 for date range 2026-01-01 to 2026-01-01
+2026/04/23 21:44:26             Merging leftover transactions (status 0: 0, status 1: 3549)
+2026/04/23 21:44:26             Merged 0 leftover transactions (status 0: 0, status 1: 3549)
+2026/04/23 21:44:26                     Inserting 0 leftover transactions for date 2026-04-23
+2026/04/23 21:44:26                     Inserted 0 leftover transactions for date 2026-04-23
+2026/04/23 21:44:26     Finished processing leftover transactions.
+2026/04/23 21:44:26 Finished FuseService.

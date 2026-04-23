@@ -13,6 +13,11 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+const (
+	batchSizeInsertTransaction    = 2000
+	batchSizeFindByKeyTransaction = 50000
+)
+
 // GormRepository is an adapter for GORM database operations
 type GormRepository struct {
 	DB  *gorm.DB
@@ -32,7 +37,8 @@ func NewGormRepository(dns string, ctx *context.Context) (*GormRepository, error
 func (a *GormRepository) Connect(dns string) error {
 	// Placeholder for actual connection logic, using GORM to connect to the database
 	gConfig := gorm.Config{
-		Logger: logger.Default.LogMode(logger.Silent), // Disables all SQL logging
+		Logger:      logger.Default.LogMode(logger.Silent), // Disables all SQL logging
+		PrepareStmt: true,
 	}
 	sqlDB, err := gorm.Open(postgres.Open(dns), &gConfig)
 	if err != nil {
@@ -83,11 +89,23 @@ func (a *GormRepository) GetExchangeTransactions(dt_transaction time.Time) ([]*d
 	return transactions, nil
 }
 
-// GetTransactionsByKey retrieves transactions by their keys from the database
+// GetTransactionsByKeyBatch retrieves transactions by their keys from the database in batches
 func (a *GormRepository) GetTransactionsByKey(keys []string) ([]*domain.Transaction, error) {
+	if len(keys) == 0 {
+		return []*domain.Transaction{}, nil
+	}
 	var transactions []*domain.Transaction
-	if err := a.DB.WithContext(*a.ctx).Where("key1 IN ?", keys).Find(&transactions).Error; err != nil {
-		return nil, err
+	for i := 0; i < len(keys); i += batchSizeFindByKeyTransaction {
+		end := i + batchSizeFindByKeyTransaction
+		if end > len(keys) {
+			end = len(keys)
+		}
+		batchKeys := keys[i:end]
+		var batchTransactions []*domain.Transaction
+		if err := a.DB.WithContext(*a.ctx).Where("key1 IN ?", batchKeys).Find(&batchTransactions).Error; err != nil {
+			return nil, err
+		}
+		transactions = append(transactions, batchTransactions...)
 	}
 	return transactions, nil
 }
@@ -103,9 +121,9 @@ func (a *GormRepository) GetTransactionsByDateRangeAndStatus(start, end time.Tim
 	return transactions, nil
 }
 
-// Insert Transactions inserts a list of transactions into the database
+// InsertTransactions inserts a batch of transactions into the database
 func (a *GormRepository) InsertTransactions(transactions []*domain.Transaction) error {
 	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
 		UpdateAll: true,
-	}).Create(&transactions).Error
+	}).CreateInBatches(&transactions, batchSizeInsertTransaction).Error
 }
