@@ -128,14 +128,13 @@ func (a *PostgresRepository) InsertTransactions(transactions []*domain.Transacti
 	}).CreateInBatches(&transactions, batchSizeInsertTransaction).Error
 }
 
-
 // InsertTransactions inserts a batch of transactions into the database
 func (a *PostgresRepository) InsertTransactions2(transactions []*domain.Transaction) error {
-    return a.DB.Transaction(func(tx *gorm.DB) error {
-        if err := tx.CreateInBatches(&transactions, batchSizeInsertTransaction).Error; err != nil {
-            // Se der erro em qualquer lote, o GORM faz ROLLBACK de tudo
-            return err
-        }
-        return nil
-    })
+	return a.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.CreateInBatches(&transactions, batchSizeInsertTransaction).Error; err != nil {
+			// Se der erro em qualquer lote, o GORM faz ROLLBACK de tudo
+			return err
+		}
+		return nil
+	})
 }

@@ -47,6 +47,11 @@ func (Transaction) TableName() string {
 	return "transaction_v4.transaction"
 }
 
+// GetKey generates a unique key for the transaction based on its Key1 and Key2 fields, which can be used for merging transactions
+func (t *Transaction) GetKey1() string {
+	return t.Key1
+}
+
 // SetForInsert sets the Key2 field of the transaction based on available data
 func (t *Transaction) PrepareForInsert() {
 	// If Key2 is already set, we do not need to generate it again
