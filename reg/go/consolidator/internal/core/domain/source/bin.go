@@ -32,3 +32,5 @@ func (b *Bin) GetCardType() string {
 	}
 	return DefaultCardType
 }
+
+

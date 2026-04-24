@@ -294,3 +294,15 @@ select capture_mode as segmento,
 where year = 2026 and quarter = 1
 group by 1
 order by 1;
+
+
+-- validacoes finais
+
+select a.brand, 
+       a.function, 
+       round(sum(case when product_code = 38 then transaction_quantity else 0 end) / sum(transaction_quantity) * 100, 2) as percentual_transacoes_produto_38,
+       count(1) 
+  from cadoc_6334_v2.intercam a
+group by 1, 2
+order by 3 desc;
+
