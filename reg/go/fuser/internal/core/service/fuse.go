@@ -165,13 +165,10 @@ func (s *FuseService) mergeTransactions(transType string, transDate time.Time, l
 	}
 	for _, localTrans := range localTransactions {
 		if repoTrans, exists := repoMap[localTrans.Key1]; exists {
-			switch transType {
-			case "exchange":
-				domain.MergeExchange(localTrans, repoTrans)
-			case "management":
-				domain.MergeManagement(localTrans, repoTrans)
-			default:
-				s.Logger.IPrintf(2, "Unknown transaction type: %s\n", transType)
+			if transType == "exchange" {
+				s.MergeExchange(localTrans, repoTrans)
+			} else {
+				s.MergeManagement(localTrans, repoTrans)
 			}
 			merged = append(merged, repoTrans)
 		} else {
@@ -184,6 +181,14 @@ func (s *FuseService) mergeTransactions(transType string, transDate time.Time, l
 
 // insertTransactionsBatch is a helper method to insert a batch of transactions into the repository using batch processing to optimize performance and reduce memory usage
 func (s *FuseService) insertTransactions(transType string, transDate time.Time, transactions []*domain.Transaction) error {
+	// prepare transactions for insert by setting the Key2 field based on available data and calculating the status
+	s.Logger.IPrintf(3, "Preparing %d %s transactions for date %s for batch insertion\n", len(transactions), transType, transDate.Format("2006-01-02"))
+	for _, transaction := range transactions {
+		transaction.PrepareForInsert()
+	}
+	s.Logger.IPrintf(3, "Prepared %d %s transactions for date %s for batch insertion\n", len(transactions), transType, transDate.Format("2006-01-02"))
+
+	// Insert transactions in batches to optimize database performance and reduce memory usage
 	s.Logger.IPrintf(3, "Inserting %d %s transactions for date %s using batch processing\n", len(transactions), transType, transDate.Format("2006-01-02"))
 	if err := s.Repository.InsertTransactions(transactions); err != nil {
 		s.Logger.IPrintf(3, "Error inserting %s transactions for date %s using batch processing: %v\n", transType, transDate.Format("2006-01-02"), err)
@@ -201,7 +206,7 @@ func (s *FuseService) filterDuplicates(transactions []*domain.Transaction) []*do
 	unique := make(map[string]*domain.Transaction)
 	for _, transaction := range transactions {
 		if _, exists := unique[transaction.Key1]; exists {
-			s.Logger.IPrintf(3, "Duplicate transaction found with key: %s\n", transaction.Key1)
+			s.Logger.IPrintf(4, "Duplicate transaction found with key: %s\n", transaction.Key1)
 		}
 		unique[transaction.Key1] = transaction
 	}
@@ -304,7 +309,7 @@ func (s *FuseService) mergeLeftoverMaps(t0_map, t1_map map[string]*domain.Transa
 				t0.TransactionDate.Before(t1.TransactionDate.AddDate(0, 0, -3)) {
 				continue
 			}
-			domain.MergeManagement(t1, t0)
+			s.MergeManagement(t1, t0)
 			t1.Cancel()
 			t1.ReferenceID = &t0.ID
 			t0.ReferenceID = &t1.ID
@@ -313,4 +318,50 @@ func (s *FuseService) mergeLeftoverMaps(t0_map, t1_map map[string]*domain.Transa
 		}
 	}
 	return result
+}
+
+// MergeExchange is a helper method to merge an Exchange transaction with an existing transaction in the repository, giving priority to non-nil values from the Exchange transaction
+func (s *FuseService) MergeExchange(excTransaction *domain.Transaction, repoTransaction *domain.Transaction) {
+	// Update fields from exchange transaction if they are not nil
+	repoTransaction.BIN = excTransaction.BIN
+	repoTransaction.AuthorizationCode = excTransaction.AuthorizationCode
+	repoTransaction.TransactionNSU = excTransaction.TransactionNSU
+	repoTransaction.TransactionDate = excTransaction.TransactionDate
+	repoTransaction.TransactionAmount = excTransaction.TransactionAmount
+	repoTransaction.TransactionInstallments = excTransaction.TransactionInstallments
+	repoTransaction.TransactionBrand = excTransaction.TransactionBrand
+	repoTransaction.TransactionProduct = excTransaction.TransactionProduct
+	repoTransaction.TransactionCapture = excTransaction.TransactionCapture
+	repoTransaction.CostInterchangeValue = excTransaction.CostInterchangeValue
+	repoTransaction.HighSourcePriority = excTransaction.HighSourcePriority
+	repoTransaction.PeriodDate = excTransaction.PeriodDate
+	repoTransaction.PeriodClosingID = excTransaction.PeriodClosingID
+	repoTransaction.TransacID = excTransaction.TransacID
+
+	// Calculate status
+	if *repoTransaction.StatusID == 1 {
+		repoTransaction.StatusCount = 0
+		*repoTransaction.StatusID = 2
+		*repoTransaction.StatusName = "Pronto"
+	}
+
+}
+
+// MergeManagement is a helper method to merge a Management transaction with an existing transaction in the repository, giving priority to non-nil values from the Management transaction
+func (s *FuseService) MergeManagement(mgtTransaction *domain.Transaction, repoTransaction *domain.Transaction) {
+	// Update fields from management transaction if they are not nil
+	repoTransaction.EstablishmentNature = mgtTransaction.EstablishmentNature
+	repoTransaction.EstablishmentMCC = mgtTransaction.EstablishmentMCC
+	repoTransaction.EstablishmentTerminalCode = mgtTransaction.EstablishmentTerminalCode
+	repoTransaction.RevenueMDRValue = mgtTransaction.RevenueMDRValue
+	repoTransaction.TransactionSecondaryDate = mgtTransaction.TransactionDate
+	repoTransaction.TransactionSecondaryAmount = mgtTransaction.TransactionAmount
+
+	// Calculate status
+	if *repoTransaction.StatusID == 0 {
+		repoTransaction.StatusCount = 0
+		*repoTransaction.StatusID = 2
+		*repoTransaction.StatusName = "Pronto"
+	}
+
 }
