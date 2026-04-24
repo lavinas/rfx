@@ -1,7 +1,6 @@
 package driven
 
 import (
-	// "fmt"
 	"context"
 	"time"
 
@@ -107,6 +106,7 @@ func (a *PostgresRepository) GetTransactionsByKey(keys []string) ([]*domain.Tran
 		}
 		transactions = append(transactions, batchTransactions...)
 	}
+
 	return transactions, nil
 }
 
@@ -123,16 +123,10 @@ func (a *PostgresRepository) GetTransactionsByDateRangeAndStatus(start, end time
 
 // InsertTransactions inserts a batch of transactions into the database
 func (a *PostgresRepository) InsertTransactions(transactions []*domain.Transaction) error {
-	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
-		UpdateAll: true,
-	}).CreateInBatches(&transactions, batchSizeInsertTransaction).Error
-}
-
-// InsertTransactions inserts a batch of transactions into the database
-func (a *PostgresRepository) InsertTransactions2(transactions []*domain.Transaction) error {
 	return a.DB.Transaction(func(tx *gorm.DB) error {
-		if err := tx.CreateInBatches(&transactions, batchSizeInsertTransaction).Error; err != nil {
-			// Se der erro em qualquer lote, o GORM faz ROLLBACK de tudo
+		if err := a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
+			UpdateAll: true,
+		}).CreateInBatches(&transactions, batchSizeInsertTransaction).Error; err != nil {
 			return err
 		}
 		return nil
