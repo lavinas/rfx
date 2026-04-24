@@ -25,7 +25,7 @@ func main() {
 	time.Local = loc
 	// Initialize the repository with the database connection
 	ctx := context.Background()
-	repo, err := driven.NewGormRepository(cfg.GetDNS(), &ctx)
+	repo, err := driven.NewPostgresRepository(cfg.GetDNS(), &ctx)
 	if err != nil {
 		logger.Println("Error initializing repository:", err)
 		os.Exit(1)

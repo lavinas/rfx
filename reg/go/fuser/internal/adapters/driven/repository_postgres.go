@@ -18,15 +18,15 @@ const (
 	batchSizeFindByKeyTransaction = 50000
 )
 
-// GormRepository is an adapter for GORM database operations
-type GormRepository struct {
+// PostgresRepository is an adapter for GORM database operations
+type PostgresRepository struct {
 	DB  *gorm.DB
 	ctx *context.Context
 }
 
-// NewGormRepository creates a new instance of GormRepository
-func NewGormRepository(dns string, ctx *context.Context) (*GormRepository, error) {
-	rep := &GormRepository{DB: nil, ctx: ctx}
+// NewPostgresRepository creates a new instance of PostgresRepository
+func NewPostgresRepository(dns string, ctx *context.Context) (*PostgresRepository, error) {
+	rep := &PostgresRepository{DB: nil, ctx: ctx}
 	if err := rep.Connect(dns); err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func NewGormRepository(dns string, ctx *context.Context) (*GormRepository, error
 }
 
 // Connect establishes a connection to the database (placeholder for actual connection logic)
-func (a *GormRepository) Connect(dns string) error {
+func (a *PostgresRepository) Connect(dns string) error {
 	// Placeholder for actual connection logic, using GORM to connect to the database
 	gConfig := gorm.Config{
 		Logger:      logger.Default.LogMode(logger.Silent), // Disables all SQL logging
@@ -50,7 +50,7 @@ func (a *GormRepository) Connect(dns string) error {
 }
 
 // Close closes the database connection
-func (a *GormRepository) Close() error {
+func (a *PostgresRepository) Close() error {
 	db, err := a.DB.DB()
 	if err != nil {
 		return err
@@ -59,7 +59,7 @@ func (a *GormRepository) Close() error {
 }
 
 // Ping checks the database connection
-func (a *GormRepository) Ping() error {
+func (a *PostgresRepository) Ping() error {
 	db, err := a.DB.DB()
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func (a *GormRepository) Ping() error {
 }
 
 // GetManagementTransactions retrieves Management transactions from the database
-func (a *GormRepository) GetManagementTransactions(dt_transaction time.Time) ([]*domain.Management, error) {
+func (a *PostgresRepository) GetManagementTransactions(dt_transaction time.Time) ([]*domain.Management, error) {
 	var transactions []*domain.Management
 	start_date := dt_transaction.Format("2006-01-02") + " 00:00:00"
 	end_date := dt_transaction.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
@@ -79,7 +79,7 @@ func (a *GormRepository) GetManagementTransactions(dt_transaction time.Time) ([]
 }
 
 // GetExchangeTransactions retrieves Exchange transactions from the database
-func (a *GormRepository) GetExchangeTransactions(dt_transaction time.Time) ([]*domain.Exchange, error) {
+func (a *PostgresRepository) GetExchangeTransactions(dt_transaction time.Time) ([]*domain.Exchange, error) {
 	var transactions []*domain.Exchange
 	start_date := dt_transaction.Format("2006-01-02") + " 00:00:00"
 	end_date := dt_transaction.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
@@ -90,7 +90,7 @@ func (a *GormRepository) GetExchangeTransactions(dt_transaction time.Time) ([]*d
 }
 
 // GetTransactionsByKeyBatch retrieves transactions by their keys from the database in batches
-func (a *GormRepository) GetTransactionsByKey(keys []string) ([]*domain.Transaction, error) {
+func (a *PostgresRepository) GetTransactionsByKey(keys []string) ([]*domain.Transaction, error) {
 	if len(keys) == 0 {
 		return []*domain.Transaction{}, nil
 	}
@@ -111,7 +111,7 @@ func (a *GormRepository) GetTransactionsByKey(keys []string) ([]*domain.Transact
 }
 
 // GetTransactionsByDateRangeAndStatus retrieves transactions by date range and status from the database
-func (a *GormRepository) GetTransactionsByDateRangeAndStatus(start, end time.Time, status int) ([]*domain.Transaction, error) {
+func (a *PostgresRepository) GetTransactionsByDateRangeAndStatus(start, end time.Time, status int) ([]*domain.Transaction, error) {
 	var transactions []*domain.Transaction
 	start_date := start.Format("2006-01-02") + " 00:00:00"
 	end_date := end.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
@@ -122,7 +122,7 @@ func (a *GormRepository) GetTransactionsByDateRangeAndStatus(start, end time.Tim
 }
 
 // InsertTransactions inserts a batch of transactions into the database
-func (a *GormRepository) InsertTransactions(transactions []*domain.Transaction) error {
+func (a *PostgresRepository) InsertTransactions(transactions []*domain.Transaction) error {
 	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
 		UpdateAll: true,
 	}).CreateInBatches(&transactions, batchSizeInsertTransaction).Error
@@ -130,7 +130,7 @@ func (a *GormRepository) InsertTransactions(transactions []*domain.Transaction) 
 
 
 // InsertTransactions inserts a batch of transactions into the database
-func (a *GormRepository) InsertTransactions2(transactions []*domain.Transaction) error {
+func (a *PostgresRepository) InsertTransactions2(transactions []*domain.Transaction) error {
     return a.DB.Transaction(func(tx *gorm.DB) error {
         if err := tx.CreateInBatches(&transactions, batchSizeInsertTransaction).Error; err != nil {
             // Se der erro em qualquer lote, o GORM faz ROLLBACK de tudo

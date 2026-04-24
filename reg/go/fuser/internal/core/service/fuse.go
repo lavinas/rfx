@@ -59,6 +59,7 @@ func (s *FuseService) mainLogic(start_date time.Time, end_date time.Time, focus 
 				return err
 			}
 		}
+		s.Logger.IPrintf(1, "Processed date: %s\n", date.Format("2006-01-02"))
 	}
 	return nil
 }
@@ -300,19 +301,28 @@ func (s *FuseService) getLeftoverMap(transactions []*domain.Transaction) map[str
 // mergeLeftoverMaps merges two maps of transactions based on their keys, giving priority to transactions in the first map over those in the second map
 func (s *FuseService) mergeLeftoverMaps(t0_map, t1_map map[string]*domain.Transaction) []*domain.Transaction {
 	result := []*domain.Transaction{}
+	// Iterate over the first map (status 0) and check if there is a corresponding transaction in the second map (status 1) with the same key, 
+	// and if so, we merge them based on their transaction dates (allowing a difference of up to 3 days) and add the merged transaction to the result slice, 
+	// while also canceling the transaction from the second map and setting reference IDs for both transactions to link them together 
 	for key, t0 := range t0_map {
+		//
 		if t1, exists := t1_map[key]; exists {
 			if t0.TransactionDate == nil || t1.TransactionDate == nil {
 				continue
 			}
+			// Allow a difference of up to 3 days between the transaction dates to account for potential delays in processing and merging transactions
 			if t0.TransactionDate.After(t1.TransactionDate.AddDate(0, 0, 3)) ||
 				t0.TransactionDate.Before(t1.TransactionDate.AddDate(0, 0, -3)) {
 				continue
 			}
+			// Merge transactions by giving priority to non-nil values from the transaction with status 0 (t0) over the transaction with status 1 (t1)
 			s.MergeManagement(t1, t0)
+			// Cancel the transaction with status 1 (t1) and set reference IDs for both transactions to link them together
 			t1.Cancel()
+			// Set reference IDs for both transactions to link them together
 			t1.ReferenceID = &t0.ID
 			t0.ReferenceID = &t1.ID
+			// Add the merged transaction to the result slice
 			result = append(result, t0)
 			result = append(result, t1)
 		}
