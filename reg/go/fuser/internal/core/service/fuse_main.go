@@ -77,8 +77,11 @@ func (s *FuseService) processManagement(focus string, date time.Time) error {
 		s.Logger.IPrintf(1, "Focus is set to '%s', skipping Management transaction processing for date %s.\n", focus, date.Format("2006-01-02"))
 		return nil
 	}
-	s.Logger.IPrintf(2, "Processing Management transactions for date %s\n", date.Format("2006-01-02"))
-	transactions, err := s.getManagementTransactions(date)
+	// Add date gap for management transactions to ensure we capture any late-arriving transactions that may have been recorded with a transaction date that is slightly later than the actual transaction date, which can happen due to processing delays or time zone differences, and log the adjusted date range for debugging and monitoring purposes
+	adjustedDate := date.AddDate(0, 0, managementGapDays)
+	// Get Management transactions for the current date from the repository and log the number of transactions read for debugging and monitoring purposes
+	s.Logger.IPrintf(2, "Processing Management transactions for date %s\n", adjustedDate.Format("2006-01-02"))
+	transactions, err := s.getManagementTransactions(adjustedDate)
 	if err != nil {
 		return err
 	}
