@@ -114,6 +114,7 @@ func (s *FuseService) processManagement(date time.Time) error {
 
 // getExchangeTransactions is a helper method to fetch Exchange transactions for a specific date
 func (s *FuseService) getExchangeTransactions(date time.Time) ([]*domain.Transaction, error) {
+	date = date.AddDate(0, 0, 1)
 	s.Logger.IPrintf(3, "* Reading Exchange transactions for date %s\n", date.Format("2006-01-02"))
 	exchanges, err := s.Repository.GetExchangeTransactions(date)
 	if err != nil {
