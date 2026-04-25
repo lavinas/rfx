@@ -109,3 +109,8 @@ func (s *FuseService) mergeManagement(mgtTransaction *domain.Transaction, repoTr
 	}
 
 }
+
+// restartTransactionsMap is a helper method to reset the transactions map to free up memory after processing each date
+func (s *FuseService) restartTransactionsMap() {
+	s.transactions = make(map[string]*domain.Transaction)
+}

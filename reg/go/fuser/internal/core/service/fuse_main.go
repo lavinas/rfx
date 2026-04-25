@@ -38,6 +38,9 @@ func (s *FuseService) mainLogicDay(date time.Time, focus string) error {
 	if err := s.insertTransactions(focus, date); err != nil {
 		return err
 	}
+	// restart transactions map to free up memory after processing each date
+	s.restartTransactionsMap()
+
 	// Log the completion of processing for the current date
 	s.Logger.IPrintf(1, "Processed date: %s\n", date.Format("2006-01-02"))
 
