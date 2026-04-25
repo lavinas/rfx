@@ -2,7 +2,6 @@ package driven
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 )
 
@@ -21,12 +20,23 @@ type JsonDBConfig struct {
 	SSLMode        string `json:"sslmode"`
 	TimeZone       string `json:"timezone"`
 	ConnectTimeout int    `json:"connect_timeout"`
+	SourceSchema   string `json:"source_schema"`
+	TargetSchema   string `json:"target_schema"`
 }
 
-// GetDNS returns the DNS string from the DBConfig struct
-func (v *JsonConfig) GetDNS() string {
-	dns := "postgresql://%s:%s@%s:%d/%s?sslmode=%s&TimeZone=%s&connect_timeout=%d"
-	return fmt.Sprintf(dns, v.DB.User, v.DB.Password, v.DB.Host, v.DB.Port, v.DB.DBName, v.DB.SSLMode, v.DB.TimeZone, v.DB.ConnectTimeout)
+// GetDBData returns the database configuration data as a JsonDBConfig struct
+func (v *JsonConfig) GetDBData(host *string, port *int, user *string, password *string, dbname *string, sslmode *string,
+	timezone *string, connect_timeout *int, sourceSchema *string, targetSchema *string) {
+	*host = v.DB.Host
+	*port = v.DB.Port
+	*user = v.DB.User
+	*password = v.DB.Password
+	*dbname = v.DB.DBName
+	*sslmode = v.DB.SSLMode
+	*timezone = v.DB.TimeZone
+	*connect_timeout = v.DB.ConnectTimeout
+	*sourceSchema = v.DB.SourceSchema
+	*targetSchema = v.DB.TargetSchema
 }
 
 // GetDBTimeZone returns the TimeZone from the DBConfig struct

@@ -169,7 +169,6 @@ func (s *FuseService) mergeTransactions(transType string, transDate time.Time, l
 	s.Logger.IPrintf(3, "Merged %s transactions for date %s (local: %d, repository: %d, merged: %d)\n", transType, transDate.Format("2006-01-02"), len(localTransactions), len(s.transactions), len(merged))
 }
 
-
 // filterDuplicates is a helper method to filter out duplicate transactions based on their keys
 func (s *FuseService) filterDuplicates(transactions []*domain.Transaction) []*domain.Transaction {
 	// Log the number of transactions before filtering duplicates

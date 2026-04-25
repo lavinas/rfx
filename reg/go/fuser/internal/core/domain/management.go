@@ -26,7 +26,7 @@ type Management struct {
 
 // TableName specifies the table name for Management struct
 func (Management) TableName() string {
-	return "raw_data_v2.management_transaction"
+	return "management_transaction"
 }
 
 // Translate converts a Management instance to a Transaction instance

@@ -112,4 +112,3 @@ func (s *FuseService) mergeLeftoverMaps(t0_map, t1_map map[string]*domain.Transa
 	}
 	return mergedCount
 }
-

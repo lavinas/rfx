@@ -7,6 +7,8 @@
         "dbname": "reg",
         "sslmode": "disable",
         "timezone": "UTC",
-        "connect_timeout": 10
+        "connect_timeout": 10,
+        "source_schema": "raw_data_v2",
+        "target_schema": "transaction_v4"
     }
 }

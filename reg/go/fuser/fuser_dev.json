@@ -6,6 +6,8 @@
         "password": "Wgkjsjjja8872Xl",
         "dbname": "dev_regulat",
         "sslmode": "disable",
-        "timezone": "America/Cuiaba"
+        "timezone": "America/Cuiaba",
+        "source_schema": "raw_data_v2",
+        "target_schema": "transaction_v4"
     }
 }

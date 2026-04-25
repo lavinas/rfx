@@ -2,9 +2,11 @@ package driven
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"fuser/internal/core/domain"
+	"fuser/internal/core/ports"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -19,13 +21,21 @@ const (
 
 // PostgresRepository is an adapter for GORM database operations
 type PostgresRepository struct {
-	DB  *gorm.DB
-	ctx *context.Context
+	DB           *gorm.DB
+	ctx          *context.Context
+	sourceSchema string
+	targetSchema string
 }
 
 // NewPostgresRepository creates a new instance of PostgresRepository
-func NewPostgresRepository(dns string, ctx *context.Context) (*PostgresRepository, error) {
+func NewPostgresRepository(config ports.Config, ctx *context.Context) (*PostgresRepository, error) {
 	rep := &PostgresRepository{DB: nil, ctx: ctx}
+	var host, user, password, dbname, sslmode, timezone string
+	var port, connect_timeout int
+	config.GetDBData(&host, &port, &user, &password, &dbname, &sslmode, &timezone, &connect_timeout, &rep.sourceSchema, &rep.targetSchema)
+	dns := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s TimeZone=%s connect_timeout=%d",
+		host, port, user, password, dbname, sslmode, timezone, connect_timeout)
+
 	if err := rep.Connect(dns); err != nil {
 		return nil, err
 	}
@@ -68,6 +78,7 @@ func (a *PostgresRepository) Ping() error {
 
 // GetManagementTransactions retrieves Management transactions from the database
 func (a *PostgresRepository) GetManagementTransactions(dt_transaction time.Time) ([]*domain.Management, error) {
+	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.sourceSchema))
 	var transactions []*domain.Management
 	start_date := dt_transaction.Format("2006-01-02") + " 00:00:00"
 	end_date := dt_transaction.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
@@ -79,6 +90,7 @@ func (a *PostgresRepository) GetManagementTransactions(dt_transaction time.Time)
 
 // GetExchangeTransactions retrieves Exchange transactions from the database
 func (a *PostgresRepository) GetExchangeTransactions(dt_transaction time.Time) ([]*domain.Exchange, error) {
+	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.sourceSchema))
 	var transactions []*domain.Exchange
 	start_date := dt_transaction.Format("2006-01-02") + " 00:00:00"
 	end_date := dt_transaction.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
@@ -90,6 +102,7 @@ func (a *PostgresRepository) GetExchangeTransactions(dt_transaction time.Time) (
 
 // GetTransactionsByKeyBatch retrieves transactions by their keys from the database in batches
 func (a *PostgresRepository) GetTransactionsByKey(keys []string) ([]*domain.Transaction, error) {
+	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.targetSchema))
 	if len(keys) == 0 {
 		return []*domain.Transaction{}, nil
 	}
@@ -112,6 +125,7 @@ func (a *PostgresRepository) GetTransactionsByKey(keys []string) ([]*domain.Tran
 
 // GetTransactionsByDateRangeAndStatus retrieves transactions by date range and status from the database
 func (a *PostgresRepository) GetTransactionsByDateRangeAndStatus(start, end time.Time, status int) ([]*domain.Transaction, error) {
+	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.targetSchema))
 	var transactions []*domain.Transaction
 	start_date := start.Format("2006-01-02") + " 00:00:00"
 	end_date := end.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
@@ -124,6 +138,7 @@ func (a *PostgresRepository) GetTransactionsByDateRangeAndStatus(start, end time
 // InsertTransactions inserts a batch of transactions into the database
 func (a *PostgresRepository) InsertTransactions(transactions []*domain.Transaction) error {
 	return a.DB.Transaction(func(tx *gorm.DB) error {
+		a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.targetSchema))
 		if err := a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
 			UpdateAll: true,
 		}).CreateInBatches(&transactions, batchSizeInsertTransaction).Error; err != nil {

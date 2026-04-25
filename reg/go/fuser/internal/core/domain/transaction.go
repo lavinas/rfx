@@ -44,7 +44,7 @@ type Transaction struct {
 
 // TableName specifies the table name for Transaction struct
 func (Transaction) TableName() string {
-	return "transaction_v4.transaction"
+	return "transaction"
 }
 
 // GetKey generates a unique key for the transaction based on its Key1 and Key2 fields, which can be used for merging transactions
