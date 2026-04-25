@@ -33,14 +33,13 @@ CREATE TABLE transaction_v4.transaction(
     period_closing_id bigint,
     transac_id varchar(50),
     reference_id bigint,
-    PRIMARY KEY(id),
-    CONSTRAINT fk_reference_id FOREIGN KEY (reference_id) REFERENCES transaction_v4.transaction(id)
+    PRIMARY KEY(id)
 );
 CREATE UNIQUE INDEX idx_transaction_key1 ON transaction_v4.transaction USING btree (key1);
 CREATE INDEX idx_transaction_key2 ON transaction_v4.transaction USING btree (key2);
 CREATE INDEX idx_transaction_secondary_transaction_date ON transaction_v4.transaction USING btree (transaction_secondary_date);
 CREATE INDEX idx_transaction_transaction_date ON transaction_v4.transaction USING btree (transaction_date);
 CREATE INDEX transaction_transaction_date_status_id_idx ON transaction_v4.transaction USING btree (transaction_date, status_id);
-CREATE INDEX idx_transaction_reference_id ON transaction_v4.transaction USING btree (reference_id);
+
 
 
