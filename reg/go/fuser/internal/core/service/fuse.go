@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	managementGapDays = 1
+	managementGapDays = 0
 )
 
 // FuseService is the service layer that interacts with the repository to perform business logic
