@@ -13,6 +13,10 @@ type Repository interface {
 	GetBins() ([]*source_domain.Bin, error)
 	GetEstablishments() ([]*source_domain.Establishment, error)
 	GetTerminals() ([]*source_domain.Terminal, error)
+	GetConcCred(year int, quarter int) ([]*target_domain.ConcCred, error)
+	Delete(model interface{}, year int, quarter int) error
+	Save(model interface{}) error
+
 	SaveDesconto(desconto []*target_domain.Desconto) error
 	DeleteDesconto(year int, quarter int) error
 	SaveRanking(ranking []*target_domain.Ranking) error
@@ -21,7 +25,6 @@ type Repository interface {
 	DeleteRankingFiltered(year int, quarter int) error
 	SaveIntercam(intercam []*target_domain.Intercam) error
 	DeleteIntercam(year int, quarter int) error
-	GetConcCred(year int, quarter int) ([]*target_domain.ConcCred, error)
 	SaveConcCred(conccred []*target_domain.ConcCred) error
 	DeleteConcCred(year int, quarter int) error
 	SaveSegmento(segmento []*target_domain.Segmento) error

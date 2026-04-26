@@ -20,6 +20,9 @@ type JsonDBConfig struct {
 	SSLMode        string `json:"sslmode"`
 	TimeZone       string `json:"timezone"`
 	ConnectTimeout int    `json:"connect_timeout"`
+	SourceSchema   string `json:"source_schema"`
+	TargetSchema   string `json:"target_schema"`
+	BinSchema      string `json:"bin_schema"`
 }
 
 func NewJsonConfig(path string) (*JsonConfig, error) {
@@ -47,7 +50,8 @@ func LoadJsonConfig(path string) (*JsonConfig, error) {
 }
 
 // GetDBData returns the database configuration data as a JsonDBConfig struct
-func (v *JsonConfig) GetDBData(host *string, port *int, user *string, password *string, dbname *string, sslmode *string, timezone *string, connect_timeout *int) {
+func (v *JsonConfig) GetDBData(host *string, port *int, user *string, password *string, dbname *string, sslmode *string, timezone *string,
+	connect_timeout *int, source_schema *string, target_schema *string, bin_schema *string) {
 	*host = v.DB.Host
 	*port = v.DB.Port
 	*user = v.DB.User
@@ -56,6 +60,9 @@ func (v *JsonConfig) GetDBData(host *string, port *int, user *string, password *
 	*sslmode = v.DB.SSLMode
 	*timezone = v.DB.TimeZone
 	*connect_timeout = v.DB.ConnectTimeout
+	*source_schema = v.DB.SourceSchema
+	*target_schema = v.DB.TargetSchema
+	*bin_schema = v.DB.BinSchema
 }
 
 // GetDBTimeZone returns the timezone from the database configuration

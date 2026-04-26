@@ -1,12 +1,15 @@
 {
     "db": {
-        "host": "192.168.100.78",
-        "port": 5436,
-        "user": "sys_flexcon",
-        "password": "Wgkjsjjja8872Xl",
-        "dbname": "dev_regulat",
+        "host": "localhost",
+        "port": 5434,
+        "user": "root",
+        "password": "root",
+        "dbname": "reg",
         "sslmode": "disable",
-        "timezone": "America/Cuiaba",
-        "connect_timeout": 10
+        "timezone": "UTC",
+        "connect_timeout": 10,
+        "source_schema": "transaction_v5",
+        "target_schema": "cadoc_6334_v2",
+        "bin_schema": "bins"
     }
 }
