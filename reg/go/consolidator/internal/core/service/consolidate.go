@@ -17,7 +17,7 @@ type ConsolidateService struct {
 }
 
 func NewConsolidateService(repository ports.Repository, logger ports.Logger, config ports.Config) *ConsolidateService {
-	bins := 
+	bins := config.GetBins()
 
 	consolidations := map[string]ports.Domain{
 		"Desconto":        domain_target.NewDesconto(),
