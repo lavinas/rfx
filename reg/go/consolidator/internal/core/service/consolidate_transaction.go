@@ -32,7 +32,7 @@ func (s *ConsolidateService) runTransaction(year int, quarter int, days int) err
 
 	// filter ranking data if the filter_ranking flag is set
 	s.Logger.IPrintf(1, "Filtering ranking data from %d records\n", len(s.ranking))
-	s.rankingFiltered = domain_target.FilterRanking(s.ranking)
+	s.rankingFiltered = s.FilterRanking(s.ranking)
 	s.Logger.IPrintf(1, "Filtered ranking data to %d records\n", len(s.rankingFiltered))
 
 
@@ -75,7 +75,7 @@ func (s *ConsolidateService) processDate(date time.Time, bins map[int64]*domain_
 	s.Logger.IPrintf(3, "Consolidated Ranking for date: %s\n", date.Format("2006-01-02"))
 	domain_target.NewIntercam(bins).AddTransactions(transactions, s.intercam, bins)
 	s.Logger.IPrintf(3, "Consolidated Intercam for date: %s\n", date.Format("2006-01-02"))
-	domain_target.NewConcCred().AddTransactions(transactions, s.concred)
+	domain_target.NewConccred().AddTransactions(transactions, s.concred)
 	s.Logger.IPrintf(3, "Consolidated ConcCred for date: %s\n", date.Format("2006-01-02"))
 	domain_target.NewSegmento().AddTransactions(transactions, s.segmento)
 	s.Logger.IPrintf(3, "Consolidated Segmento for date: %s\n", date.Format("2006-01-02"))

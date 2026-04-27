@@ -13,31 +13,26 @@ type ConsolidateService struct {
 	Repository      ports.Repository
 	Logger          ports.Logger
 	Config          ports.Config
-	concred         map[string]*domain_target.ConcCred
-	desconto        map[string]*domain_target.Desconto
-	infresta        map[string]*domain_target.Infresta
-	infrterm        map[string]*domain_target.Infrterm
-	intercam        map[string]*domain_target.Intercam
-	ranking         map[string]*domain_target.Ranking
-	rankingFiltered map[string]*domain_target.RankingFiltered
-	segmento        map[string]*domain_target.Segmento
+	consolidations map[string]ports.Domain
 }
 
 func NewConsolidateService(repository ports.Repository, logger ports.Logger, config ports.Config) *ConsolidateService {
+	bins := 
+
+	consolidations := map[string]ports.Domain{
+		"Desconto":        domain_target.NewDesconto(),
+		"Ranking":         domain_target.NewRanking(),
+		"Intercam":        domain_target.NewIntercam(config.GetBins()),
+		"ConcCred":        domain_target.NewConccred(),
+		"Segmento":        domain_target.NewSegmento(),
+		"infrterm":        domain_target.NewInfrterm(),
+		"infresta":        domain_target.NewInfresta(),
+	}
 	return &ConsolidateService{
 		Repository:      repository,
 		Logger:          logger,
 		Config:          config,
-		concred:         make(map[string]*domain_target.ConcCred),
-		desconto:        make(map[string]*domain_target.Desconto),
-		infresta:        make(map[string]*domain_target.Infresta),
-		infrterm:        make(map[string]*domain_target.Infrterm),
-		intercam:        make(map[string]*domain_target.Intercam),
-		ranking:         make(map[string]*domain_target.Ranking),
-		rankingFiltered: make(map[string]*domain_target.RankingFiltered),
-		segmento:        make(map[string]*domain_target.Segmento),
 	}
-
 }
 
 // Run executes the consolidation process for a specific date.
@@ -86,7 +81,7 @@ func (s *ConsolidateService) delete(year int, quarter int) error {
 		"Ranking":         domain_target.Ranking{},
 		"RankingFiltered": domain_target.RankingFiltered{},
 		"Intercam":        domain_target.Intercam{},
-		"ConcCred":        domain_target.ConcCred{},
+		"ConcCred":        domain_target.Conccred{},
 		"Segmento":        domain_target.Segmento{},
 		"infrterm":        domain_target.Infrterm{},
 		"infresta":        domain_target.Infresta{},

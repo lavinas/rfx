@@ -1,58 +1,51 @@
 package target_domain
 
 import (
-	"fmt"
-	"math"
-	"time"
-
 	source_domain "consolidator/internal/core/domain/source"
+	"consolidator/internal/core/ports"
+	"math"
 )
 
-// Desconto represents the data structure for discounts which will be used for fusing data between intercam, management and webservice
+// Desconto represents the consolidated discount transactions for a specific year and quarter.
 type Desconto struct {
-	ID                  int64     `gorm:"column:id"`
-	CreatedAt           time.Time `gorm:"column:created_at"`
-	UpdatedAt           time.Time `gorm:"column:updated_at"`
-	Year                int       `gorm:"column:year"`
-	Quarter             int       `gorm:"column:quarter"`
-	Function            string    `gorm:"column:function"`
-	Brand               int       `gorm:"column:brand"`
-	CaptureMode         int       `gorm:"column:capture_mode"`
-	Installments        int       `gorm:"column:installments"`
-	SegmentCode         int       `gorm:"column:segment_code"`
-	AvgMDRFee           float64   `gorm:"column:avg_mdr_fee"`
-	MinMDRFee           float64   `gorm:"column:min_mdr_fee"`
-	MaxMDRFee           float64   `gorm:"column:max_mdr_fee"`
-	StdevMDRFee         float64   `gorm:"column:stdev_mdr_fee"`
-	SqrdiffMDRFee       float64   `gorm:"column:sqrdiff_mdr_fee"`
-	TransactionAmount   float64   `gorm:"column:transaction_amount"`
-	TransactionQuantity int64     `gorm:"column:transaction_quantity"`
-}
-
-// TableName specifies the table name for Desconto struct
-func (i *Desconto) TableName() string {
-	return "cadoc_6334_v2.desconto"
+	desconto      *DescontoItem
+	consolidation map[string]*DescontoItem
 }
 
 // NewDesconto creates a new instance of Desconto.
 func NewDesconto() *Desconto {
-	return &Desconto{}
+	return &Desconto{
+		desconto:      NewDescontoItem(),
+		consolidation: make(map[string]*DescontoItem),
+	}
 }
 
-// GetKey generates a unique key for the Desconto struct based on its fields.
-func (i *Desconto) GetKey() string {
-	return fmt.Sprintf("%d-%d-%s-%d-%d-%d-%d", i.Year, i.Quarter, i.Function, i.Brand, i.CaptureMode, i.Installments, i.SegmentCode)
+// Delete removes the consolidated data for a specific year and quarter from the consolidation map.
+func (i *Desconto) Delete(year int, quarter int, repository ports.Repository) error {
+	// delete the consolidated data for the specified year and quarter from the repository
+	if err := repository.Delete(&DescontoItem{}, year, quarter); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Save persists the consolidated data for a specific year and quarter to the repository.
+func (i *Desconto) Save(repository ports.Repository) error {
+	if err := repository.Save(i.consolidation); err != nil {
+		return err
+	}
+	return nil
 }
 
 // GetFromTransactions returns a map of Desconto structs for a given list of transactions.
-func (i *Desconto) AddTransactions(transactions []*source_domain.Transaction, items map[string]*Desconto) {
+func (i *Desconto) AddTransactions(transactions []*source_domain.Transaction) {
 	// for each transaction, get the corresponding Desconto instance and update the transaction amount, quantity and mdr fee statistics
 	for _, t := range transactions {
-		desconto := i.GetFromTransaction(t)
+		desconto := i.desconto.GetFromTransaction(t)
 		key := desconto.GetKey()
 
 		// if the key already exists in the items map, update the existing Desconto instance with the new transaction data
-		if existing, exists := items[key]; exists {
+		if existing, exists := i.consolidation[key]; exists {
 			// sum amount and quantity
 			existing.TransactionAmount += desconto.TransactionAmount
 			existing.TransactionQuantity += desconto.TransactionQuantity
@@ -70,29 +63,17 @@ func (i *Desconto) AddTransactions(transactions []*source_domain.Transaction, it
 			existing.SqrdiffMDRFee += delta2 * delta2
 			variance := existing.SqrdiffMDRFee / (float64(existing.TransactionQuantity) - 1)
 			existing.StdevMDRFee = math.Sqrt(variance)
-			items[key] = existing
+			i.consolidation[key] = existing
 		} else {
-			items[key] = desconto
+			i.consolidation[key] = desconto
 		}
 	}
 }
 
-// GetFromTransaction returns the discount data for a given transaction.
-func (i *Desconto) GetFromTransaction(transaction *source_domain.Transaction) *Desconto {
-	return &Desconto{
-		Year:                transaction.GetYear(),
-		Quarter:             transaction.GetQuarter(),
-		Function:            transaction.GetFunctionCode(),
-		Brand:               transaction.GetBrandCode(),
-		CaptureMode:         transaction.GetCaptureModeCode(),
-		Installments:        transaction.GetInstallments(),
-		SegmentCode:         transaction.GetSegmentCode(),
-		AvgMDRFee:           transaction.GetRevenueMDRValueRate(),
-		MinMDRFee:           transaction.GetRevenueMDRValueRate(),
-		MaxMDRFee:           transaction.GetRevenueMDRValueRate(),
-		StdevMDRFee:         0,
-		SqrdiffMDRFee:       0,
-		TransactionAmount:   transaction.GetTransactionAmount(),
-		TransactionQuantity: 1,
-	}
+// AddEstablishments processes a slice of establishments and updates the Desconto instance with the number of accredited and active establishments.
+func (i *Desconto) AddEstablishments(year int, quarter int, establishments []*source_domain.Establishment) {
+}
+
+// AddTerminals processes a slice of terminals and updates the Desconto instance with the number of accredited and active terminals.
+func (i *Desconto) AddTerminals(year int, quarter int, terminals []*source_domain.Terminal, esblishmentMap map[int64]string) {
 }
