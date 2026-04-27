@@ -125,6 +125,9 @@ func (s *ConsolidateService) consolidateEstablishments(year int, quarter int) (m
 	}
 	estabMap := make(map[int64]string)
 	for _, estab := range establishments {
+		if !estab.IsAccredited(year, quarter) {
+			continue
+		}
 		estabMap[estab.EstablishmentCode] = *estab.FederationUnit
 	}
 	s.Logger.IPrintf(1, "Consolidated establishments for year: %d, quarter: %d\n", year, quarter)
