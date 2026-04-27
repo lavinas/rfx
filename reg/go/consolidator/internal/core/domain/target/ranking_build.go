@@ -82,19 +82,7 @@ func (r *Ranking) addTopRanking(segmentCode int, establishments []establishment,
 		code := establishments[i].Code
 		for key, ranking := range r.consolidation {
 			if ranking.SegmentCode == segmentCode && ranking.EstablishmentCode == code {
-				newranking[key] = &RankingItem{
-					Year:                ranking.Year,
-					Quarter:             ranking.Quarter,
-					EstablishmentCode:   ranking.EstablishmentCode,
-					Function:            ranking.Function,
-					Brand:               ranking.Brand,
-					CaptureMode:         ranking.CaptureMode,
-					Installments:        ranking.Installments,
-					SegmentCode:         ranking.SegmentCode,
-					TransactionAmount:   ranking.TransactionAmount,
-					TransactionQuantity: ranking.TransactionQuantity,
-					AvgMccFee:           ranking.AvgMccFee,
-				}
+				newranking[key] = ranking
 			}
 		}
 	}
@@ -126,7 +114,7 @@ func (r *Ranking) consolidateBottomRanking(ranking map[string]*RankingItem, newr
 
 	// for each ranking, if the establishment code is -1, consolidate it with the existing one in consRanking
 	for _, rk := range ranking {
-		NewRanking := &RankingItem{
+		bottomNew := &RankingItem{
 			Year:                rk.Year,
 			Quarter:             rk.Quarter,
 			EstablishmentCode:   -1,
@@ -141,7 +129,7 @@ func (r *Ranking) consolidateBottomRanking(ranking map[string]*RankingItem, newr
 		}
 
 		// generate key for consRanking
-		key := NewRanking.GetKey()
+		key := bottomNew.GetKey()
 
 		// if the key already exists in consRanking, sum the transaction amount and quantity and calculate the new average mcc fee
 		if existing, exists := newranking[key]; exists {
@@ -151,7 +139,7 @@ func (r *Ranking) consolidateBottomRanking(ranking map[string]*RankingItem, newr
 			existing.TransactionAmount += rk.TransactionAmount
 			existing.TransactionQuantity += rk.TransactionQuantity
 		} else {
-			newranking[key] = NewRanking
+			newranking[key] = bottomNew
 		}
 	}
 }
