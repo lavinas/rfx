@@ -47,7 +47,7 @@ func NewIntercam(bins map[int64]*source_domain.Bin) *Intercam {
 
 // TableName returns the name of the table in the database.
 func (i *IntercamItem) TableName() string {
-	return "cadoc_6334_v2.intercam"
+	return "intercam"
 }
 
 // GetFromTransaction returns the interchange fee for a given transaction.

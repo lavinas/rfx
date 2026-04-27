@@ -41,7 +41,7 @@ func NewInfresta() *Infresta {
 
 // TableName specifies the table name for InfrestaItem struct
 func (i *InfrestaItem) TableName() string {
-	return "cadoc_6334_v2.infresta"
+	return "infresta"
 }
 
 // GetFromClient returns the infresta data for a given transaction.

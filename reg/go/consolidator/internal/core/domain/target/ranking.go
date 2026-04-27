@@ -45,7 +45,7 @@ func NewRanking() *Ranking {
 
 // TableName returns the name of the database table for the RankingItem model.
 func (i *RankingItem) TableName() string {
-	return "cadoc_6334_v2.ranking"
+	return "ranking"
 }
 
 // GetFromTransaction returns a RankingItem instance populated with data from a given transaction.

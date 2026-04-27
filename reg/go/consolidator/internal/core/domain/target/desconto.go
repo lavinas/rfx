@@ -49,7 +49,7 @@ func NewDesconto() *Desconto {
 
 // TableName specifies the table name for DescontoItem struct
 func (i *DescontoItem) TableName() string {
-	return "cadoc_6334_v2.desconto"
+	return "desconto"
 }
 
 // GetKey generates a unique key for the DescontoItem struct based on its fields.

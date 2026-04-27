@@ -46,7 +46,7 @@ func NewConccred() *Conccred {
 
 // TableName specifies the table name for ConcCredItem struct
 func (i *ConcCredItem) TableName() string {
-	return "cadoc_6334_v2.conccred"
+	return "conccred"
 }
 
 // GetKey generates a unique key for the ConcCred struct based on its fields.

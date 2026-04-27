@@ -23,8 +23,9 @@ const (
 type GormRepository struct {
 	DB            *gorm.DB
 	ctx           *context.Context
-	source_schema string
-	target_schema string
+	rawdata_schema string
+	transaction_schema string
+	consolidator_schema string
 	bin_schema    string
 }
 
@@ -33,7 +34,7 @@ func NewGormRepository(config ports.Config, ctx *context.Context) (*GormReposito
 	rep := &GormRepository{DB: nil, ctx: ctx}
 	var host, user, password, dbname, sslmode, timezone string
 	var port, connect_timeout int
-	config.GetDBData(&host, &port, &user, &password, &dbname, &sslmode, &timezone, &connect_timeout, &rep.source_schema, &rep.target_schema, &rep.bin_schema)
+	config.GetDBData(&host, &port, &user, &password, &dbname, &sslmode, &timezone, &connect_timeout, &rep.rawdata_schema, &rep.transaction_schema, &rep.consolidator_schema, &rep.bin_schema)
 	dns := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s TimeZone=%s connect_timeout=%d", host, port, user, password, dbname, sslmode, timezone, connect_timeout)
 	if err := rep.Connect(dns); err != nil {
 		return nil, err
@@ -80,7 +81,7 @@ func (a *GormRepository) GetTransactionsByDate(date time.Time) ([]*source_domain
 	start_date := date.Format("2006-01-02") + " 00:00:00"
 	end_date := date.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
 
-	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.source_schema))
+	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.transaction_schema))
 	if err := a.DB.WithContext(*a.ctx).Where("period_date >= ? AND period_date < ? and status_id = 2", start_date, end_date).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
@@ -101,7 +102,7 @@ func (a *GormRepository) GetBins() ([]*source_domain.Bin, error) {
 // GetEstablishments retrieves establishment information from the database
 func (a *GormRepository) GetEstablishments() ([]*source_domain.Establishment, error) {
 	var establishments []*source_domain.Establishment
-	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.source_schema))
+	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.rawdata_schema))
 	if err := a.DB.WithContext(*a.ctx).Find(&establishments).Error; err != nil {
 		return nil, err
 	}
@@ -111,7 +112,7 @@ func (a *GormRepository) GetEstablishments() ([]*source_domain.Establishment, er
 // GetTerminals retrieves terminal information from the database
 func (a *GormRepository) GetTerminals() ([]*source_domain.Terminal, error) {
 	var terminals []*source_domain.Terminal
-	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.source_schema))
+	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.rawdata_schema))
 	if err := a.DB.WithContext(*a.ctx).Find(&terminals).Error; err != nil {
 		return nil, err
 	}
@@ -120,7 +121,7 @@ func (a *GormRepository) GetTerminals() ([]*source_domain.Terminal, error) {
 
 // GeneralDelete is a helper function to delete records from the database for a specific year and quarter
 func (a *GormRepository) Delete(model interface{}, year int, quarter int) error {
-	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.target_schema))
+	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.consolidator_schema))
 	if err := a.DB.Where("year = ? AND quarter = ?", year, quarter).Delete(model).Error; err != nil {
 		return err
 	}
@@ -129,7 +130,7 @@ func (a *GormRepository) Delete(model interface{}, year int, quarter int) error 
 
 // GeneralSave is a helper function to save records to the database with conflict handling
 func (a *GormRepository) Save(model interface{}) error {
-	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.target_schema))
+	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.consolidator_schema))
 	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
 		UpdateAll: true,
 	}).CreateInBatches(model, batchSizeInsertTransaction).Error

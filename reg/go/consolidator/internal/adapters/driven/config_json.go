@@ -20,9 +20,10 @@ type JsonDBConfig struct {
 	SSLMode        string `json:"sslmode"`
 	TimeZone       string `json:"timezone"`
 	ConnectTimeout int    `json:"connect_timeout"`
-	SourceSchema   string `json:"source_schema"`
-	TargetSchema   string `json:"target_schema"`
+	RawDataSchema   string `json:"rawdata_schema"`
+	TransactionSchema   string `json:"transaction_schema"`
 	BinSchema      string `json:"bin_schema"`
+	ConsolidatorSchema   string `json:"consolidator_schema"`
 }
 
 func NewJsonConfig(path string) (*JsonConfig, error) {
@@ -51,7 +52,7 @@ func LoadJsonConfig(path string) (*JsonConfig, error) {
 
 // GetDBData returns the database configuration data as a JsonDBConfig struct
 func (v *JsonConfig) GetDBData(host *string, port *int, user *string, password *string, dbname *string, sslmode *string, timezone *string,
-	connect_timeout *int, source_schema *string, target_schema *string, bin_schema *string) {
+	connect_timeout *int, rawdata_schema *string, transaction_schema *string, consolidator_schema *string, bin_schema *string) {
 	*host = v.DB.Host
 	*port = v.DB.Port
 	*user = v.DB.User
@@ -60,8 +61,9 @@ func (v *JsonConfig) GetDBData(host *string, port *int, user *string, password *
 	*sslmode = v.DB.SSLMode
 	*timezone = v.DB.TimeZone
 	*connect_timeout = v.DB.ConnectTimeout
-	*source_schema = v.DB.SourceSchema
-	*target_schema = v.DB.TargetSchema
+	*rawdata_schema = v.DB.RawDataSchema
+	*transaction_schema = v.DB.TransactionSchema
+	*consolidator_schema = v.DB.ConsolidatorSchema
 	*bin_schema = v.DB.BinSchema
 }
 

@@ -14,7 +14,7 @@ type Bin struct {
 
 // TableName specifies the table name for Bin struct
 func (Bin) TableName() string {
-	return "bins.bins"
+	return "bins"
 }
 
 // GetProductCode returns the product code based on the BIN information.

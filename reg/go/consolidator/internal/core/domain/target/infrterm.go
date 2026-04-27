@@ -41,7 +41,7 @@ func NewInfrterm() *Infrterm {
 
 // TableName specifies the table name for InfrtermItem struct
 func (i *InfrtermItem) TableName() string {
-	return "cadoc_6334_v2.infrterm"
+	return "infrterm"
 }
 
 // GetFromTerminal returns an InfrtermItem instance populated with data from a given terminal.

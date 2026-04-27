@@ -42,7 +42,7 @@ func NewSegmento() *Segmento {
 
 // TableName specifies the table name for SegmentoItem struct
 func (i *SegmentoItem) TableName() string {
-	return "cadoc_6334_v2.segmento"
+	return "segmento"
 }
 
 // Delete removes the consolidated data for a specific year and quarter from the consolidation map.

@@ -9,7 +9,7 @@ type Terminal struct {
 
 // TableName specifies the table name for Terminal struct
 func (Terminal) TableName() string {
-	return "raw_data_v2.terminals_transaction"
+	return "terminals_transaction"
 }
 
 // GetPOSQuantity returns the total quantity of POS terminals based on the TerminalType field.

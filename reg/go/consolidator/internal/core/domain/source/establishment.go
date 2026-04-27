@@ -38,7 +38,7 @@ type Establishment struct {
 
 // TableName specifies the table name for Establishment struct
 func (Establishment) TableName() string {
-	return "raw_data_v2.establishments"
+	return "establishments"
 }
 
 // GetEstablishmentCode returns the establishment code of the establishment.
