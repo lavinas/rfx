@@ -2,22 +2,12 @@ package target_domain
 
 import (
 	"sort"
-
-	"consolidator/internal/core/ports"
 )
 
 const (
-	// TopCount defines the number of top establishments to include in the filtered ranking
-	topCount = 15
-	// BottomCount defines the number of bottom establishments to include in the filtered ranking
+	topCount    = 15
 	bottomCount = 200
 )
-
-// RankingsFiltered represents the filtered ranking of establishments based on transaction data.
-type RankingFiltered struct {
-	rankingItem *RankingFilteredItem
-	consolidation map[string]*RankingFilteredItem
-}
 
 // establishment represents the data structure for establishments which will be used for filtering the ranking data
 type establishment struct {
@@ -25,37 +15,13 @@ type establishment struct {
 	Amount float64
 }
 
-// NewRankingFiltered creates a new instance of RankingFiltered.
-func NewRankingFiltered() *RankingFiltered {
-	return &RankingFiltered{
-		rankingItem: NewRankingFilteredItem(),
-		consolidation: make(map[string]*RankingFilteredItem),
-	}
-}
-
-// Delete removes the consolidated data for a specific year and quarter from the consolidation map.
-func (r *RankingFiltered) Delete(year int, quarter int, repository ports.Repository) error {
-	// delete the consolidated data for the specified year and quarter from the repository
-	if err := repository.Delete(&RankingFilteredItem{}, year, quarter); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Save persists the consolidated data for a specific year and quarter to the repository.
-func (r *RankingFiltered) Save(repository ports.Repository) error {
-	if err := repository.Save(r.consolidation); err != nil {
-		return err
-	}
-	return nil
-}
-
-
-// FilterRanking filters the ranking data to include only the top and bottom establishments based on transaction amount
-func (r *RankingFiltered) FilterRanking(items map[string]*RankingItem) {
+// Build processes the ranking data to include only the top and bottom establishments based on transaction amount
+func (r *Ranking) Build() {
 
 	// Group establishments by segment code and sum transaction amounts
-	segmentEstablishments := r.getSegmentEstablishmentsMap(items)
+	segmentEstablishments := r.getSegmentEstablishmentsMap(r.consolidation)
+
+	newranking := make(map[string]*RankingItem, 0)
 
 	// for each segment code, filter top and bottom establishments
 	for segmentCode := range segmentEstablishments {
@@ -63,16 +29,19 @@ func (r *RankingFiltered) FilterRanking(items map[string]*RankingItem) {
 		establishments := r.getRankingSortedEstablishments(segmentCode, segmentEstablishments)
 
 		// add top establishments
-		r.addTopRanking(items, segmentCode, establishments)
+		r.addTopRanking(segmentCode, establishments, newranking)
 
 		// add bottom establishments
-		r.addBottomRanking(items, segmentCode, establishments)
-
+		r.addBottomRanking(segmentCode, establishments, newranking)
 	}
+
+	// update the consolidation with the new ranking data
+	r.consolidation = newranking
+
 }
 
 // getSegmentEstablishments returns a map of segment code to a map of establishment code and transaction amount
-func (r *RankingFiltered) getSegmentEstablishmentsMap(items map[string]*RankingItem) map[int]map[int64]float64 {
+func (r *Ranking) getSegmentEstablishmentsMap(items map[string]*RankingItem) map[int]map[int64]float64 {
 	segmentEstablishments := make(map[int]map[int64]float64)
 	for _, ranking := range items {
 		if _, exists := segmentEstablishments[ranking.SegmentCode]; !exists {
@@ -84,7 +53,7 @@ func (r *RankingFiltered) getSegmentEstablishmentsMap(items map[string]*RankingI
 }
 
 // getRankingSortedEstablishments returns a sorted slice of establishments based on transaction amount for a given segment code
-func (r *RankingFiltered) getRankingSortedEstablishments(segmentCode int, segmentEstablishments map[int]map[int64]float64) []establishment {
+func (r *Ranking) getRankingSortedEstablishments(segmentCode int, segmentEstablishments map[int]map[int64]float64) []establishment {
 	// Create a slice of establishments from the map and sort it by transaction amount in descending order
 	var establishments []establishment
 
@@ -102,7 +71,7 @@ func (r *RankingFiltered) getRankingSortedEstablishments(segmentCode int, segmen
 }
 
 // addTopRanking adds the top 15 establishments based on transaction amount to the consolidation
-func (r *RankingFiltered) addTopRanking(items map[string]*RankingItem, segmentCode int, establishments []establishment) {
+func (r *Ranking) addTopRanking(segmentCode int, establishments []establishment, newranking map[string]*RankingItem) {
 	// limits the count to topCount or the length of establishments if it's less than topCount
 	count := topCount
 	if len(establishments) < topCount {
@@ -111,9 +80,9 @@ func (r *RankingFiltered) addTopRanking(items map[string]*RankingItem, segmentCo
 	// add greater establishments to filtered
 	for i := 0; i < count; i++ {
 		code := establishments[i].Code
-		for key, ranking := range items {
+		for key, ranking := range r.consolidation {
 			if ranking.SegmentCode == segmentCode && ranking.EstablishmentCode == code {
-				r.consolidation[key] = &RankingFilteredItem{
+				newranking[key] = &RankingItem{
 					Year:                ranking.Year,
 					Quarter:             ranking.Quarter,
 					EstablishmentCode:   ranking.EstablishmentCode,
@@ -131,9 +100,8 @@ func (r *RankingFiltered) addTopRanking(items map[string]*RankingItem, segmentCo
 	}
 }
 
-
 // addBottomRanking2 adds the bottom  establishments based on transaction amount to the consolidation
-func (r *RankingFiltered) addBottomRanking(items map[string]*RankingItem, segmentCode int, establishments []establishment) {
+func (r *Ranking) addBottomRanking(segmentCode int, establishments []establishment, newranking map[string]*RankingItem) {
 	// get bottom establishments
 	count := bottomCount
 	if len(establishments) < count {
@@ -143,22 +111,22 @@ func (r *RankingFiltered) addBottomRanking(items map[string]*RankingItem, segmen
 	filteredRanking := map[string]*RankingItem{}
 	for i := len(establishments) - count; i < len(establishments); i++ {
 		code := establishments[i].Code
-		for key, ranking := range items {
+		for key, ranking := range r.consolidation {
 			if ranking.SegmentCode == segmentCode && ranking.EstablishmentCode == code {
 				filteredRanking[key] = ranking
 			}
 		}
 	}
-	// consolidate the filtered bottom ranking data	
-	r.consolidateBottomRanking(filteredRanking)
+	// consolidate the filtered bottom ranking data
+	r.consolidateBottomRanking(filteredRanking, newranking)
 }
 
 // Consolidate Ranking
-func (r *RankingFiltered) consolidateBottomRanking(ranking map[string]*RankingItem) {
+func (r *Ranking) consolidateBottomRanking(ranking map[string]*RankingItem, newranking map[string]*RankingItem) {
 
 	// for each ranking, if the establishment code is -1, consolidate it with the existing one in consRanking
 	for _, rk := range ranking {
-		NewRanking := &RankingFilteredItem{
+		NewRanking := &RankingItem{
 			Year:                rk.Year,
 			Quarter:             rk.Quarter,
 			EstablishmentCode:   -1,
@@ -176,14 +144,14 @@ func (r *RankingFiltered) consolidateBottomRanking(ranking map[string]*RankingIt
 		key := NewRanking.GetKey()
 
 		// if the key already exists in consRanking, sum the transaction amount and quantity and calculate the new average mcc fee
-		if existing, exists := r.consolidation[key]; exists {
+		if existing, exists := newranking[key]; exists {
 			fee := existing.AvgMccFee / 100 * existing.TransactionAmount
 			fee += rk.AvgMccFee / 100 * rk.TransactionAmount
 			existing.AvgMccFee = fee / (existing.TransactionAmount + rk.TransactionAmount) * 100
 			existing.TransactionAmount += rk.TransactionAmount
 			existing.TransactionQuantity += rk.TransactionQuantity
 		} else {
-			r.consolidation[key] = NewRanking
+			newranking[key] = NewRanking
 		}
 	}
 }

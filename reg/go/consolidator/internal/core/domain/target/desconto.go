@@ -1,13 +1,40 @@
 package target_domain
 
 import (
+	"fmt"
+	"maps"
+	"slices"
+	"time"
+
 	source_domain "consolidator/internal/core/domain/source"
 	"consolidator/internal/core/ports"
 	"math"
 )
 
+// DescontoItem represents the data structure for discounts which will be used for fusing data between intercam, management and webservice
+type DescontoItem struct {
+	ID                  int64     `gorm:"column:id"`
+	CreatedAt           time.Time `gorm:"column:created_at"`
+	UpdatedAt           time.Time `gorm:"column:updated_at"`
+	Year                int       `gorm:"column:year"`
+	Quarter             int       `gorm:"column:quarter"`
+	Function            string    `gorm:"column:function"`
+	Brand               int       `gorm:"column:brand"`
+	CaptureMode         int       `gorm:"column:capture_mode"`
+	Installments        int       `gorm:"column:installments"`
+	SegmentCode         int       `gorm:"column:segment_code"`
+	AvgMDRFee           float64   `gorm:"column:avg_mdr_fee"`
+	MinMDRFee           float64   `gorm:"column:min_mdr_fee"`
+	MaxMDRFee           float64   `gorm:"column:max_mdr_fee"`
+	StdevMDRFee         float64   `gorm:"column:stdev_mdr_fee"`
+	SqrdiffMDRFee       float64   `gorm:"column:sqrdiff_mdr_fee"`
+	TransactionAmount   float64   `gorm:"column:transaction_amount"`
+	TransactionQuantity int64     `gorm:"column:transaction_quantity"`
+}
+
 // Desconto represents the consolidated discount transactions for a specific year and quarter.
 type Desconto struct {
+	DomainBase
 	desconto      *DescontoItem
 	consolidation map[string]*DescontoItem
 }
@@ -15,8 +42,38 @@ type Desconto struct {
 // NewDesconto creates a new instance of Desconto.
 func NewDesconto() *Desconto {
 	return &Desconto{
-		desconto:      NewDescontoItem(),
+		desconto:      &DescontoItem{},
 		consolidation: make(map[string]*DescontoItem),
+	}
+}
+
+// TableName specifies the table name for DescontoItem struct
+func (i *DescontoItem) TableName() string {
+	return "cadoc_6334_v2.desconto"
+}
+
+// GetKey generates a unique key for the DescontoItem struct based on its fields.
+func (i *DescontoItem) GetKey() string {
+	return fmt.Sprintf("%d-%d-%s-%d-%d-%d-%d", i.Year, i.Quarter, i.Function, i.Brand, i.CaptureMode, i.Installments, i.SegmentCode)
+}
+
+// GetFromTransaction returns the discount data for a given transaction.
+func (i *DescontoItem) GetFromTransaction(transaction *source_domain.Transaction) *DescontoItem {
+	return &DescontoItem{
+		Year:                transaction.GetYear(),
+		Quarter:             transaction.GetQuarter(),
+		Function:            transaction.GetFunctionCode(),
+		Brand:               transaction.GetBrandCode(),
+		CaptureMode:         transaction.GetCaptureModeCode(),
+		Installments:        transaction.GetInstallments(),
+		SegmentCode:         transaction.GetSegmentCode(),
+		AvgMDRFee:           transaction.GetRevenueMDRValueRate(),
+		MinMDRFee:           transaction.GetRevenueMDRValueRate(),
+		MaxMDRFee:           transaction.GetRevenueMDRValueRate(),
+		StdevMDRFee:         0,
+		SqrdiffMDRFee:       0,
+		TransactionAmount:   transaction.GetTransactionAmount(),
+		TransactionQuantity: 1,
 	}
 }
 
@@ -31,7 +88,7 @@ func (i *Desconto) Delete(year int, quarter int, repository ports.Repository) er
 
 // Save persists the consolidated data for a specific year and quarter to the repository.
 func (i *Desconto) Save(repository ports.Repository) error {
-	if err := repository.Save(i.consolidation); err != nil {
+	if err := repository.Save(slices.Collect(maps.Values(i.consolidation))); err != nil {
 		return err
 	}
 	return nil
@@ -68,12 +125,4 @@ func (i *Desconto) AddTransactions(transactions []*source_domain.Transaction) {
 			i.consolidation[key] = desconto
 		}
 	}
-}
-
-// AddEstablishments processes a slice of establishments and updates the Desconto instance with the number of accredited and active establishments.
-func (i *Desconto) AddEstablishments(year int, quarter int, establishments []*source_domain.Establishment) {
-}
-
-// AddTerminals processes a slice of terminals and updates the Desconto instance with the number of accredited and active terminals.
-func (i *Desconto) AddTerminals(year int, quarter int, terminals []*source_domain.Terminal, esblishmentMap map[int64]string) {
 }

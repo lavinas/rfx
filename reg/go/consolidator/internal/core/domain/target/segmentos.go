@@ -1,27 +1,48 @@
 package target_domain
 
 import (
-
 	"fmt"
+	"maps"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
-	
+	"time"
+
 	source_domain "consolidator/internal/core/domain/source"
 	"consolidator/internal/core/ports"
 )
 
+// SegmentoItem represents the data structure for segments which will be used for fusing data between intercam, management and webservice
+type SegmentoItem struct {
+	ID          int64     `gorm:"column:id"`
+	CreatedAt   time.Time `gorm:"column:created_at"`
+	UpdatedAt   time.Time `gorm:"column:updated_at"`
+	Year        int       `gorm:"column:year"`
+	Quarter     int       `gorm:"column:quarter"`
+	SegmentName string    `gorm:"column:segment_name"`
+	Description string    `gorm:"column:segment_description"`
+	SegmentCode int       `gorm:"column:segment_code"`
+}
+
+// Segmento represents the consolidated segment data for a specific year and quarter.
 type Segmento struct {
-	Segmento *SegmentoItem
+	DomainBase
+	Segmento      *SegmentoItem
 	consolidation map[string]*SegmentoItem
 }
 
 // NewSegmento creates a new instance of Segmento.
 func NewSegmento() *Segmento {
 	return &Segmento{
-		Segmento: NewSegmentoItem(),
+		Segmento:      &SegmentoItem{},
 		consolidation: make(map[string]*SegmentoItem),
 	}
+}
+
+// TableName specifies the table name for SegmentoItem struct
+func (i *SegmentoItem) TableName() string {
+	return "cadoc_6334_v2.segmento"
 }
 
 // Delete removes the consolidated data for a specific year and quarter from the consolidation map.
@@ -35,12 +56,11 @@ func (s *Segmento) Delete(year int, quarter int, repository ports.Repository) er
 
 // Save persists the consolidated data for a specific year and quarter to the repository.
 func (s *Segmento) Save(repository ports.Repository) error {
-	if err := repository.Save(s.consolidation); err != nil {
+	if err := repository.Save(slices.Collect(maps.Values(s.consolidation))); err != nil {
 		return err
 	}
 	return nil
 }
-
 
 // AddTransactions adds the transaction amount and quantity from another Segmento to the current one.
 func (s *Segmento) AddTransactions(transactions []*source_domain.Transaction) {
@@ -76,14 +96,6 @@ func (s *Segmento) AddTransactions(transactions []*source_domain.Transaction) {
 		segment.Description = s.mountDescription(mccCode, segment.Description)
 	}
 
-}
-
-// AddEstablishments processes a slice of establishments and updates the Segmento instance with the number of accredited and active establishments.
-func (s *Segmento) AddEstablishments(year int, quarter int, establishments []*source_domain.Establishment) {
-}
-
-// AddTerminals processes a slice of terminals and updates the Segmento instance with the number of accredited and active terminals.
-func (s *Segmento) AddTerminals(year int, quarter int, terminals []*source_domain.Terminal, esblishmentMap map[int64]string) {
 }
 
 // mountDescription updates the description of a Segmento instance with a new mcc code. If the description already contains an mcc code, it appends the new mcc code to the existing description. If the description does not contain an mcc code, it sets the description to the new mcc code.

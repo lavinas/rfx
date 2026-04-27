@@ -36,7 +36,11 @@ func main() {
 	defer repository.Close()
 
 	// Initialize and run the consolidation service
-	service := service.NewConsolidateService(repository, logger, config)
+	service, err := service.NewConsolidateService(repository, logger, config)
+	if err != nil {
+		logger.Printf("Failed to initialize consolidation service: %v\n", err)
+		return
+	}
 
 	// Initialize driver and run the service
 	driver := driver.NewFlagDriver(service)

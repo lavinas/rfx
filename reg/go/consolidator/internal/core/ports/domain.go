@@ -10,4 +10,5 @@ type Domain interface {
 	AddTransactions(transactions []*source_domain.Transaction)
 	AddEstablishments(year int, quarter int, establishments []*source_domain.Establishment)
 	AddTerminals(year int, quarter int, terminals []*source_domain.Terminal, esblishmentMap map[int64]string)
+	Build()
 }
