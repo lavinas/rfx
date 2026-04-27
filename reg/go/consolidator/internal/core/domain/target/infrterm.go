@@ -55,6 +55,7 @@ func (i *Infrterm) GetKey() string {
 
 // AddTerminals processes a slice of terminals and updates the Infrterm instance accordingly.
 func (i *Infrterm) AddTerminals(year int, quarter int, clientsFU map[int64]string, terminals []*source_domain.Terminal, items map[string]*Infrterm) {
+	fmt.Println(1, len(clientsFU))
 	for _, t := range terminals {
 		infrterm := i.GetFromTerminal(year, quarter, t, clientsFU)
 		if infrterm == nil {
