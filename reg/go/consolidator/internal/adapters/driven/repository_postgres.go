@@ -34,8 +34,10 @@ func NewPostgresRepository(config ports.Config, ctx *context.Context) (*Postgres
 	rep := &PostgresRepository{DB: nil, ctx: ctx}
 	var host, user, password, dbname, sslmode, timezone string
 	var port, connect_timeout int
-	config.GetDBData(&host, &port, &user, &password, &dbname, &sslmode, &timezone, &connect_timeout, &rep.rawdata_schema, &rep.transaction_schema, &rep.consolidator_schema, &rep.bin_schema)
-	dns := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s TimeZone=%s connect_timeout=%d", host, port, user, password, dbname, sslmode, timezone, connect_timeout)
+	config.GetDBData(&host, &port, &user, &password, &dbname, &sslmode, &timezone, &connect_timeout, &rep.rawdata_schema,
+		&rep.transaction_schema, &rep.bin_schema, &rep.consolidator_schema)
+	dns := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s TimeZone=%s connect_timeout=%d", host, port,
+		user, password, dbname, sslmode, timezone, connect_timeout)
 	if err := rep.Connect(dns); err != nil {
 		return nil, err
 	}
@@ -91,7 +93,6 @@ func (a *PostgresRepository) GetTransactionsByDate(date time.Time) ([]*source_do
 // GetBins retrieves BIN information from the database
 func (a *PostgresRepository) GetBins() ([]*source_domain.Bin, error) {
 	var bins []*source_domain.Bin
-
 	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.bin_schema))
 	if err := a.DB.WithContext(*a.ctx).Find(&bins).Error; err != nil {
 		return nil, err
