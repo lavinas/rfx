@@ -8,6 +8,7 @@ import (
 // JsonConfig represents the configuration structure for the application
 type JsonConfig struct {
 	DB   JsonDBConfig   `json:"db"`
+	Log  JsonLogConfig  `json:"log"`
 	Cron JsonCronConfig `json:"cron"`
 }
 
@@ -30,6 +31,12 @@ type JsonCronConfig struct {
 	Schedules []string `json:"schedules"`
 	TimeZone  string   `json:"timezone"`
 	BacktrackDays int    `json:"backtrackdays"`
+}
+
+// LogConfig represents the logging configuration structure
+type JsonLogConfig struct {
+	Output string `json:"output"`
+	Level  int    `json:"level"`
 }
 
 // LoadJsonConfig reads the configuration from a JSON file and unmarshals it into a JsonConfig struct
@@ -73,4 +80,10 @@ func (v *JsonConfig) GetCronData(schedule *[]string, timezone *string, backtrack
 	*schedule = v.Cron.Schedules
 	*timezone = v.Cron.TimeZone
 	*backtrackDays = v.Cron.BacktrackDays
+}
+
+// GetConfigData returns the entire configuration as a JsonConfig struct
+func (v *JsonConfig) GetConfigData(output *string, level *int) {
+	*output = v.Log.Output
+	*level = v.Log.Level
 }

@@ -11,11 +11,14 @@
         "source_schema": "raw_data_v2",
         "target_schema": "transaction_v5"
     },
-        "cron": {
+    "log": {
+        "output": "stdout",
+        "level": 10
+    },
+    "cron": {
         "schedules": [
             "* * * * *"
         ], 
         "backtrackdays": 5
     }
-
 }

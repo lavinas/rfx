@@ -7,4 +7,5 @@ type Config interface {
 		connect_timeout *int, sourceSchema *string, targetSchema *string)
 	GetDBTimeZone() string
 	GetCronData(schedule *[]string, timezone *string, backtrackDays *int)
+	GetConfigData(output *string, level *int)
 }
