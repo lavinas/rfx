@@ -103,4 +103,3 @@ func (i *Ranking) AddTransactions(transactions []*source_domain.Transaction) {
 		}
 	}
 }
-

@@ -7,35 +7,42 @@ import (
 
 // JsonConfig represents the configuration structure for the application
 type JsonConfig struct {
-	DB JsonDBConfig `json:"db"`
+	DB   JsonDBConfig   `json:"db"`
+	Log  JsonLogConfig  `json:"log"`
+	Cron JsonCronConfig `json:"cron"`
 }
 
 // DBConfig represents the database configuration structure
 type JsonDBConfig struct {
-	Host           string `json:"host"`
-	Port           int    `json:"port"`
-	User           string `json:"user"`
-	Password       string `json:"password"`
-	DBName         string `json:"dbname"`
-	SSLMode        string `json:"sslmode"`
-	TimeZone       string `json:"timezone"`
-	ConnectTimeout int    `json:"connect_timeout"`
-	RawDataSchema   string `json:"rawdata_schema"`
-	TransactionSchema   string `json:"transaction_schema"`
-	BinSchema      string `json:"bin_schema"`
-	ConsolidatorSchema   string `json:"consolidator_schema"`
+	Host               string `json:"host"`
+	Port               int    `json:"port"`
+	User               string `json:"user"`
+	Password           string `json:"password"`
+	DBName             string `json:"dbname"`
+	SSLMode            string `json:"sslmode"`
+	TimeZone           string `json:"timezone"`
+	ConnectTimeout     int    `json:"connect_timeout"`
+	RawDataSchema      string `json:"rawdata_schema"`
+	TransactionSchema  string `json:"transaction_schema"`
+	BinSchema          string `json:"bin_schema"`
+	ConsolidatorSchema string `json:"consolidator_schema"`
 }
 
-func NewJsonConfig(path string) (*JsonConfig, error) {
-	cfg, err := LoadJsonConfig(path)
-	if err != nil {
-		return nil, err
-	}
-	return cfg, nil
+// CronConfig represents the cron configuration structure
+type JsonCronConfig struct {
+	Schedules     []string `json:"schedules"`
+	TimeZone      string   `json:"timezone"`
+	BacktrackDays int      `json:"backtrackdays"`
+}
+
+// LogConfig represents the logging configuration structure
+type JsonLogConfig struct {
+	Output string `json:"output"`
+	Level  int    `json:"level"`
 }
 
 // LoadJsonConfig reads the configuration from a JSON file and unmarshals it into a JsonConfig struct
-func LoadJsonConfig(path string) (*JsonConfig, error) {
+func NewConfig(path string) (*JsonConfig, error) {
 	// Attempt to read the configuration file, if it fails, use the default configuration string
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -51,8 +58,8 @@ func LoadJsonConfig(path string) (*JsonConfig, error) {
 }
 
 // GetDBData returns the database configuration data as a JsonDBConfig struct
-func (v *JsonConfig) GetDBData(host *string, port *int, user *string, password *string, dbname *string, sslmode *string, timezone *string,
-	connect_timeout *int, rawdata_schema *string, transaction_schema *string, consolidator_schema *string, bin_schema *string) {
+func (v *JsonConfig) GetDBData(host *string, port *int, user *string, password *string, dbname *string, sslmode *string,
+	timezone *string, connect_timeout *int, rawDataSchema *string, transactionSchema *string, binSchema *string, consolidatorSchema *string) {
 	*host = v.DB.Host
 	*port = v.DB.Port
 	*user = v.DB.User
@@ -61,13 +68,26 @@ func (v *JsonConfig) GetDBData(host *string, port *int, user *string, password *
 	*sslmode = v.DB.SSLMode
 	*timezone = v.DB.TimeZone
 	*connect_timeout = v.DB.ConnectTimeout
-	*rawdata_schema = v.DB.RawDataSchema
-	*transaction_schema = v.DB.TransactionSchema
-	*consolidator_schema = v.DB.ConsolidatorSchema
-	*bin_schema = v.DB.BinSchema
+	*rawDataSchema = v.DB.RawDataSchema
+	*transactionSchema = v.DB.TransactionSchema
+	*binSchema = v.DB.BinSchema
+	*consolidatorSchema = v.DB.ConsolidatorSchema
 }
 
-// GetDBTimeZone returns the timezone from the database configuration
+// GetDBTimeZone returns the database time zone from the configuration
 func (v *JsonConfig) GetDBTimeZone() string {
 	return v.DB.TimeZone
+}
+
+// GetCronData returns the cron configuration data as a JsonCronConfig struct
+func (v *JsonConfig) GetCronData(schedule *[]string, timezone *string, backtrackDays *int) {
+	*schedule = v.Cron.Schedules
+	*timezone = v.Cron.TimeZone
+	*backtrackDays = v.Cron.BacktrackDays
+}
+
+// GetConfigData returns the entire configuration as a JsonConfig struct
+func (v *JsonConfig) GetConfigData(output *string, level *int) {
+	*output = v.Log.Output
+	*level = v.Log.Level
 }

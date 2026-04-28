@@ -30,7 +30,7 @@ func (d *FlagDriver) Run() error {
 	signal.Notify(sigs, os.Interrupt)
 	// Run the service in a separate goroutine to allow for graceful shutdown on interrupt signal
 	go func() {
-		err= d.callService()
+		err = d.callService()
 		sigs <- os.Interrupt
 	}()
 	// Wait for an interrupt signal to gracefully shut down the service

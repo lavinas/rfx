@@ -4,5 +4,7 @@ package ports
 type Config interface {
 	// GetDBData retrieves the database configuration data and populates the provided pointers with the respective values.
 	GetDBData(host *string, port *int, user *string, password *string, dbname *string, sslmode *string, timezone *string,
-	connect_timeout *int, rawdata_schema *string, transaction_schema *string, consolidator_schema *string, bin_schema *string)
+		connect_timeout *int, rawdata_schema *string, transaction_schema *string, consolidator_schema *string, bin_schema *string)
+	GetCronData(schedule *[]string, timezone *string, backtrackDays *int)
+	GetConfigData(output *string, level *int)
 }

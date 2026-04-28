@@ -12,5 +12,15 @@
         "transaction_schema": "transaction_v4",
         "bin_schema": "bins",
         "consolidator_schema": "cadoc_6334_v3"
+    },
+    "log": {
+        "output": "stdout",
+        "level": 10
+    },
+    "cron": {
+        "schedules": [
+            "* * * * *"
+        ], 
+        "backtrackdays": 5
     }
 }

@@ -2,8 +2,8 @@ package driven
 
 import (
 	"log"
-	"strings"
 	"os"
+	"strings"
 
 	"fuser/internal/core/ports"
 )
@@ -47,4 +47,3 @@ func (s *SimpleLogger) IPrintf(level int, format string, v ...interface{}) {
 	format = strings.Repeat("\t", level) + format
 	s.Printf(format, v...)
 }
-

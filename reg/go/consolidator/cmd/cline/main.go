@@ -11,37 +11,34 @@ import (
 
 // main is the entry point of the consolidation application. It initializes the necessary components and starts the consolidation process.
 func main() {
-
-	// Initialize the logger
-	logger := driven.NewSimpleLogger()
-
-	// Initialize the configuration
-	config, err := driven.NewJsonConfig("consolidator.json")
+	// Load configuration
+	cfg, err := driven.NewConfig("consolidator.json")
 	if err != nil {
-		logger.Printf("Failed to initialize configuration: %v\n", err)
-		return
+		panic(err)
 	}
-
+	// Initialize the logger
+	logger, err := driven.NewSimpleLogger(cfg)
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Close()
 	// Set the local time zone based on the configuration
-	loc, _ := time.LoadLocation(config.GetDBTimeZone())
+	loc, _ := time.LoadLocation(cfg.GetDBTimeZone())
 	time.Local = loc
-
 	// Initialize the repository (this is a placeholder, you would need to implement the actual repository)
 	ctx := context.Background()
-	repository, err := driven.NewGormRepository(config, &ctx)
+	repository, err := driven.NewPostgresRepository(cfg, &ctx)
 	if err != nil {
 		logger.Printf("Failed to initialize repository: %v\n", err)
 		return
 	}
 	defer repository.Close()
-
 	// Initialize and run the consolidation service
-	service, err := service.NewConsolidateService(repository, logger, config)
+	service, err := service.NewConsolidateService(repository, logger, cfg)
 	if err != nil {
 		logger.Printf("Failed to initialize consolidation service: %v\n", err)
 		return
 	}
-
 	// Initialize driver and run the service
 	driver := driver.NewFlagDriver(service)
 	if err := driver.Run(); err != nil {

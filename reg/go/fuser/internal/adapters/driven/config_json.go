@@ -28,9 +28,9 @@ type JsonDBConfig struct {
 
 // CronConfig represents the cron configuration structure
 type JsonCronConfig struct {
-	Schedules []string `json:"schedules"`
-	TimeZone  string   `json:"timezone"`
-	BacktrackDays int    `json:"backtrackdays"`
+	Schedules     []string `json:"schedules"`
+	TimeZone      string   `json:"timezone"`
+	BacktrackDays int      `json:"backtrackdays"`
 }
 
 // LogConfig represents the logging configuration structure

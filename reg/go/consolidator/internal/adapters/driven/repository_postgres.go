@@ -19,19 +19,19 @@ const (
 	batchSizeInsertTransaction = 2000
 )
 
-// GormRepository is an adapter for GORM database operations
-type GormRepository struct {
-	DB            *gorm.DB
-	ctx           *context.Context
-	rawdata_schema string
-	transaction_schema string
+// PostgresRepository is an adapter for GORM database operations
+type PostgresRepository struct {
+	DB                  *gorm.DB
+	ctx                 *context.Context
+	rawdata_schema      string
+	transaction_schema  string
 	consolidator_schema string
-	bin_schema    string
+	bin_schema          string
 }
 
-// NewGormRepository creates a new instance of GormRepository
-func NewGormRepository(config ports.Config, ctx *context.Context) (*GormRepository, error) {
-	rep := &GormRepository{DB: nil, ctx: ctx}
+// NewPostgresRepository creates a new instance of PostgresRepository
+func NewPostgresRepository(config ports.Config, ctx *context.Context) (*PostgresRepository, error) {
+	rep := &PostgresRepository{DB: nil, ctx: ctx}
 	var host, user, password, dbname, sslmode, timezone string
 	var port, connect_timeout int
 	config.GetDBData(&host, &port, &user, &password, &dbname, &sslmode, &timezone, &connect_timeout, &rep.rawdata_schema, &rep.transaction_schema, &rep.consolidator_schema, &rep.bin_schema)
@@ -43,7 +43,7 @@ func NewGormRepository(config ports.Config, ctx *context.Context) (*GormReposito
 }
 
 // Connect establishes a connection to the database (placeholder for actual connection logic)
-func (a *GormRepository) Connect(dns string) error {
+func (a *PostgresRepository) Connect(dns string) error {
 	// Placeholder for actual connection logic, using GORM to connect to the database
 	gConfig := gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent), // Disables all SQL logging
@@ -58,7 +58,7 @@ func (a *GormRepository) Connect(dns string) error {
 }
 
 // Close closes the database connection
-func (a *GormRepository) Close() error {
+func (a *PostgresRepository) Close() error {
 	db, err := a.DB.DB()
 	if err != nil {
 		return err
@@ -67,7 +67,7 @@ func (a *GormRepository) Close() error {
 }
 
 // Ping checks the database connection
-func (a *GormRepository) Ping() error {
+func (a *PostgresRepository) Ping() error {
 	db, err := a.DB.DB()
 	if err != nil {
 		return err
@@ -76,7 +76,7 @@ func (a *GormRepository) Ping() error {
 }
 
 // GetTransactionsByDate retrieves transactions from the database for a specific date
-func (a *GormRepository) GetTransactionsByDate(date time.Time) ([]*source_domain.Transaction, error) {
+func (a *PostgresRepository) GetTransactionsByDate(date time.Time) ([]*source_domain.Transaction, error) {
 	var transactions []*source_domain.Transaction
 	start_date := date.Format("2006-01-02") + " 00:00:00"
 	end_date := date.AddDate(0, 0, 1).Format("2006-01-02") + " 00:00:00"
@@ -89,7 +89,7 @@ func (a *GormRepository) GetTransactionsByDate(date time.Time) ([]*source_domain
 }
 
 // GetBins retrieves BIN information from the database
-func (a *GormRepository) GetBins() ([]*source_domain.Bin, error) {
+func (a *PostgresRepository) GetBins() ([]*source_domain.Bin, error) {
 	var bins []*source_domain.Bin
 
 	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.bin_schema))
@@ -100,7 +100,7 @@ func (a *GormRepository) GetBins() ([]*source_domain.Bin, error) {
 }
 
 // GetEstablishments retrieves establishment information from the database
-func (a *GormRepository) GetEstablishments() ([]*source_domain.Establishment, error) {
+func (a *PostgresRepository) GetEstablishments() ([]*source_domain.Establishment, error) {
 	var establishments []*source_domain.Establishment
 	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.rawdata_schema))
 	if err := a.DB.WithContext(*a.ctx).Find(&establishments).Error; err != nil {
@@ -110,7 +110,7 @@ func (a *GormRepository) GetEstablishments() ([]*source_domain.Establishment, er
 }
 
 // GetTerminals retrieves terminal information from the database
-func (a *GormRepository) GetTerminals() ([]*source_domain.Terminal, error) {
+func (a *PostgresRepository) GetTerminals() ([]*source_domain.Terminal, error) {
 	var terminals []*source_domain.Terminal
 	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.rawdata_schema))
 	if err := a.DB.WithContext(*a.ctx).Find(&terminals).Error; err != nil {
@@ -120,7 +120,7 @@ func (a *GormRepository) GetTerminals() ([]*source_domain.Terminal, error) {
 }
 
 // GeneralDelete is a helper function to delete records from the database for a specific year and quarter
-func (a *GormRepository) Delete(model interface{}, year int, quarter int) error {
+func (a *PostgresRepository) Delete(model interface{}, year int, quarter int) error {
 	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.consolidator_schema))
 	if err := a.DB.Where("year = ? AND quarter = ?", year, quarter).Delete(model).Error; err != nil {
 		return err
@@ -129,7 +129,7 @@ func (a *GormRepository) Delete(model interface{}, year int, quarter int) error 
 }
 
 // GeneralSave is a helper function to save records to the database with conflict handling
-func (a *GormRepository) Save(model interface{}) error {
+func (a *PostgresRepository) Save(model interface{}) error {
 	a.DB.Exec(fmt.Sprintf("SET search_path TO %s", a.consolidator_schema))
 	return a.DB.WithContext(*a.ctx).Clauses(clause.OnConflict{
 		UpdateAll: true,

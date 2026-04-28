@@ -45,7 +45,7 @@ func (i *InfrtermItem) TableName() string {
 }
 
 // GetFromTerminal returns an InfrtermItem instance populated with data from a given terminal.
-func (i *InfrtermItem) GetFromTerminal(year int, quarter int, term *source_domain.Terminal, clientsFU map[int64]string) *InfrtermItem {	
+func (i *InfrtermItem) GetFromTerminal(year int, quarter int, term *source_domain.Terminal, clientsFU map[int64]string) *InfrtermItem {
 	fu, exists := clientsFU[term.GetEstablishmentCode()]
 	if !exists {
 		return nil

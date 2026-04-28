@@ -9,7 +9,7 @@ import (
 
 	"github.com/robfig/cron/v3"
 
-	"fuser/internal/core/ports"
+	"consolidator/internal/core/ports"
 	"github.com/postfinance/single"
 )
 
@@ -93,11 +93,8 @@ func (d *CronDriver) addFunc(cron *cron.Cron) error {
 
 // callService calls the Run method of the service with the provided parameters and logs the result
 func (d *CronDriver) callService() {
-	// call the service with the appropriate parameters based on the current date and the backtrack days, and log the result
-	endDate := time.Now().Truncate(24*time.Hour).AddDate(0, 0, -1)
-	startDate := endDate.AddDate(0, 0, -d.backtrackDays)
 	d.logger.Println("Starting scheduled task")
-	if err := d.service.Run(startDate, endDate, "all", true); err != nil {
+	if err := d.service.Run(2026, 1, 1); err != nil {
 		d.logger.Println("Error running service:", err)
 		return
 	}
