@@ -3,6 +3,8 @@ package driver
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
 	"time"
 
 	"consolidator/internal/core/ports"
@@ -22,6 +24,22 @@ func NewFlagDriver(service ports.Service) *FlagDriver {
 
 // Run executes the main logic of the FlagDriver by calling the Run method of the service
 func (d *FlagDriver) Run() error {
+	// Run the service in a separate goroutine and wait for an interrupt signal to gracefully shut down
+	var err error
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, os.Interrupt)
+	// Run the service in a separate goroutine to allow for graceful shutdown on interrupt signal
+	go func() {
+		err = d.callService()
+		sigs <- os.Interrupt
+	}()
+	// Wait for an interrupt signal to gracefully shut down the service
+	<-sigs
+	return err
+}
+
+// callService executes the main logic of the FlagDriver by calling the Run method of the service
+func (d *FlagDriver) callService() error {
 	// parse parameters
 	year := flag.Int("year", 0, "year for processing transactions (format: YYYY)")
 	quarter := flag.Int("quarter", 0, "quarter for processing transactions (format: 1, 2, 3, 4)")

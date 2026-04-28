@@ -29,20 +29,20 @@ func main() {
 	ctx := context.Background()
 	repository, err := driven.NewPostgresRepository(cfg, &ctx)
 	if err != nil {
-		logger.Printf("Failed to initialize repository: %v\n", err)
+		logger.IPrintf(0, "Failed to initialize repository: %v\n", err)
 		return
 	}
 	defer repository.Close()
 	// Initialize and run the consolidation service
 	service, err := service.NewConsolidateService(repository, logger, cfg)
 	if err != nil {
-		logger.Printf("Failed to initialize consolidation service: %v\n", err)
+		logger.IPrintf(0, "Failed to initialize consolidation service: %v\n", err)
 		return
 	}
 	// Initialize driver and run the service
 	driver := driver.NewFlagDriver(service)
 	if err := driver.Run(); err != nil {
-		logger.Printf("Error running the consolidation service: %v\n", err)
+		logger.IPrintf(0, "Error running the consolidation service: %v\n", err)
 	}
-
+	logger.IPrintf(0, "Fully exiting command line\n")
 }
