@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"time"
+	"os/signal"
+	"syscall"
 
 	"github.com/robfig/cron/v3"
 
@@ -37,6 +39,20 @@ func NewCronDriver(service ports.Service, logger ports.Logger, config ports.Conf
 
 // Run executes the main logic of the CronDriver by calling the Run method of the service
 func (d *CronDriver) Run() error {
+	// Use single instance lock to ensure only one instance of CronDriver is running at a time
+	s, err := single.New("fuser-cron-driver")
+	if err != nil {
+		return fmt.Errorf("error creating single instance lock: %w", err)
+	}
+	if err := s.Lock(); err != nil {
+		return fmt.Errorf("another instance of CronDriver is already running: %w", err)
+	}
+	defer s.Unlock()
+	return d.runCron()
+}
+
+// runCron sets up the cron scheduler and adds the function to be executed on the specified schedule, then starts the scheduler and waits for an interrupt signal to gracefully shut down
+func (d *CronDriver) runCron() error {
 	// Create a new cron scheduler and add the function to be executed on the specified schedule, then start the scheduler and wait for an interrupt signal to gracefully shut down
 	c := cron.New()
 	if loc, err:= time.LoadLocation(d.timezone); err == nil {
@@ -48,9 +64,13 @@ func (d *CronDriver) Run() error {
 	// Start the cron scheduler and wait for an interrupt signal to gracefully shut down
 	d.logger.Println("Starting CronDriver with schedule:", d.schedule)
 	c.Start()
-	sig := make(chan os.Signal, 1)
-	<-sig
-	c.Stop()
+	// Configurate listener
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+	sig := <-stop
+	d.logger.Printf("Stop Signal [%v] received", sig)
+	ctx := c.Stop()
+	<-ctx.Done()
 	d.logger.Println("CronDriver stopped")
 	return nil
 }
@@ -73,18 +93,6 @@ func (d *CronDriver) addFunc(cron *cron.Cron) error {
 
 // callService calls the Run method of the service with the provided parameters and logs the result
 func (d *CronDriver) callService() {
-	// Use single instance lock to ensure only one instance of CronDriver is running at a time
-	s, err := single.New("fuser-cron-driver")
-	if err != nil {
-		d.logger.Println("Error creating single instance lock:", err)
-		return
-	}
-	if err := s.Lock(); err != nil {
-		d.logger.Println("Another instance of CronDriver is already running:", err)
-		return
-	}
-	defer s.Unlock()
-
 	// call the service with the appropriate parameters based on the current date and the backtrack days, and log the result
 	endDate := time.Now().Truncate(24 * time.Hour).AddDate(0, 0, -1)
 	startDate := endDate.AddDate(0, 0, -d.backtrackDays)
@@ -93,5 +101,5 @@ func (d *CronDriver) callService() {
 		d.logger.Println("Error running service:", err)
 		return
 	}
-	d.logger.Println("Scheduled task completed successfully")
+	d.logger.Println("Scheduled fuser completed successfully")
 }
