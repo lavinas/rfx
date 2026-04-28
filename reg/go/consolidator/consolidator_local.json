@@ -7,9 +7,9 @@
         "dbname": "reg",
         "sslmode": "disable",
         "timezone": "UTC",
-        "connect_timeout": 10,
-        "source_schema": "transaction_v5",
-        "target_schema": "cadoc_6334_v2",
-        "bin_schema": "bins"
+        "rawdata_schema": "raw_data_v2",
+        "transaction_schema": "transaction_v4",
+        "bin_schema": "bins",
+        "consolidator_schema": "cadoc_6334_v3"
     }
 }

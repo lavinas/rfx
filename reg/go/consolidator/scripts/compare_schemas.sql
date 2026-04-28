@@ -1,9 +1,9 @@
 -- ranking
 
-select count(1)
+select count(1), sum(transaction_amount), sum(transaction_quantity)
   from cadoc_6334_v3.ranking;
 
-select count(1)
+select count(1), sum(transaction_amount), sum(transaction_quantity)
 from cadoc_6334_v2.ranking_filtered;
 
 
@@ -29,10 +29,10 @@ select year, quarter, segment_name, segment_description, segment_code
 
 -- conccred
 
-select count(1)
+select count(1), sum(transaction_amount), sum(transaction_quantity), sum(number_accredited_establishments), sum(number_active_establishments)
   from cadoc_6334_v2.conccred;
 
-select count(1)
+select count(1), sum(transaction_amount), sum(transaction_quantity), sum(number_accredited_establishments), sum(number_active_establishments)
   from cadoc_6334_v3.conccred;
 
 select year, quarter, brand, function, number_accredited_establishments, number_active_establishments, transaction_amount, transaction_quantity
@@ -44,12 +44,13 @@ select year, quarter, brand, function, number_accredited_establishments, number_
 
 -- desconto
 
-select count(1)
+-- 1274	409446468.98	8849390
+select count(1), sum(transaction_amount), sum(transaction_quantity)
   from cadoc_6334_v2.desconto;
 
-select count(1)
+-- 1274	409185626.11	8843465
+select count(1), sum(transaction_amount), sum(transaction_quantity)
   from cadoc_6334_v3.desconto;
-
 
 select year, quarter, function, brand, capture_mode, installments, segment_code
   from cadoc_6334_v2.desconto
