@@ -1,0 +1,22 @@
+{
+    "db": {
+        "host": "192.168.100.78",
+        "port": 5436,
+        "user": "sys_flexcon",
+        "password": "Wgkjsjjja8872Xl",
+        "dbname": "dev_regulat",
+        "sslmode": "disable",
+        "timezone": "America/Cuiaba",
+        "connect_timeout": 10,
+        "source_schema": "raw_data_v2",
+        "target_schema": "transaction_v6"
+    },
+    "cron": {
+        "schedules": [
+            "* * * * *"
+        ], 
+        "timezone": "America/Cuiaba",
+        "backtrackdays": 5
+    }
+
+}

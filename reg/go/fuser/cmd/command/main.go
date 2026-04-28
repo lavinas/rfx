@@ -15,7 +15,7 @@ func main() {
 	// Initialize the logger
 	logger := driven.NewSimpleLogger()
 	// Load configuration
-	cfg, err := driven.LoadJsonConfig("fuser.json")
+	cfg, err := driven.NewConfig("fuser.json")
 	if err != nil {
 		logger.Println("Error loading configuration:", err)
 		os.Exit(1)
@@ -38,4 +38,5 @@ func main() {
 		logger.Println(err)
 		os.Exit(1)
 	}
+	logger.Println("Fully exiting !!")
 }

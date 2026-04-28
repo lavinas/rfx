@@ -5,4 +5,6 @@ type Config interface {
 	// GetDBData retrieves the database configuration data and populates the provided pointers with the respective values.
 	GetDBData(host *string, port *int, user *string, password *string, dbname *string, sslmode *string, timezone *string,
 		connect_timeout *int, sourceSchema *string, targetSchema *string)
+	GetDBTimeZone() string
+	GetCronData(schedule *[]string, timezone *string, backtrackDays *int)
 }

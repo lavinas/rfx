@@ -1,14 +1,14 @@
 {
     "db": {
-        "host": "192.168.100.78",
-        "port": 5436,
-        "user": "sys_flexcon",
-        "password": "Wgkjsjjja8872Xl",
-        "dbname": "dev_regulat",
+        "host": "localhost",
+        "port": 5434,
+        "user": "root",
+        "password": "root",
+        "dbname": "reg",
         "sslmode": "disable",
-        "timezone": "America/Cuiaba",
+        "timezone": "UTC",
         "connect_timeout": 10,
         "source_schema": "raw_data_v2",
-        "target_schema": "transaction_v6"
+        "target_schema": "transaction_v5"
     }
 }
