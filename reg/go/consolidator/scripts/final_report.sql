@@ -1,3 +1,4 @@
+-- Active: 1774368236280@@192.168.100.78@5436@dev_regulat
 
 -- extract intercam data for final report
 select id, 
@@ -219,6 +220,24 @@ group by 1
 order by 1 desc;
 
 
+select function as funcao, 
+       replace(sum(transaction_amount)::text, '.', ',') as valor,
+       sum(transaction_quantity) as quantidade
+  from cadoc_6334_v2.desconto
+where year = 2025 and quarter = 4
+group by 1
+order by 1 desc;
+
+select funcao, 
+       replace(sum(valor_transacoes)::text, '.', ',') as valor,
+       sum(quantidade_transacoes) as quantidade
+  from reports.intercam_ch
+where ano = 2025 and trimestre = 4
+group by 1
+order by 1 desc;
+
+
+
 -- bandeira
 
 select brand as bandeira, 
@@ -237,7 +256,13 @@ where year = 2026 and quarter = 1
 group by 1
 order by 1;
 
-
+select bandeira as bandeira, 
+       replace(sum(valor_transacoes)::text, '.', ',') as valor,
+       sum(quantidade_transacoes) as quantidade
+  from reports.intercam_ch
+where ano = 2025 and trimestre = 4
+group by 1
+order by 1;
 
 -- parcela
 
@@ -254,6 +279,14 @@ select installments as parcela,
        sum(transaction_quantity) as quantidade
   from cadoc_6334_v2.desconto
 where year = 2026 and quarter = 1
+group by 1
+order by 1;
+
+select numero_parcelas as bandeira, 
+       replace(sum(valor_transacoes)::text, '.', ',') as valor,
+       sum(quantidade_transacoes) as quantidade
+  from reports.intercam_ch
+where ano = 2025 and trimestre = 4
 group by 1
 order by 1;
 
@@ -276,6 +309,13 @@ where year = 2026 and quarter = 1
 group by 1
 order by 1;
 
+select codigo_segmento as segmento, 
+       replace(sum(valor_transacoes)::text, '.', ',') as valor,
+       sum(quantidade_transacoes) as quantidade
+  from reports.intercam_ch
+where ano = 2025 and trimestre = 4
+group by 1
+order by 1;
 
 -- captura
 
@@ -295,14 +335,93 @@ where year = 2026 and quarter = 1
 group by 1
 order by 1;
 
+select forma_captura as captura, 
+       replace(sum(valor_transacoes)::text, '.', ',') as valor,
+       sum(quantidade_transacoes) as quantidade
+  from reports.intercam_ch
+where ano = 2025 and trimestre = 4
+group by 1
+order by 1;
+
+
 
 -- validacoes finais
 
-select a.brand, 
-       a.function, 
-       round(sum(case when product_code = 38 then transaction_quantity else 0 end) / sum(transaction_quantity) * 100, 2) as percentual_transacoes_produto_38,
-       count(1) 
-  from cadoc_6334_v2.intercam a
-group by 1, 2
-order by 3 desc;
+-- intercam
+select count(1)
+  from cadoc_6334_v2.intercam
+where year = 2026 and quarter = 1
+ and transaction_amount <= 0;
 
+ select count(1)
+  from cadoc_6334_v2.intercam
+where year = 2026 and quarter = 1
+ and transaction_quantity <= 0;
+
+select *
+  from cadoc_6334_v2.intercam
+where year = 2026 and quarter = 1
+ and interchange_fee <= 0;
+
+select *
+  from cadoc_6334_v2.intercam
+where year = 2026 and quarter = 1
+ and interchange_fee > 10;
+
+
+select round(avg(a.cost_interchange_value / a.transaction_amount * 100), 2) as tarifa_intercambio
+ from transaction_v4.transaction a
+inner join cadoc_6334_v2.mcc_segmentos b on b.mcc_init <= a.establishment_mcc and b.mcc_end >= a.establishment_mcc
+inner join bins.bins_v2 c on c.bin = a.bin::text
+where transaction_date >= '2026-01-01' and transaction_date < '2026-04-01'
+  and status_id = 2
+  and transaction_product = 'CR'
+  and transaction_brand = 'V'
+  and transaction_installments = 1
+  and transaction_capture = 'CTC'
+  and b.segment = 426
+  and c.produto_final = 34
+  and c.modalidade_final = 'P'
+
+
+-- desconto
+select count(1)
+  from cadoc_6334_v2.desconto
+where year = 2026 and quarter = 1
+ and transaction_amount <= 0;
+
+select count(1)
+  from cadoc_6334_v2.desconto
+where year = 2026 and quarter = 1
+ and transaction_quantity <= 0;
+
+select *
+  from cadoc_6334_v2.desconto
+where year = 2026 and quarter = 1
+ and min_mdr_fee <= 0; 
+
+
+select count(1), count(1)/2
+ from transaction_v4.transaction a
+inner join cadoc_6334_v2.mcc_segmentos b on b.mcc_init <= a.establishment_mcc and b.mcc_end >= a.establishment_mcc
+where transaction_date >= '2026-01-01' and transaction_date < '2026-04-01'
+  and status_id = 2
+  and transaction_product = 'DB'
+  and transaction_brand = 'M'
+  and transaction_installments = 1
+  and transaction_capture = 'CTC'
+  and b.segment = 427;
+
+
+select a.key1, count(1)
+ from transaction_v4.transaction a
+inner join cadoc_6334_v2.mcc_segmentos b on b.mcc_init <= a.establishment_mcc and b.mcc_end >= a.establishment_mcc
+where transaction_date >= '2026-01-01' and transaction_date < '2026-04-01'
+  and status_id = 2
+group by 1
+having count(1) > 1;
+
+select * from transaction_v4.transaction limit 100;
+
+
+select * from cadoc_6334_v2.mcc_segmentos 
