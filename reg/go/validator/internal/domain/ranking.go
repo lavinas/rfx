@@ -30,7 +30,7 @@ type Ranking struct {
 
 // TableName returns the name of the database table for the Ranking model.
 func (r *Ranking) TableName() string {
-	return "cadoc_6334_v2.ranking_filtered"
+	return "ranking"
 }
 
 // NewRanking creates a new Ranking instance
@@ -112,9 +112,9 @@ func (r *Ranking) GetKey() string {
 }
 
 // FindAll retrieves all Ranking records.
-func (r *Ranking) GetDB(repo port.Repository) (map[string]port.Report, error) {
+func (r *Ranking) GetDB(repo port.Repository, year int, quarter int) (map[string]port.Report, error) {
 	var records []*Ranking
-	err := repo.FindAll(&records, 0, 0, "")
+	err := repo.FindAll(&records, 0, 0, "", "year = ? AND quarter = ?", year, quarter)
 	if err != nil {
 		return nil, err
 	}

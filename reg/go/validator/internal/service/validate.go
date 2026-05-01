@@ -1,32 +1,29 @@
-package usecase
+package service
 
 import (
 	"fmt"
+	"os"
 
 	"golang.org/x/text/encoding/charmap"
 	"validator/internal/domain"
 	"validator/internal/port"
 )
 
-const (
-	inPath = "./files/in"
-)
-
-// ReconciliateCase represents the use case for checking or validating data
-type ReconciliateCase struct {
+// ValidatorService represents the use case for checking or validating data
+type ValidatorService struct {
 	repo port.Repository
 	// Add any dependencies or configurations needed for the use case
 }
 
-// NewReconciliateCase creates a new instance of ReconciliateCase
-func NewReconciliateCase(repo port.Repository) *ReconciliateCase {
-	return &ReconciliateCase{
+// NewValidatorService creates a new instance of ValidatorService
+func NewValidatorService(repo port.Repository) *ValidatorService {
+	return &ValidatorService{
 		repo: repo,
 	}
 }
 
-// Execute2 executes the check use case
-func (uc *ReconciliateCase) ExecuteAll() {
+// ExecuteAll executes the check use case for all reports
+func (uc *ValidatorService) ExecuteAll(year int, quarter int, path string) error {
 	files := []string{
 		"RANKING.TXT",
 		"CONCCRED.TXT",
@@ -49,58 +46,66 @@ func (uc *ReconciliateCase) ExecuteAll() {
 		domain.NewLucrCred(),
 		domain.NewContact(),
 	}
-	for i, file := range files {
-		filename := fmt.Sprintf("%s/%s", inPath, file)
-		uc.ExecuteReport(reports[i], filename)
+	// validate path
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return fmt.Errorf("path does not exist: %s", path)
 	}
+	// execute reports
+	for i, file := range files {
+		filename := fmt.Sprintf("%s/%s", path, file)
+		if err := uc.ExecuteReport(reports[i], filename, year, quarter); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // ExecuteReport executes the check use case for a specific report
-func (uc *ReconciliateCase) ExecuteReport(report port.Report, filename string) {
+func (uc *ValidatorService) ExecuteReport(report port.Report, filename string, year int, quarter int) error {
 	fmt.Printf("Reconciliating %s\n", filename)
 	defer fmt.Println("---------------------------------------------------------------------------------------------------------")
 	// Get db data
-	loaded, err := report.GetDB(uc.repo)
+	loaded, err := report.GetDB(uc.repo, year, quarter)
 	if err != nil {
-		fmt.Printf("Error loading report data: %v\n", err)
-		return
+		return fmt.Errorf("Error loading report data: %v", err)
 	}
 	// Get file data
 	filed, err := report.GetParsedFile(filename)
 	if err != nil {
-		fmt.Printf("Error parsing report file: %v\n", err)
-		return
+		return fmt.Errorf("Error parsing report file: %v", err)
 	}
 	// validate DB
 	if err := uc.validateReport(loaded); err != nil {
-		fmt.Println("DB validation errors found:")
+		errMessage := fmt.Sprintf("DB validation errors found for %s:", filename)
 		for _, e := range err {
-			fmt.Println(e)
+			errMessage += fmt.Sprintf("\n%v", e)
 		}
-		return
+		return fmt.Errorf("%s", errMessage)
 	}
 	// validate File
 	if err := uc.validateReport(filed); err != nil {
-		fmt.Println("File validation errors found:")
+		errMessage := fmt.Sprintf("File validation errors found for %s:", filename)
 		for _, e := range err {
-			fmt.Println(e)
+			errMessage += fmt.Sprintf("\n%v", e)
 		}
-		return
+		return fmt.Errorf("%s", errMessage)
 	}
 	// Match and report discrepancies
 	errs := uc.match(loaded, filed)
 	if len(errs) > 0 {
-		fmt.Printf("Discrepancies found in %s:\n", filename)
+		errMessage := fmt.Sprintf("Discrepancies found in %s:", filename)
 		for _, e := range errs {
-			fmt.Println(e)
+			errMessage += fmt.Sprintf("\n%v", e)
 		}
+		return fmt.Errorf("%s", errMessage)
 	} else {
 		fmt.Printf("No discrepancies found in %s\n", filename)
 	}
+	return nil
 }
 
 // validate validates records from both sources.
-func (uc *ReconciliateCase) validateReport(report map[string]port.Report) []error {
+func (uc *ValidatorService) validateReport(report map[string]port.Report) []error {
 	var errs []error
 	for key, dbRecord := range report {
 		if err := dbRecord.Validate(); err != nil {
@@ -111,7 +116,7 @@ func (uc *ReconciliateCase) validateReport(report map[string]port.Report) []erro
 }
 
 // match compares two maps of records and returns a slice of errors for any discrepancies found.
-func (uc *ReconciliateCase) match(db map[string]port.Report, file map[string]port.Report) []error {
+func (uc *ValidatorService) match(db map[string]port.Report, file map[string]port.Report) []error {
 	var errs []error
 	// compare lengths
 	if len(db) != len(file) {

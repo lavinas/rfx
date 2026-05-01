@@ -3,6 +3,8 @@ package adapter
 import (
 	"fmt"
 
+	"validator/internal/port"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -23,17 +25,15 @@ type PostgresConfig struct {
 	SSLMode  string
 }
 
-// NewGormAdapter creates a new GormAdapter instance
-func NewGormAdapter(db *gorm.DB) *GormAdapter {
-	return &GormAdapter{
-		db: db,
-	}
-}
-
 // NewPostgresGormAdapter creates a new GormAdapter instance connected to a PostgreSQL database
-func NewPostgresGormAdapter(config PostgresConfig) (*GormAdapter, error) {
-	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
-		config.Host, config.Port, config.User, config.Password, config.DBName, config.SSLMode)
+func NewPostgresGormAdapter(config port.Config) (*GormAdapter, error) {
+	var host, user, password, dbname, sslmode, sourceSchema, timeZone string
+	var port, connectTimeout int
+
+	config.GetDBData(&host, &port, &user, &password, &dbname, &sslmode, &timeZone, &connectTimeout, &sourceSchema)
+
+	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s TimeZone=%s connect_timeout=%d search_path=%s",
+		host, port, user, password, dbname, sslmode, timeZone, connectTimeout, sourceSchema)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
 	if err != nil {

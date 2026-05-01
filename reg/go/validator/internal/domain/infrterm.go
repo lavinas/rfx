@@ -23,7 +23,7 @@ type Infrterm struct {
 
 // TableName specifies the table name for Infrterm struct
 func (r *Infrterm) TableName() string {
-	return "cadoc_6334_v2.infrterm"
+	return "infrterm"
 }
 
 // NewInfrterm creates a new Infrterm instance
@@ -81,9 +81,9 @@ func (r *Infrterm) GetKey() string {
 }
 
 // FindAll retrieves all Infrterm records.
-func (r *Infrterm) GetDB(repo port.Repository) (map[string]port.Report, error) {
+func (r *Infrterm) GetDB(repo port.Repository, year int, quarter int) (map[string]port.Report, error) {
 	var records []*Infrterm
-	err := repo.FindAll(&records, 0, 0, "")
+	err := repo.FindAll(&records, 0, 0, "", "year = ? AND quarter = ?", year, quarter)
 	if err != nil {
 		return nil, err
 	}

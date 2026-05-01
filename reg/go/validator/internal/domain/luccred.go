@@ -35,7 +35,7 @@ type LucrCred struct {
 
 // TableName returns the name of the database table for the LucrCred model.
 func (l *LucrCred) TableName() string {
-	return "cadoc_6334_v2.luccred"
+	return "luccred"
 }
 
 // NewLucrCred creates a new LucrCred instance
@@ -98,9 +98,9 @@ func (l *LucrCred) GetKey() string {
 }
 
 // GetDB retrieves all LucrCred records.
-func (l *LucrCred) GetDB(repo port.Repository) (map[string]port.Report, error) {
+func (l *LucrCred) GetDB(repo port.Repository, year int, quarter int) (map[string]port.Report, error) {
 	var records []*LucrCred
-	err := repo.FindAll(&records, 0, 0, "")
+	err := repo.FindAll(&records, 0, 0, "", "year = ? AND quarter = ?", year, quarter)
 	if err != nil {
 		return nil, err
 	}

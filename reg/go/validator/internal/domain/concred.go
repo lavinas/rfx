@@ -26,7 +26,7 @@ type Conccred struct {
 
 // TableName specifies the table name for Conccred struct
 func (i *Conccred) TableName() string {
-	return "cadoc_6334_v2.conccred"
+	return "conccred"
 }
 
 // NewConccred creates a new Conccred instance.
@@ -90,9 +90,9 @@ func (c *Conccred) GetKey() string {
 }
 
 // FindAll retrieves all Conccred records.
-func (c *Conccred) GetDB(repo port.Repository) (map[string]port.Report, error) {
+func (c *Conccred) GetDB(repo port.Repository, year int, quarter int) (map[string]port.Report, error) {
 	var records []*Conccred
-	err := repo.FindAll(&records, 0, 0, "")
+	err := repo.FindAll(&records, 0, 0, "", "year = ? AND quarter = ?", year, quarter)
 	if err != nil {
 		return nil, err
 	}

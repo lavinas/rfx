@@ -24,7 +24,7 @@ type Contact struct {
 
 // TableName specifies the table name for Contact struct
 func (c *Contact) TableName() string {
-	return "cadoc_6334_v2.contatos"
+	return "contatos"
 }
 
 // NewContact creates a new Contact instance.
@@ -73,9 +73,9 @@ func (c *Contact) GetKey() string {
 }
 
 // GetDB returns the database connection.
-func (c *Contact) GetDB(repo port.Repository) (map[string]port.Report, error) {
+func (c *Contact) GetDB(repo port.Repository, year int, quarter int) (map[string]port.Report, error) {
 	var records []*Contact
-	err := repo.FindAll(&records, 0, 0, "")
+	err := repo.FindAll(&records, 0, 0, "", "year = ? AND quarter = ?", year, quarter)
 	if err != nil {
 		return nil, err
 	}

@@ -34,7 +34,7 @@ type Discount struct {
 
 // TableName specifies the table name for Desconto struct
 func (d *Discount) TableName() string {
-	return "cadoc_6334_v2.desconto"
+	return "desconto"
 }
 
 // NewDiscount creates a new Discount instance
@@ -123,9 +123,9 @@ func (d *Discount) GetKey() string {
 }
 
 // FindAll retrieves all Discount records.
-func (d *Discount) GetDB(repo port.Repository) (map[string]port.Report, error) {
+func (d *Discount) GetDB(repo port.Repository, year int, quarter int) (map[string]port.Report, error) {
 	var records []*Discount
-	err := repo.FindAll(&records, 0, 0, "")
+	err := repo.FindAll(&records, 0, 0, "", "year = ? AND quarter = ?", year, quarter)
 	if err != nil {
 		return nil, err
 	}

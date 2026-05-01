@@ -3,6 +3,8 @@ package adapter
 import (
 	"os"
 	"os/signal"
+	"flag"
+	"fmt"
 
 	ports "validator/internal/port"
 )
@@ -37,6 +39,16 @@ func (d *FlagDriver) Run() error {
 
 // Run executes the main logic of the FlagDriver by calling the Run method of the service
 func (d *FlagDriver) callService() error {
+	year := flag.Int("year", 0, "Year for processing reports (format: YYYY)")
+	quarter := flag.Int("quarter", 0, "Quarter for processing reports (format: 1, 2, 3, or 4)")
+	path := flag.String("path", "./files", "Path to the input files")
+	flag.Parse()
+	if *year <= 0 {
+		return fmt.Errorf("invalid command: use validator -year=YYYY -quarter=Q")
+	}
+	if *quarter <= 0 || *quarter > 4 {
+		return fmt.Errorf("invalid command: use validator -year=YYYY -quarter=Q")
+	}
 	// parse parameters
-	return d.service.ExecuteAll()
+	return d.service.ExecuteAll(*year, *quarter, *path)
 }

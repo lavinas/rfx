@@ -30,7 +30,7 @@ type Intercam struct {
 
 // TableName returns the name of the table in the database.
 func (i *Intercam) TableName() string {
-	return "cadoc_6334_v2.intercam"
+	return "intercam"
 }
 
 // NewIntercam creates a new Intercam instance
@@ -112,9 +112,9 @@ func (i *Intercam) GetKey() string {
 }
 
 // FindAll retrieves all Intercam records.
-func (i *Intercam) GetDB(repo port.Repository) (map[string]port.Report, error) {
+func (i *Intercam) GetDB(repo port.Repository, year int, quarter int) (map[string]port.Report, error) {
 	var records []*Intercam
-	err := repo.FindAll(&records, 0, 0, "")
+	err := repo.FindAll(&records, 0, 0, "", "year = ? AND quarter = ?", year, quarter)
 	if err != nil {
 		return nil, err
 	}

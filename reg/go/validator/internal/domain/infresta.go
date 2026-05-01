@@ -23,7 +23,7 @@ type Infresta struct {
 
 // TableName specifies the table name for Infresta struct
 func (r *Infresta) TableName() string {
-	return "cadoc_6334_v2.infresta"
+	return "infresta"
 }
 
 // NewInfresta creates a new Infresta instance
@@ -81,9 +81,9 @@ func (r *Infresta) GetKey() string {
 }
 
 // FindAll retrieves all Infresta records.
-func (r *Infresta) GetDB(repo port.Repository) (map[string]port.Report, error) {
+func (r *Infresta) GetDB(repo port.Repository, year int, quarter int) (map[string]port.Report, error) {
 	var records []*Infresta
-	err := repo.FindAll(&records, 0, 0, "")
+	err := repo.FindAll(&records, 0, 0, "", "year = ? AND quarter = ?", year, quarter)
 	if err != nil {
 		return nil, err
 	}

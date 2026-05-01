@@ -22,7 +22,7 @@ type Segment struct {
 
 // TableName specifies the table name for Segment struct
 func (s *Segment) TableName() string {
-	return "cadoc_6334_v2.segmento"
+	return "segmento"
 }
 
 // NewSegment creates a new Segment instance
@@ -65,9 +65,9 @@ func (s *Segment) GetKey() string {
 }
 
 // FindAll retrieves all Segment records.
-func (s *Segment) GetDB(repo port.Repository) (map[string]port.Report, error) {
+func (s *Segment) GetDB(repo port.Repository, year int, quarter int) (map[string]port.Report, error) {
 	var records []*Segment
-	err := repo.FindAll(&records, 0, 0, "")
+	err := repo.FindAll(&records, 0, 0, "", "year = ? AND quarter = ?", year, quarter)
 	if err != nil {
 		return nil, err
 	}

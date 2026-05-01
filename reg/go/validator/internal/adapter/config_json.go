@@ -23,7 +23,6 @@ type JsonDBConfig struct {
 	TimeZone       string `json:"timezone"`
 	ConnectTimeout int    `json:"connect_timeout"`
 	SourceSchema   string `json:"source_schema"`
-	TargetSchema   string `json:"target_schema"`
 }
 
 // CronConfig represents the cron configuration structure
@@ -57,7 +56,7 @@ func NewConfig(path string) (*JsonConfig, error) {
 
 // GetDBData returns the database configuration data as a JsonDBConfig struct
 func (v *JsonConfig) GetDBData(host *string, port *int, user *string, password *string, dbname *string, sslmode *string,
-	timezone *string, connect_timeout *int, sourceSchema *string, targetSchema *string) {
+	timezone *string, connect_timeout *int, sourceSchema *string) {
 	*host = v.DB.Host
 	*port = v.DB.Port
 	*user = v.DB.User
@@ -67,16 +66,9 @@ func (v *JsonConfig) GetDBData(host *string, port *int, user *string, password *
 	*timezone = v.DB.TimeZone
 	*connect_timeout = v.DB.ConnectTimeout
 	*sourceSchema = v.DB.SourceSchema
-	*targetSchema = v.DB.TargetSchema
 }
 
 // GetDBTimeZone returns the database time zone from the configuration
 func (v *JsonConfig) GetDBTimeZone() string {
 	return v.DB.TimeZone
-}
-
-// GetLogData returns the logging configuration data as a JsonLogConfig struct
-func (v *JsonConfig) GetLogData(output *string, level *int) {
-	*output = v.Log.Output
-	*level = v.Log.Level
 }
