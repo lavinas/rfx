@@ -41,7 +41,7 @@ func (d *FlagDriver) Run() error {
 func (d *FlagDriver) callService() error {
 	year := flag.Int("year", 0, "Year for processing reports (format: YYYY)")
 	quarter := flag.Int("quarter", 0, "Quarter for processing reports (format: 1, 2, 3, or 4)")
-	path := flag.String("path", "./files", "Path to the input files")
+	path := flag.String("path", ".", "Path to the input files")
 	flag.Parse()
 	if *year <= 0 {
 		return fmt.Errorf("invalid command: use validator -year=YYYY -quarter=Q")
