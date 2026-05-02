@@ -25,5 +25,5 @@ func main() {
 	if err := adapter.NewFlagDriver(service).Run(); err != nil {
 		fmt.Printf("Error running the driver: %v\n", err)
 	}
-	
+
 }

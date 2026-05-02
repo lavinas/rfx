@@ -1,10 +1,10 @@
 package adapter
 
 import (
-	"os"
-	"os/signal"
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
 
 	ports "validator/internal/port"
 )

@@ -3,10 +3,8 @@ package domain
 import (
 	"bufio"
 	"fmt"
-	"os"
 
 	"github.com/ianlopshire/go-fixedwidth"
-	"golang.org/x/text/encoding/charmap"
 	"validator/internal/port"
 )
 
@@ -110,30 +108,21 @@ func (s *Segment) String() string {
 }
 
 // ParseSegmentFile parses a file of segments into a slice of Segment structs
-func (s *Segment) ParseSegmentFile(filename string) ([]*Segment, error) {
-	f, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	decoder := charmap.ISO8859_1.NewDecoder()
-	decodedReader := decoder.Reader(f)
-	scanner := bufio.NewScanner(decodedReader)
+func (s *Segment) ParseSegmentFile(file *bufio.Scanner) ([]*Segment, error) {
 	// read header
-	if !scanner.Scan() {
+	if !file.Scan() {
 		return nil, fmt.Errorf("file is empty")
 	}
-	headerLine := scanner.Text()
+	headerLine := file.Text()
 	header := &RankingHeader{}
-	_, err = header.Parse(headerLine)
-	if err != nil {
+	if _, err := header.Parse(headerLine); err != nil {
 		return nil, fmt.Errorf("error parsing header: %w", err)
 	}
 	// read records
 	segments := []*Segment{}
 	count := 0
-	for scanner.Scan() {
-		line := scanner.Text()
+	for file.Scan() {
+		line := file.Text()
 		segment := &Segment{}
 		err := segment.Parse(line)
 		if err != nil {
@@ -142,7 +131,7 @@ func (s *Segment) ParseSegmentFile(filename string) ([]*Segment, error) {
 		segments = append(segments, segment)
 		count++
 	}
-	if err := scanner.Err(); err != nil {
+	if err := file.Err(); err != nil {
 		return nil, err
 	}
 	if err := header.Validate("SEGMENTO", int64(count)); err != nil {
@@ -152,8 +141,8 @@ func (s *Segment) ParseSegmentFile(filename string) ([]*Segment, error) {
 }
 
 // GetParsedFile retrieves and maps Segment records from a file.
-func (s *Segment) GetParsedFile(filename string) (map[string]port.Report, error) {
-	fileSegments, err := s.ParseSegmentFile(filename)
+func (s *Segment) GetParsedFile(file *bufio.Scanner) (map[string]port.Report, error) {
+	fileSegments, err := s.ParseSegmentFile(file)
 	if err != nil {
 		return nil, err
 	}

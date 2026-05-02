@@ -3,12 +3,10 @@ package domain
 import (
 	"bufio"
 	"fmt"
-	"os"
 
 	"validator/internal/port"
 
 	"github.com/ianlopshire/go-fixedwidth"
-	"golang.org/x/text/encoding/charmap"
 )
 
 // Contact represents the Contact data model.
@@ -102,31 +100,21 @@ func (c *Contact) String() string {
 }
 
 // ParseContactFile parses a file containing Contact records.
-func (c *Contact) ParseContactFile(filePath string) ([]*Contact, error) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	var contacts []*Contact
-	decoder := charmap.ISO8859_1.NewDecoder()
-	decodedReader := decoder.Reader(file)
-
-	scanner := bufio.NewScanner(decodedReader)
+func (c *Contact) ParseContactFile(file *bufio.Scanner) ([]*Contact, error) {
 	// read header
-	if !scanner.Scan() {
+	if !file.Scan() {
 		return nil, fmt.Errorf("file is empty")
 	}
-	headerLine := scanner.Text()
+	headerLine := file.Text()
 	header := &RankingHeader{}
-	_, err = header.Parse(headerLine)
-	if err != nil {
+	if _, err := header.Parse(headerLine); err != nil {
 		return nil, fmt.Errorf("error parsing header: %w", err)
 	}
 	// read contacts
 	count := int64(0)
-	for scanner.Scan() {
-		line := scanner.Text()
+	contacts := make([]*Contact, 0)
+	for file.Scan() {
+		line := file.Text()
 		contact := NewContact()
 		err := fixedwidth.Unmarshal([]byte(line), contact)
 		if err != nil {
@@ -135,7 +123,7 @@ func (c *Contact) ParseContactFile(filePath string) ([]*Contact, error) {
 		contacts = append(contacts, contact)
 		count++
 	}
-	if err := scanner.Err(); err != nil {
+	if err := file.Err(); err != nil {
 		return nil, err
 	}
 	if err := header.Validate("CONTATOS", count); err != nil {
@@ -145,8 +133,8 @@ func (c *Contact) ParseContactFile(filePath string) ([]*Contact, error) {
 }
 
 // GetParsedFile retrieves and maps Conccred records from a file.
-func (c *Contact) GetParsedFile(filename string) (map[string]port.Report, error) {
-	fileConccred, err := c.ParseContactFile(filename)
+func (c *Contact) GetParsedFile(file *bufio.Scanner) (map[string]port.Report, error) {
+	fileConccred, err := c.ParseContactFile(file)
 	if err != nil {
 		return nil, err
 	}

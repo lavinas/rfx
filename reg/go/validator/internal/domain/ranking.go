@@ -3,11 +3,9 @@ package domain
 import (
 	"bufio"
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/ianlopshire/go-fixedwidth"
-	"golang.org/x/text/encoding/charmap"
 	"validator/internal/port"
 )
 
@@ -150,20 +148,11 @@ func (r *Ranking) String() string {
 }
 
 // ParseRankingFile parses a file of rankings into a slice of Ranking structs
-func (r *Ranking) ParseRankingFile(filename string) ([]*Ranking, error) {
-	f, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	decoder := charmap.ISO8859_1.NewDecoder()
-	decodedReader := decoder.Reader(f)
-	scanner := bufio.NewScanner(decodedReader)
-	// read header
-	if !scanner.Scan() {
+func (r *Ranking) ParseRankingFile(file *bufio.Scanner) ([]*Ranking, error) {
+	if !file.Scan() {
 		return nil, fmt.Errorf("file is empty")
 	}
-	headerLine := scanner.Text()
+	headerLine := file.Text()
 	header, err := (&RankingHeader{}).Parse(headerLine)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing header: %w", err)
@@ -171,8 +160,8 @@ func (r *Ranking) ParseRankingFile(filename string) ([]*Ranking, error) {
 	// read rankings
 	rankings := []*Ranking{}
 	var count int64 = 0
-	for scanner.Scan() {
-		line := scanner.Text()
+	for file.Scan() {
+		line := file.Text()
 		ranking, err := (&Ranking{}).Parse(line)
 		if err != nil {
 			return nil, fmt.Errorf("error parsing line: %w", err)
@@ -180,7 +169,7 @@ func (r *Ranking) ParseRankingFile(filename string) ([]*Ranking, error) {
 		rankings = append(rankings, ranking)
 		count++
 	}
-	if err := scanner.Err(); err != nil {
+	if err := file.Err(); err != nil {
 		return nil, err
 	}
 	if err := header.Validate("RANKING", count); err != nil {
@@ -190,8 +179,8 @@ func (r *Ranking) ParseRankingFile(filename string) ([]*Ranking, error) {
 }
 
 // GetParsedFile retrieves and maps Ranking records from a file.
-func (r *Ranking) GetParsedFile(filename string) (map[string]port.Report, error) {
-	fileRankings, err := r.ParseRankingFile(filename)
+func (r *Ranking) GetParsedFile(file *bufio.Scanner) (map[string]port.Report, error) {
+	fileRankings, err := r.ParseRankingFile(file)
 	if err != nil {
 		return nil, err
 	}

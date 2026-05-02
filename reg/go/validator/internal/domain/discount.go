@@ -3,10 +3,8 @@ package domain
 import (
 	"bufio"
 	"fmt"
-	"os"
 
 	"github.com/ianlopshire/go-fixedwidth"
-	"golang.org/x/text/encoding/charmap"
 	"validator/internal/port"
 )
 
@@ -158,30 +156,21 @@ func (r *Discount) String() string {
 }
 
 // ParseDiscountFile parses a discount file and returns a slice of Discount structs
-func (r *Discount) ParseDiscountFile(filePath string) ([]*Discount, error) {
-	f, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	discounts := []*Discount{}
-	decoder := charmap.ISO8859_1.NewDecoder()
-	decodedReader := decoder.Reader(f)
-	scanner := bufio.NewScanner(decodedReader)
+func (r *Discount) ParseDiscountFile(file *bufio.Scanner) ([]*Discount, error) {
 	// read header
-	if !scanner.Scan() {
+	if !file.Scan() {
 		return nil, fmt.Errorf("file is empty")
 	}
-	headerLine := scanner.Text()
+	headerLine := file.Text()
 	header := &RankingHeader{}
-	_, err = header.Parse(headerLine)
-	if err != nil {
+	if _, err := header.Parse(headerLine); err != nil {
 		return nil, fmt.Errorf("error parsing header: %w", err)
 	}
 	// read discounts
 	var count int64 = 0
-	for scanner.Scan() {
-		line := scanner.Text()
+	discounts := make([]*Discount, 0)
+	for file.Scan() {
+		line := file.Text()
 		disc := &Discount{}
 		parsedDisc, err := disc.Parse(line)
 		if err != nil {
@@ -190,7 +179,7 @@ func (r *Discount) ParseDiscountFile(filePath string) ([]*Discount, error) {
 		discounts = append(discounts, parsedDisc)
 		count++
 	}
-	if err := scanner.Err(); err != nil {
+	if err := file.Err(); err != nil {
 		return nil, err
 	}
 	if err := header.Validate("DESCONTO", count); err != nil {
@@ -200,8 +189,8 @@ func (r *Discount) ParseDiscountFile(filePath string) ([]*Discount, error) {
 }
 
 // GetParsedFile retrieves and maps Discount records from a file.
-func (r *Discount) GetParsedFile(filePath string) (map[string]port.Report, error) {
-	fileDiscounts, err := r.ParseDiscountFile(filePath)
+func (r *Discount) GetParsedFile(file *bufio.Scanner) (map[string]port.Report, error) {
+	fileDiscounts, err := r.ParseDiscountFile(file)
 	if err != nil {
 		return nil, err
 	}

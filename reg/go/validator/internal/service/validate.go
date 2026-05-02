@@ -1,8 +1,12 @@
 package service
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"golang.org/x/text/encoding/charmap"
 	"validator/internal/domain"
@@ -11,7 +15,9 @@ import (
 
 // ValidatorService represents the use case for checking or validating data
 type ValidatorService struct {
-	repo port.Repository
+	repo    port.Repository
+	year    int
+	quarter int
 	// Add any dependencies or configurations needed for the use case
 }
 
@@ -70,38 +76,65 @@ func (uc *ValidatorService) ExecuteReport(report port.Report, filename string, y
 		return fmt.Errorf("Error loading report data: %v", err)
 	}
 	// Get file data
-	filed, err := report.GetParsedFile(filename)
+	filed, err := uc.getFile(report, filename)
 	if err != nil {
 		return fmt.Errorf("Error parsing report file: %v", err)
 	}
 	// validate DB
-	if err := uc.validateReport(loaded); err != nil {
-		errMessage := fmt.Sprintf("DB validation errors found for %s:", filename)
-		for _, e := range err {
-			errMessage += fmt.Sprintf("\n%v", e)
-		}
-		return fmt.Errorf("%s", errMessage)
+	if errs := uc.validateReport(loaded); errs != nil {
+		return fmt.Errorf("DB validation errors found for %s: %w", filename, errors.Join(errs...))
 	}
 	// validate File
-	if err := uc.validateReport(filed); err != nil {
-		errMessage := fmt.Sprintf("File validation errors found for %s:", filename)
-		for _, e := range err {
-			errMessage += fmt.Sprintf("\n%v", e)
-		}
-		return fmt.Errorf("%s", errMessage)
+	if errs := uc.validateReport(filed); errs != nil {
+		return fmt.Errorf("File validation errors found for %s: %w", filename, errors.Join(errs...))
 	}
 	// Match and report discrepancies
-	errs := uc.match(loaded, filed)
-	if len(errs) > 0 {
-		errMessage := fmt.Sprintf("Discrepancies found in %s:", filename)
-		for _, e := range errs {
-			errMessage += fmt.Sprintf("\n%v", e)
-		}
-		return fmt.Errorf("%s", errMessage)
-	} else {
-		fmt.Printf("No discrepancies found in %s\n", filename)
+	if errs := uc.match(loaded, filed); errs != nil {
+		return fmt.Errorf("Discrepancies found in %s: %w", filename, errors.Join(errs...))
 	}
+	fmt.Printf("No discrepancies found for %s\n", filename)
 	return nil
+}
+
+// getfile retrieves and parses the file data for a given report and filename, returning a map of records keyed by their unique identifiers.
+func (uc *ValidatorService) getFile(report port.Report, filename string) (map[string]port.Report, error) {
+	file, err := uc.OpenFileCaseInsensitive(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	decoder := charmap.ISO8859_1.NewDecoder()
+	decodedReader := decoder.Reader(file)
+	scanner := bufio.NewScanner(decodedReader)
+	return report.GetParsedFile(scanner)
+}
+
+// OpenFileCaseInsensitive attempts to open a file with case-insensitive matching of the filename.
+func (uc *ValidatorService) OpenFileCaseInsensitive(path string) (*os.File, error) {
+	// 1. Try a direct open first (efficient for Windows/Mac)
+	f, err := os.Open(path)
+	if err == nil {
+		return f, nil
+	}
+
+	// 2. If it fails, search the parent directory
+	dir := filepath.Dir(path)
+	targetBase := filepath.Base(path)
+
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, entry := range entries {
+		// EqualFold is the Go way to compare strings case-insensitively
+		if strings.EqualFold(entry.Name(), targetBase) {
+			realPath := filepath.Join(dir, entry.Name())
+			return os.Open(realPath)
+		}
+	}
+
+	return nil, fmt.Errorf("file not found: %s", path)
 }
 
 // validate validates records from both sources.
@@ -122,6 +155,14 @@ func (uc *ValidatorService) match(db map[string]port.Report, file map[string]por
 	if len(db) != len(file) {
 		return []error{fmt.Errorf("length mismatch: DB has %d records, File has %d records", len(db), len(file))}
 	}
+	errs = uc.matchDB(db, file)
+	errs = append(errs, uc.matchFile(db, file)...)
+	return errs
+}
+
+// matchDB compares the records from the database and the file, returning a slice of errors for any discrepancies found.
+func (uc *ValidatorService) matchDB(db map[string]port.Report, file map[string]port.Report) []error {
+	var errs []error
 	encoder := charmap.ISO8859_1.NewEncoder()
 
 	for key, dbRecord := range db {
@@ -146,6 +187,14 @@ func (uc *ValidatorService) match(db map[string]port.Report, file map[string]por
 			errs = append(errs, fmt.Errorf("mismatch for key %s:\nDB: %s\nFile: %s", key, encodedDBString, encodedFileString))
 		}
 	}
+	return errs
+
+}
+
+// matchFileDB compares the records from the file and the database, returning a slice of errors for any discrepancies found.
+func (uc *ValidatorService) matchFile(db map[string]port.Report, file map[string]port.Report) []error {
+	var errs []error
+	encoder := charmap.ISO8859_1.NewEncoder()
 
 	for key, fileRecord := range file {
 		dbRecord, exists := db[key]
@@ -169,6 +218,6 @@ func (uc *ValidatorService) match(db map[string]port.Report, file map[string]por
 			errs = append(errs, fmt.Errorf("mismatch for key %s:\nDB: %s\nFile: %s", key, encodedDBString, encodedFileString))
 		}
 	}
-
 	return errs
 }
+

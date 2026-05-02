@@ -3,12 +3,10 @@ package domain
 import (
 	"bufio"
 	"fmt"
-	"os"
 
 	"validator/internal/port"
 
 	"github.com/ianlopshire/go-fixedwidth"
-	"golang.org/x/text/encoding/charmap"
 )
 
 // Conccred represents the Conccred data model.
@@ -89,6 +87,11 @@ func (c *Conccred) GetKey() string {
 	return fmt.Sprintf("%d-%d-%d-%s", c.Year, c.Quarter, c.Brand, c.Function)
 }
 
+// GetType returns the type of the report
+func (c *Conccred) GetType() string {
+	return "CONCCRED"
+}
+
 // FindAll retrieves all Conccred records.
 func (c *Conccred) GetDB(repo port.Repository, year int, quarter int) (map[string]port.Report, error) {
 	var records []*Conccred
@@ -121,30 +124,21 @@ func (c *Conccred) String() string {
 }
 
 // ParseConccredFile parses a file containing Conccred records.
-func (c *Conccred) ParseConccredFile(filename string) ([]*Conccred, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	decoder := charmap.ISO8859_1.NewDecoder()
-	decodedReader := decoder.Reader(file)
-	scanner := bufio.NewScanner(decodedReader)
+func (c *Conccred) ParseConccredFile(file *bufio.Scanner) ([]*Conccred, error) {
 	// read header
-	if !scanner.Scan() {
+	if !file.Scan() {
 		return nil, fmt.Errorf("file is empty")
 	}
-	headerLine := scanner.Text()
+	headerLine := file.Text()
 	header := &RankingHeader{}
-	_, err = header.Parse(headerLine)
-	if err != nil {
+	if _, err := header.Parse(headerLine); err != nil {
 		return nil, fmt.Errorf("error parsing header: %w", err)
 	}
 	// read records
 	var records []*Conccred
 	var count int64 = 0
-	for scanner.Scan() {
-		line := scanner.Text()
+	for file.Scan() {
+		line := file.Text()
 		var c Conccred
 		record, err := c.Parse(line)
 		if err != nil {
@@ -153,7 +147,7 @@ func (c *Conccred) ParseConccredFile(filename string) ([]*Conccred, error) {
 		records = append(records, record)
 		count++
 	}
-	if err := scanner.Err(); err != nil {
+	if err := file.Err(); err != nil {
 		return nil, err
 	}
 	if err := header.Validate("CONCCRED", count); err != nil {
@@ -163,8 +157,8 @@ func (c *Conccred) ParseConccredFile(filename string) ([]*Conccred, error) {
 }
 
 // GetParsedFile retrieves and maps Conccred records from a file.
-func (c *Conccred) GetParsedFile(filename string) (map[string]port.Report, error) {
-	fileConccred, err := c.ParseConccredFile(filename)
+func (c *Conccred) GetParsedFile(file *bufio.Scanner) (map[string]port.Report, error) {
+	fileConccred, err := c.ParseConccredFile(file)
 	if err != nil {
 		return nil, err
 	}

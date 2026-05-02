@@ -3,10 +3,8 @@ package domain
 import (
 	"bufio"
 	"fmt"
-	"os"
 
 	"github.com/ianlopshire/go-fixedwidth"
-	"golang.org/x/text/encoding/charmap"
 	"validator/internal/port"
 )
 
@@ -110,31 +108,21 @@ func (r *Infrterm) String() string {
 }
 
 // LoadInfrtermFile loads infrterm data from a fixed-width file
-func (i *Infrterm) LoadInfrtermFile(filename string) ([]*Infrterm, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
+func (i *Infrterm) LoadInfrtermFile(file *bufio.Scanner) ([]*Infrterm, error) {
 	var r []*Infrterm
-	decoder := charmap.ISO8859_1.NewDecoder()
-	decodedReader := decoder.Reader(file)
-	scanner := bufio.NewScanner(decodedReader)
 	// header line
-	if !scanner.Scan() {
+	if !file.Scan() {
 		return nil, fmt.Errorf("file is empty")
 	}
-	headerLine := scanner.Text()
+	headerLine := file.Text()
 	header := &RankingHeader{}
-	_, err = header.Parse(headerLine)
-	if err != nil {
+	if _, err := header.Parse(headerLine); err != nil {
 		return nil, fmt.Errorf("error parsing header: %w", err)
 	}
 	// data lines
 	var count int64 = 0
-	for scanner.Scan() {
-		line := scanner.Text()
+	for file.Scan() {
+		line := file.Text()
 		inf := &Infrterm{}
 		err := inf.Parse(line)
 		if err != nil {
@@ -143,7 +131,7 @@ func (i *Infrterm) LoadInfrtermFile(filename string) ([]*Infrterm, error) {
 		r = append(r, inf)
 		count++
 	}
-	if err := scanner.Err(); err != nil {
+	if err := file.Err(); err != nil {
 		return nil, err
 	}
 	if err := header.Validate("INFRTERM", count); err != nil {
@@ -153,8 +141,8 @@ func (i *Infrterm) LoadInfrtermFile(filename string) ([]*Infrterm, error) {
 }
 
 // GetParsedFile retrieves and maps Infrterm records from a file.
-func (r *Infrterm) GetParsedFile(filename string) (map[string]port.Report, error) {
-	fileInfrterm, err := r.LoadInfrtermFile(filename)
+func (r *Infrterm) GetParsedFile(file *bufio.Scanner) (map[string]port.Report, error) {
+	fileInfrterm, err := r.LoadInfrtermFile(file)
 	if err != nil {
 		return nil, err
 	}

@@ -3,10 +3,8 @@ package domain
 import (
 	"bufio"
 	"fmt"
-	"os"
 
 	"github.com/ianlopshire/go-fixedwidth"
-	"golang.org/x/text/encoding/charmap"
 	"validator/internal/port"
 )
 
@@ -144,31 +142,21 @@ func (i *Intercam) String() string {
 }
 
 // ParseIntercamFile parses the intercam file and returns a slice of Intercam structs
-func (i *Intercam) ParseIntercamFile(filename string) ([]*Intercam, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
+func (i *Intercam) ParseIntercamFile(file *bufio.Scanner) ([]*Intercam, error) {
 	var intercams []*Intercam
-	decoder := charmap.ISO8859_1.NewDecoder()
-	decodedReader := decoder.Reader(file)
-	scanner := bufio.NewScanner(decodedReader)
 	// read header
-	if !scanner.Scan() {
+	if !file.Scan() {
 		return nil, fmt.Errorf("file is empty")
 	}
-	headerLine := scanner.Text()
+	headerLine := file.Text()
 	header := &RankingHeader{}
-	_, err = header.Parse(headerLine)
-	if err != nil {
+	if _, err := header.Parse(headerLine); err != nil {
 		return nil, fmt.Errorf("error parsing header: %w", err)
 	}
 	// read records
 	var count int64 = 0
-	for scanner.Scan() {
-		line := scanner.Text()
+	for file.Scan() {
+		line := file.Text()
 		intercam := &Intercam{}
 		_, err := intercam.Parse(line)
 		if err != nil {
@@ -177,7 +165,7 @@ func (i *Intercam) ParseIntercamFile(filename string) ([]*Intercam, error) {
 		intercams = append(intercams, intercam)
 		count++
 	}
-	if err := scanner.Err(); err != nil {
+	if err := file.Err(); err != nil {
 		return nil, err
 	}
 	if err := header.Validate("INTERCAM", count); err != nil {
@@ -187,8 +175,8 @@ func (i *Intercam) ParseIntercamFile(filename string) ([]*Intercam, error) {
 }
 
 // GetParsedFile retrieves and maps Intercam records from a file.
-func (i *Intercam) GetParsedFile(filename string) (map[string]port.Report, error) {
-	fileIntercam, err := i.ParseIntercamFile(filename)
+func (i *Intercam) GetParsedFile(file *bufio.Scanner) (map[string]port.Report, error) {
+	fileIntercam, err := i.ParseIntercamFile(file)
 	if err != nil {
 		return nil, err
 	}

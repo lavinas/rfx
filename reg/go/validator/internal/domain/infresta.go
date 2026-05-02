@@ -3,10 +3,8 @@ package domain
 import (
 	"bufio"
 	"fmt"
-	"os"
 
 	"github.com/ianlopshire/go-fixedwidth"
-	"golang.org/x/text/encoding/charmap"
 	"validator/internal/port"
 )
 
@@ -110,31 +108,21 @@ func (r *Infresta) String() string {
 }
 
 // LoadInfrestaFile loads infresta data from a file
-func (r *Infresta) LoadInfrestaFile(filename string) ([]*Infresta, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
+func (r *Infresta) LoadInfrestaFile(file *bufio.Scanner) ([]*Infresta, error) {
 
 	ret := []*Infresta{}
-	decoder := charmap.ISO8859_1.NewDecoder()
-	decodedReader := decoder.Reader(file)
-	scanner := bufio.NewScanner(decodedReader)
-	// header line
-	if !scanner.Scan() {
+	if !file.Scan() {
 		return nil, fmt.Errorf("file is empty")
 	}
-	headerLine := scanner.Text()
+	headerLine := file.Text()
 	header := &RankingHeader{}
-	_, err = header.Parse(headerLine)
-	if err != nil {
+	if _, err := header.Parse(headerLine); err != nil {
 		return nil, fmt.Errorf("error parsing header: %w", err)
 	}
 	// data lines
 	var count int64 = 0
-	for scanner.Scan() {
-		line := scanner.Text()
+	for file.Scan() {
+		line := file.Text()
 		inf := &Infresta{}
 		parsedInf, err := inf.Parse(line)
 		if err != nil {
@@ -143,7 +131,7 @@ func (r *Infresta) LoadInfrestaFile(filename string) ([]*Infresta, error) {
 		ret = append(ret, parsedInf)
 		count++
 	}
-	if err := scanner.Err(); err != nil {
+	if err := file.Err(); err != nil {
 		return nil, err
 	}
 	if err := header.Validate("INFRESTA", count); err != nil {
@@ -153,8 +141,8 @@ func (r *Infresta) LoadInfrestaFile(filename string) ([]*Infresta, error) {
 }
 
 // GetParsedFile retrieves and maps Infresta records from a file.
-func (r *Infresta) GetParsedFile(filename string) (map[string]port.Report, error) {
-	fileInfresta, err := r.LoadInfrestaFile(filename)
+func (r *Infresta) GetParsedFile(file *bufio.Scanner) (map[string]port.Report, error) {
+	fileInfresta, err := r.LoadInfrestaFile(file)
 	if err != nil {
 		return nil, err
 	}

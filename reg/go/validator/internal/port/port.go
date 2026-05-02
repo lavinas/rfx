@@ -1,12 +1,17 @@
 package port
 
+import (
+	"bufio"
+)
+
 // report domain interface
 type Report interface {
 	Validate() error
-	GetParsedFile(filename string) (map[string]Report, error)
+	GetParsedFile(file *bufio.Scanner) (map[string]Report, error)
 	GetDB(repo Repository, year int, quarter int) (map[string]Report, error)
 	String() string
 	GetName() string
+	GetKey() string
 }
 
 // repository domain interface
@@ -18,7 +23,7 @@ type Repository interface {
 // Config interface defines methods to get configuration data
 type Config interface {
 	GetDBData(host *string, port *int, user *string, password *string, dbname *string, sslmode *string,
-	timezone *string, connect_timeout *int, sourceSchema *string)
+		timezone *string, connect_timeout *int, sourceSchema *string)
 }
 
 // Service interface defines methods to interact with the service
