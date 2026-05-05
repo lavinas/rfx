@@ -1,4 +1,4 @@
-package internal
+package internal  
 
 // Batch struct to hold a batch of transactions
 type Batch struct {
